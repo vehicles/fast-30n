@@ -203,10 +203,10 @@
 
                 <!-- Desktop Navigation: CHỈ 4 MENU CHÍNH -->
                 <nav class="hidden md:flex items-center gap-8 text-sm font-bold text-[#2D3748]">
-                    <a href="#btc" onclick="navigateToHomeSection('btc'); return false;" class="hover:text-[#00979C] transition-colors py-2">Ban tổ chức</a>
-					<a href="#chuong-trinh" id="nav-link-program" onclick="switchPageView('program'); return false;" class="hover:text-[#00979C] transition-colors py-2">Chương trình</a>
+                    <a href="#chuong-trinh" id="nav-link-program" onclick="switchPageView('program'); return false;" class="hover:text-[#00979C] transition-colors py-2">Chương trình</a>
                     <a href="#dia-diem" onclick="navigateToHomeSection('dia-diem'); return false;" class="hover:text-[#00979C] transition-colors py-2">Địa điểm</a>
-                    <a href="#an-pham" onclick="navigateToHomeSection('an-pham'); return false;" class="hover:text-[#00979C] transition-colors py-2">Ấn phẩm</a>                    
+                    <a href="#an-pham" onclick="navigateToHomeSection('an-pham'); return false;" class="hover:text-[#00979C] transition-colors py-2">Ấn phẩm</a>
+                    <a href="#btc" onclick="navigateToHomeSection('btc'); return false;" class="hover:text-[#00979C] transition-colors py-2">BTC</a>
                 </nav>
 
                 <!-- Action Buttons: Tra cứu & Đăng ký -->
@@ -231,10 +231,10 @@
         <!-- Mobile Dropdown Navigation -->
         <div id="mobile-menu" class="hidden md:hidden bg-[#FFFFFF] border-t border-[#E2E8F0] px-4 pt-3 pb-6 shadow-xl rounded-b-3xl">
             <div class="flex flex-col space-y-1 text-base font-bold text-[#2D3748]">
-                <a href="#btc" onclick="closeMobileMenu(); navigateToHomeSection('btc'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-[#FAF9F6] hover:text-[#00979C]">Ban tổ chức</a>
-				<a href="#chuong-trinh" onclick="closeMobileMenu(); switchPageView('program'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-[#FAF9F6] hover:text-[#00979C]">Chương trình</a>
+                <a href="#chuong-trinh" onclick="closeMobileMenu(); switchPageView('program'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-[#FAF9F6] hover:text-[#00979C]">Chương trình</a>
                 <a href="#dia-diem" onclick="closeMobileMenu(); navigateToHomeSection('dia-diem'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-[#FAF9F6] hover:text-[#00979C]">Địa điểm</a>
-                <a href="#an-pham" onclick="closeMobileMenu(); navigateToHomeSection('an-pham'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-[#FAF9F6] hover:text-[#00979C]">Ấn phẩm</a>                
+                <a href="#an-pham" onclick="closeMobileMenu(); navigateToHomeSection('an-pham'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-[#FAF9F6] hover:text-[#00979C]">Ấn phẩm</a>
+                <a href="#btc" onclick="closeMobileMenu(); navigateToHomeSection('btc'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-[#FAF9F6] hover:text-[#00979C]">BTC</a>
             </div>
             <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-[#E2E8F0]">
                 <button type="button" onclick="closeMobileMenu(); openLookupModal();" class="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold text-[#00686B] bg-[#EAE6DF]">
@@ -389,55 +389,83 @@
             </div>
         </section>
 
-        <!-- ==================== B. DẤU ẤN 30 NĂM & 3 TRỤ CỘT HỘI TỤ ==================== -->
+        <!-- ==================== B. 5 DẤU ẤN KIẾN TẠO HÀNH TRÌNH 30 NĂM FAST ==================== -->
         <section class="py-20 bg-[#FAF9F6]">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-3xl mx-auto mb-14">
                     <span class="inline-block px-4 py-1.5 rounded-full bg-[#00979C]/10 text-[#00686B] text-xs font-bold uppercase tracking-wider mb-3">
-                        1997 — 2027 · Ba Thập Kỷ Kiến Tạo
+                        5 dấu ấn
                     </span>
                     <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-[#00686B] mb-4">
-                        Ba Trụ Cột Hội Tụ Tại Chương trình
+                        5 dấu ấn kiến tạo hành trình 30 năm FAST
                     </h2>
                     <p class="text-[#64748B] text-base">
                         Từ những dòng mã nguồn kế toán đầu tiên năm 1997 đến hệ sinh thái quản trị doanh nghiệp toàn diện phục vụ hơn 50.000 khách hàng trên cả nước.
                     </p>
                 </div>
 
-                <div class="grid md:grid-cols-3 gap-7">
-                    <!-- Pillar 1 -->
-                    <div class="bg-[#FFFFFF] p-8 rounded-3xl border border-[#E2E8F0] shadow-sm hover:border-[#00979C] transition-all">
+                <!-- Hàng 1: 3 Dấu ấn đầu -->
+                <div class="grid md:grid-cols-3 gap-6 mb-6">
+                    <!-- Dấu ấn 01 -->
+                    <div class="bg-[#FFFFFF] p-7 rounded-3xl border border-[#E2E8F0] shadow-sm hover:border-[#00979C] transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-[#00979C]/10 text-[#00979C] flex items-center justify-center mb-5">
+                            <i data-lucide="cpu" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#00979C]">Dấu ấn 01</span>
+                        <h3 class="font-display font-extrabold text-xl text-[#00686B] mt-1 mb-3">Tiên Phong Công Nghệ Quản Trị</h3>
+                        <p class="text-sm text-[#64748B] leading-relaxed">
+                            Ba thập kỷ không ngừng đổi mới từ phần mềm kế toán đến giải pháp ERP, Cloud và AI chuyên sâu cho doanh nghiệp Việt Nam.
+                        </p>
+                    </div>
+
+                    <!-- Dấu ấn 02 -->
+                    <div class="bg-[#FFFFFF] p-7 rounded-3xl border border-[#E2E8F0] shadow-sm hover:border-[#00979C] transition-all">
                         <div class="w-12 h-12 rounded-2xl bg-[#00979C]/10 text-[#00979C] flex items-center justify-center mb-5">
                             <i data-lucide="handshake" class="w-6 h-6"></i>
                         </div>
-                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#00979C]">Trụ cột 01</span>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#00979C]">Dấu ấn 02</span>
                         <h3 class="font-display font-extrabold text-xl text-[#00686B] mt-1 mb-3">Tri Ân Khách Hàng & Đối Tác</h3>
                         <p class="text-sm text-[#64748B] leading-relaxed">
-                            Gặp gỡ, tri ân cộng đồng doanh nghiệp khách hàng và các đối tác công nghệ, ngân hàng số, hóa đơn điện tử đã tin tưởng đồng hành cùng FAST suốt 30 năm qua.
+                            Gặp gỡ, tri ân cộng đồng hơn 50.000 doanh nghiệp khách hàng và đối tác ngân hàng số, hóa đơn điện tử, hạ tầng đã đồng hành suốt 30 năm.
                         </p>
                     </div>
 
-                    <!-- Pillar 2 -->
-                    <div class="bg-[#FFFFFF] p-8 rounded-3xl border border-[#E2E8F0] shadow-sm hover:border-[#FF6B35] transition-all">
+                    <!-- Dấu ấn 03 -->
+                    <div class="bg-[#FFFFFF] p-7 rounded-3xl border border-[#E2E8F0] shadow-sm hover:border-[#FF6B35] transition-all">
                         <div class="w-12 h-12 rounded-2xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center mb-5">
                             <i data-lucide="globe" class="w-6 h-6"></i>
                         </div>
-                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#FF6B35]">Trụ cột 02</span>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#FF6B35]">Dấu ấn 03</span>
                         <h3 class="font-display font-extrabold text-xl text-[#00686B] mt-1 mb-3">Hội Ngộ 3 Miền & Alumni</h3>
                         <p class="text-sm text-[#64748B] leading-relaxed">
-                            Đại gia đình CBNV FAST Hà Nội, Đà Nẵng, TP.HCM cùng các thế hệ cựu nhân viên (Alumni) hội tụ tại điểm hẹn di sản miền Trung.
+                            Đại gia đình CBNV FAST Hà Nội (FHN), Đà Nẵng (FĐN), TP.HCM (FSG) cùng các thế hệ cựu nhân viên (Alumni) hội tụ tại miền di sản Quảng Bình.
                         </p>
                     </div>
+                </div>
 
-                    <!-- Pillar 3 -->
-                    <div class="bg-[#FFFFFF] p-8 rounded-3xl border border-[#E2E8F0] shadow-sm hover:border-[#D4AF37] transition-all">
+                <!-- Hàng 2: 2 Dấu ấn tiếp theo căn giữa hài hòa -->
+                <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    <!-- Dấu ấn 04 -->
+                    <div class="bg-[#FFFFFF] p-7 rounded-3xl border border-[#E2E8F0] shadow-sm hover:border-[#D4AF37] transition-all">
                         <div class="w-12 h-12 rounded-2xl bg-[#D4AF37]/15 text-[#9A7B1C] flex items-center justify-center mb-5">
                             <i data-lucide="trophy" class="w-6 h-6"></i>
                         </div>
-                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#9A7B1C]">Trụ cột 03</span>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#9A7B1C]">Dấu ấn 04</span>
                         <h3 class="font-display font-extrabold text-xl text-[#00686B] mt-1 mb-3">Gala 30 Năm & Thể Thao Biển</h3>
                         <p class="text-sm text-[#64748B] leading-relaxed">
-                            Bùng nổ cảm xúc với Giải Pickleball 30 Năm, Team Building trên bãi biển Bảo Ninh và Đêm Gala Dinner vinh danh chặng đường 1997 – 2027.
+                            Bùng nổ năng lượng với Giải Pickleball 30 Năm, Giải chạy bình minh, Team Building bãi biển Bảo Ninh và Đêm Gala Dinner vinh danh hành trình 1997 – 2027.
+                        </p>
+                    </div>
+
+                    <!-- Dấu ấn 05 -->
+                    <div class="bg-[#FFFFFF] p-7 rounded-3xl border border-[#E2E8F0] shadow-sm hover:border-[#00979C] transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-[#00979C]/10 text-[#00686B] flex items-center justify-center mb-5">
+                            <i data-lucide="compass" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#00686B]">Dấu ấn 05</span>
+                        <h3 class="font-display font-extrabold text-xl text-[#00686B] mt-1 mb-3">Khát Vọng Vươn Tầm Tương Lai</h3>
+                        <p class="text-sm text-[#64748B] leading-relaxed">
+                            Khẳng định cam kết "Am hiểu nghiệp vụ, Tận tâm đồng hành", mở ra chương mới chuyển đổi số thông minh và bền vững cho cộng đồng doanh nghiệp.
                         </p>
                     </div>
                 </div>
@@ -771,7 +799,7 @@
                         Đầu Mối Điều Phối & Hỗ Trợ Đại Biểu
                     </span>
                     <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-[#00686B] mb-4">
-                        Ban Tổ Chức Đại Lễ 30 Năm
+                        Ban Tổ Chức Fast 30 Năm
                     </h2>
                     <p class="text-[#64748B] text-base">
                         Quý Khách hàng, Đối tác và CBNV cần hỗ trợ đăng ký, lưu trú hoặc lịch trình di chuyển vui lòng liên hệ trực tiếp đầu mối phụ trách từng khu vực.
@@ -854,7 +882,7 @@
     <!-- ==================== END VIEW A: TRANG CHỦ SỰ KIỆN ==================== -->
 
     <!-- ==================== VIEW B: FULL-SCREEN DETAILED PROGRAM VIEW ==================== -->
-    <section id="program-view" class="hidden pt-20 bg-[#FAF9F6] min-h-screen">
+    <section id="program-view" class="hidden pt-20 bg-[#FFFFFF] min-h-screen">
         
         <!-- 1. Hero Banner Toàn Màn Hình Khu Nghỉ Dưỡng Sun Spa Resort -->
         <div class="program-resort-banner text-white relative overflow-hidden">
@@ -908,253 +936,316 @@
             </div>
         </div>
 
-        <!-- 2. White Sticky Horizontal Day Selector Bar -->
+        <!-- 2. White Sticky Horizontal Day Selector Bar (Pill Active Tab chuẩn mẫu) -->
         <div class="sticky top-20 z-30 bg-[#FFFFFF] border-b border-[#E2E8F0] shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-3 max-w-3xl">
-                    <button type="button" onclick="selectDetailedDay(1)" id="dp-tab-1" class="dp-day-tab py-4 sm:py-5 text-left pr-4 border-b-[3px] border-[#00686B] transition-all">
-                        <span class="block font-display font-extrabold text-sm sm:text-base text-[#00686B]">Ngày 1</span>
-                        <span class="block text-xs sm:text-sm text-[#64748B] mt-0.5">Thứ Bảy 10/07</span>
-                    </button>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-3xl">
+                        <!-- Tab Ngày 1 (Active mặc định màu xanh chủ đạo FAST #00979C) -->
+                        <button type="button" onclick="selectDetailedDay(1)" id="dp-tab-1" class="dp-day-tab px-4 sm:px-5 py-3 rounded-xl text-left bg-[#00979C] text-white shadow-sm transition-all">
+                            <span class="block font-display font-extrabold text-sm sm:text-base text-white">Ngày 1</span>
+                            <span class="block text-xs sm:text-sm text-white/90 mt-0.5">Thứ Bảy 10/07</span>
+                        </button>
 
-                    <button type="button" onclick="selectDetailedDay(2)" id="dp-tab-2" class="dp-day-tab py-4 sm:py-5 text-left pr-4 border-b-[3px] border-transparent hover:border-[#E2E8F0] transition-all">
-                        <span class="block font-display font-extrabold text-sm sm:text-base text-[#2D3748]">Ngày 2</span>
-                        <span class="block text-xs sm:text-sm text-[#64748B] mt-0.5">Chủ Nhật 11/07</span>
-                    </button>
+                        <!-- Tab Ngày 2 -->
+                        <button type="button" onclick="selectDetailedDay(2)" id="dp-tab-2" class="dp-day-tab px-4 sm:px-5 py-3 rounded-xl text-left bg-transparent hover:bg-[#FAF9F6] text-[#2D3748] transition-all">
+                            <span class="block font-display font-extrabold text-sm sm:text-base text-[#2D3748]">Ngày 2</span>
+                            <span class="block text-xs sm:text-sm text-[#64748B] mt-0.5">Chủ Nhật 11/07</span>
+                        </button>
 
-                    <button type="button" onclick="selectDetailedDay(3)" id="dp-tab-3" class="dp-day-tab py-4 sm:py-5 text-left pr-4 border-b-[3px] border-transparent hover:border-[#E2E8F0] transition-all">
-                        <span class="block font-display font-extrabold text-sm sm:text-base text-[#2D3748]">Ngày 3</span>
-                        <span class="block text-xs sm:text-sm text-[#64748B] mt-0.5">Thứ Hai 12/07</span>
-                    </button>
+                        <!-- Tab Ngày 3 -->
+                        <button type="button" onclick="selectDetailedDay(3)" id="dp-tab-3" class="dp-day-tab px-4 sm:px-5 py-3 rounded-xl text-left bg-transparent hover:bg-[#FAF9F6] text-[#2D3748] transition-all">
+                            <span class="block font-display font-extrabold text-sm sm:text-base text-[#2D3748]">Ngày 3</span>
+                            <span class="block text-xs sm:text-sm text-[#64748B] mt-0.5">Thứ Hai 12/07</span>
+                        </button>
+                    </div>
+
+                    <label class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#00686B] cursor-pointer select-none self-end sm:self-center">
+                        <input type="checkbox" id="dp-show-all-days" onchange="toggleShowAllDetailedDays(this.checked)" class="w-4 h-4 rounded accent-[#00979C]">
+                        <span>Xem tất cả 3 ngày</span>
+                    </label>
                 </div>
             </div>
         </div>
 
-        <!-- 3. Filter Bar & Timeline Cards -->
+        <!-- 3. Nội Dung Chương Trình Chi Tiết Bố Cục 2 Cột Bất Đối Xứng (4/12 Trái - 8/12 Phải) -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-            
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 mb-8 border-b border-[#00686B]/20">
-                <div class="flex flex-wrap items-center gap-2">
-                    <span class="text-xs font-bold uppercase tracking-wider text-[#64748B] mr-1">Lọc hoạt động:</span>
-                    <button type="button" onclick="filterDetailedCategory('all')" data-cat="all" class="dp-cat-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#00686B] text-white transition-colors">
-                        Tất cả
-                    </button>
-                    <button type="button" onclick="filterDetailedCategory('b2b')" data-cat="b2b" class="dp-cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#FFFFFF] text-[#2D3748] border border-[#E2E8F0] hover:border-[#00979C] transition-colors">
-                        Khách hàng & Đối tác
-                    </button>
-                    <button type="button" onclick="filterDetailedCategory('sport')" data-cat="sport" class="dp-cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#FFFFFF] text-[#2D3748] border border-[#E2E8F0] hover:border-[#00979C] transition-colors">
-                        Thể thao & Team Building
-                    </button>
-                    <button type="button" onclick="filterDetailedCategory('gala')" data-cat="gala" class="dp-cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#FFFFFF] text-[#2D3748] border border-[#E2E8F0] hover:border-[#00979C] transition-colors">
-                        Gala & Ẩm thực
-                    </button>
-                </div>
 
-                <label class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#00686B] cursor-pointer select-none">
-                    <input type="checkbox" id="dp-show-all-days" onchange="toggleShowAllDetailedDays(this.checked)" class="w-4 h-4 rounded accent-[#00979C]">
-                    <span>Tất cả 3 ngày</span>
-                </label>
-            </div>
+            <!-- Đường kẻ ngang phân tách mảnh phía trên như ảnh mẫu -->
+            <div class="border-t-2 border-[#00686B]/25 mb-10 sm:mb-12"></div>
 
-            <!-- NGÀY 1: THỨ BẢY 10/07/2027 -->
-            <div id="dp-day-panel-1" class="dp-day-section space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-4 border-b border-[#E2E8F0]">
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-[#00979C]">Ngày 01 · Hội ngộ & Khai mở Kết nối</span>
-                        <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-[#00686B] mt-1">Thứ Bảy, 10/07/2027</h2>
-                    </div>
-                    <span class="text-xs sm:text-sm font-medium text-[#64748B]">Sun Spa Resort, Bảo Ninh, Đồng Hới</span>
-                </div>
-
-                <div class="space-y-4">
-                    <div data-category="all" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">07:30 – 11:30</span>
-                            <span class="block text-xs text-[#64748B] mt-1.5">Sảnh Lễ Tân Resort</span>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Đón đoàn 3 miền (Hà Nội, Đà Nẵng, TP.HCM) & Nhận phòng Resort</h3>
-                            <p class="text-sm text-[#64748B] leading-relaxed">
-                                Xe đưa đón của BTC đón đại biểu tại Sân bay Đồng Hới / Ga Đồng Hới về Sun Spa Resort. Làm thủ tục check-in và nhận bộ <strong>Welcome Kit FAST 30 Năm</strong> (Áo Polo đồng phục, Thẻ đeo QR & Cẩm nang sự kiện).
+            <!-- ==================== NGÀY 1: THỨ BẢY 10/07/2027 ==================== -->
+            <div id="dp-day-panel-1" class="dp-day-section">
+                <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+                    
+                    <!-- Cột Trái (4/12 - Sticky trên desktop) -->
+                    <div class="lg:col-span-4 lg:sticky lg:top-44 space-y-4">
+                        <span class="block font-display font-bold text-sm text-[#00979C]">
+                            Ngày 1 · Thứ Bảy, 10/07/2027
+                        </span>
+                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-[#00686B] leading-tight">
+                            Hội tụ 3 miền – Đồng Hới, Quảng Bình
+                        </h2>
+                        <p class="text-sm sm:text-base text-[#64748B]">
+                            Bao gồm bữa trưa, tối
+                        </p>
+                        <div class="pt-2">
+                            <div class="rounded-2xl overflow-hidden border border-[#E2E8F0] shadow-sm">
+                                <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=900&q=80" alt="Hoạt động kết nối thể thao và team building bãi biển FAST 30 Năm" class="w-full h-56 sm:h-64 object-cover" onerror="this.src='https://placehold.co/800x520/00979C/FFFFFF?text=FAST+30+Nam+-+Quang+Binh'">
+                            </div>
+                            <p class="text-xs text-[#64748B] mt-2.5">
+                                Đón đoàn 3 miền, giao lưu Pickleball & Sunset Welcome Party bên bờ biển Bảo Ninh.
                             </p>
                         </div>
                     </div>
 
-                    <div data-category="gala" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">12:00 – 13:30</span>
-                            <span class="block text-xs text-[#64748B] mt-1.5">Nhà hàng Sun Cafe</span>
+                    <!-- Cột Phải (8/12 - Danh sách thẻ khung giờ nền ấm #F3EFEA) -->
+                    <div class="lg:col-span-8 space-y-4">
+                        
+                        <!-- Khung giờ 1 -->
+                        <div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
+                            <div class="sm:w-40 shrink-0">
+                                <span class="font-display font-extrabold text-base sm:text-lg text-[#00979C]">08:00 – 11:30</span>
+                            </div>
+                            <ul class="flex-1 space-y-3 text-sm sm:text-[15px] text-[#2D3748] leading-relaxed">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Xe và điều phối viên BTC đón đại biểu 3 miền tại Sân bay Đồng Hới (VDH) và Ga Đồng Hới đưa về Sun Spa Resort.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">09:30</strong> Đón tiếp tại sảnh chính Resort, trao bộ <strong>Welcome Kit FAST 30 Năm</strong> (Áo Polo đồng phục, Thẻ đeo QR định danh).</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Check-in không gian triển lãm ảnh "30 Năm FAST — Am hiểu nghiệp vụ, Tận tâm đồng hành".</span>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="flex-1">
-                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Tiệc trưa chào mừng (Welcome Lunch)</h3>
-                            <p class="text-sm text-[#64748B] leading-relaxed">
-                                Thưởng thức ẩm thực đặc sản miền Trung và giao lưu thân mật giữa Quý Khách hàng, Đối tác và CBNV 3 miền.
-                            </p>
-                        </div>
-                    </div>
 
-                    <div data-category="b2b sport" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C] text-white font-display font-extrabold text-sm">14:30 – 17:30</span>
-                            <span class="block text-xs text-[#64748B] mt-1.5">Sân Pickleball & Bãi Biển</span>
+                        <!-- Khung giờ 2 -->
+                        <div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
+                            <div class="sm:w-40 shrink-0">
+                                <span class="font-display font-extrabold text-base sm:text-lg text-[#00979C]">12:00 – 13:30</span>
+                            </div>
+                            <ul class="flex-1 space-y-3 text-sm sm:text-[15px] text-[#2D3748] leading-relaxed">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">12:00</strong> Dùng bữa trưa chào mừng (Welcome Lunch) tại Nhà hàng Sun Cafe & Golden Lotus – Sun Spa Resort.</span>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="flex-1">
-                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#00686B] mb-2">Vòng loại Giải Pickleball 30 Năm & Giao lưu Khách hàng – Đối tác</h3>
-                            <p class="text-sm text-[#64748B] leading-relaxed">
-                                Khởi tranh các nội dung Đôi nam, Đôi nữ, Đôi nam nữ mở rộng giữa Khách hàng, Đối tác và CBNV 3 miền cùng các hoạt động khởi động bên bờ biển Bảo Ninh.
-                            </p>
-                        </div>
-                    </div>
 
-                    <div data-category="gala" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#FF6B35]/15 text-[#FF6B35] font-display font-extrabold text-sm">18:30 – 21:30</span>
-                            <span class="block text-xs text-[#64748B] mt-1.5">Bãi Biển Riêng Bảo Ninh</span>
+                        <!-- Khung giờ 3 -->
+                        <div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
+                            <div class="sm:w-40 shrink-0">
+                                <span class="font-display font-extrabold text-base sm:text-lg text-[#00979C]">14:00 – 21:30</span>
+                            </div>
+                            <ul class="flex-1 space-y-3 text-sm sm:text-[15px] text-[#2D3748] leading-relaxed">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Nhận phòng, nghỉ ngơi. Giờ nhận phòng tiêu chuẩn từ 14:00; các đoàn đến sớm được BTC ưu tiên bố trí phòng sớm.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">15:00</strong> Khai mạc & Vòng loại Giải Pickleball 30 Năm giao lưu giữa Khách hàng, Đối tác và CBNV 3 miền.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Tự do tắm biển Bảo Ninh, thư giãn tại hồ bơi tràn bờ hướng biển của Resort.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">18:30</strong> Sunset Welcome Party: Tiệc BBQ hải sản ngoài trời, đêm nhạc Acoustic & giao lưu gắn kết 3 miền (Bãi biển riêng Sun Spa Resort).</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Nghỉ đêm tại Sun Spa Resort Quảng Bình.</span>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="flex-1">
-                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Sunset Welcome Party & Đêm Nhạc Acoustic Biển Quảng Bình</h3>
-                            <p class="text-sm text-[#64748B] leading-relaxed">
-                                Tiệc nướng hải sản bên bờ biển, thưởng thức âm nhạc acoustic và hàn huyên cùng các thế hệ người FAST (F1–F4, Alumni) và Quý Khách hàng thân thiết.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- NGÀY 2: CHỦ NHẬT 11/07/2027 -->
-            <div id="dp-day-panel-2" class="dp-day-section hidden space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-4 border-b border-[#E2E8F0]">
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-[#FF6B35]">Ngày 02 · Diễn Đàn Công Nghệ & Gala 30 Năm</span>
-                        <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-[#00686B] mt-1">Chủ Nhật, 11/07/2027</h2>
-                    </div>
-                    <span class="text-xs sm:text-sm font-medium text-[#64748B]">Tâm điểm kỷ niệm 30 năm FAST</span>
-                </div>
-
-                <div class="space-y-4">
-                    <div data-category="sport" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">06:30 – 08:30</span>
-                            <span class="block text-xs text-[#64748B] mt-1.5">Đường ven biển Bảo Ninh</span>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Buffet sáng & Giải chạy bình minh "FAST 30 Run — Bước Chân Gắn Kết"</h3>
-                            <p class="text-sm text-[#64748B] leading-relaxed">
-                                Cự ly 3km Fun Run và 10km Challenge dọc bán đảo Bảo Ninh, trao huy chương kỷ niệm 30 năm cho toàn bộ vận động viên về đích.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div data-category="b2b" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C] text-white font-display font-extrabold text-sm">09:00 – 11:30</span>
-                            <span class="block text-xs text-[#64748B] mt-1.5">Hội trường Hoa Hồng · Resort</span>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#00686B] mb-2">Diễn Đàn Lãnh Đạo & Đối Tác: "Beyond Tech, Beyond Trust"</h3>
-                            <p class="text-sm text-[#64748B] leading-relaxed">
-                                Triển lãm hành trình 30 năm FAST, tọa đàm ứng dụng AI & Cloud trong quản trị doanh nghiệp – kế toán và kết nối trực tiếp giữa Khách hàng, Đối tác cùng Ban Lãnh đạo FAST.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div data-category="gala" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#EAE6DF] text-[#2D3748] font-display font-extrabold text-sm">12:00 – 13:30</span>
-                            <span class="block text-xs text-[#64748B] mt-1.5">Nhà hàng Golden Lotus</span>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-display font-bold text-lg text-[#2D3748] mb-1">Dùng bữa trưa & Nghỉ ngơi</h3>
-                            <p class="text-sm text-[#64748B]">Thưởng thức buffet trưa và nghỉ ngơi tại khu nghỉ dưỡng.</p>
-                        </div>
-                    </div>
-
-                    <div data-category="sport" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">15:00 – 17:15</span>
-                            <span class="block text-xs text-[#64748B] mt-1.5">Bãi Biển & Sân Pickleball</span>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Chung kết Giải Pickleball, Team Building Bãi Biển & Flycam Xếp Chữ "FAST 30"</h3>
-                            <p class="text-sm text-[#64748B] leading-relaxed">
-                                Tranh cúp vô địch Pickleball 30 Năm, chuỗi trò chơi đồng đội gắn kết 3 miền và chụp hình toàn thể 500+ đại biểu trên bãi biển Bảo Ninh.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div data-category="gala b2b" class="dp-item rounded-3xl p-6 sm:p-8 fast-gala-gradient text-white shadow-xl border border-[#D4AF37]/60 flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-4 py-1.5 rounded-xl bg-[#FF6B35] text-white font-display font-extrabold text-sm shadow">18:00 – 22:00</span>
-                            <span class="block text-xs text-amber-200 mt-1.5 font-semibold">Grand Ballroom · Resort</span>
-                        </div>
-                        <div class="flex-1">
-                            <span class="inline-block px-3 py-0.5 rounded-full bg-white/20 text-amber-200 text-[11px] font-extrabold uppercase tracking-wider mb-2">SỰ KIỆN TRỌNG TÂM</span>
-                            <h3 class="font-display font-extrabold text-xl sm:text-2xl text-white mb-2">
-                                ĐÊM GALA DINNER KỶ NIỆM 30 NĂM FAST (1997 – 2027)
-                            </h3>
-                            <p class="text-sm text-white/95 leading-relaxed">
-                                Nghi thức thắp sáng biểu tượng 30 năm, Tri ân Khách hàng & Đối tác đồng hành, Vinh danh các thế hệ kiến tạo FAST, chương trình nghệ thuật đặc sắc và bốc thăm may mắn.
-                            </p>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- NGÀY 3: THỨ HAI 12/07/2027 -->
-            <div id="dp-day-panel-3" class="dp-day-section hidden space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-4 border-b border-[#E2E8F0]">
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-[#00979C]">Ngày 03 · Khám phá Di sản & Hẹn ngày tái ngộ</span>
-                        <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-[#00686B] mt-1">Thứ Hai, 12/07/2027</h2>
-                    </div>
-                    <span class="text-xs sm:text-sm font-medium text-[#64748B]">Phong Nha – Kẻ Bàng & Đồng Hới</span>
-                </div>
-
-                <div class="space-y-4">
-                    <div data-category="gala" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">07:00 – 08:30</span>
-                            <span class="block text-xs text-[#64748B] mt-1.5">Nhà hàng Sun Cafe</span>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-1">Điểm tâm sáng & Tắm biển tự do</h3>
-                            <p class="text-sm text-[#64748B]">Thưởng thức buffet sáng tự chọn và tận hưởng không khí trong lành tại Sun Spa Resort.</p>
-                        </div>
-                    </div>
-
-                    <div data-category="sport b2b" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">08:30 – 11:00</span>
-                            <span class="block text-xs text-[#64748B] mt-1.5">Phong Nha – Kẻ Bàng / City Tour</span>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Tham quan Động Phong Nha / City Tour Đồng Hới (Tùy chọn)</h3>
-                            <p class="text-sm text-[#64748B] leading-relaxed">
-                                Đại biểu lựa chọn tour tham quan Di sản Thiên nhiên Thế giới Phong Nha – Kẻ Bàng, tham quan Quảng Bình Quan – Tượng đài Mẹ Suốt hoặc tự do nghỉ dưỡng tại Resort.
+            <!-- ==================== NGÀY 2: CHỦ NHẬT 11/07/2027 ==================== -->
+            <div id="dp-day-panel-2" class="dp-day-section hidden">
+                <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+                    
+                    <!-- Cột Trái (4/12 - Sticky trên desktop) -->
+                    <div class="lg:col-span-4 lg:sticky lg:top-44 space-y-4">
+                        <span class="block font-display font-bold text-sm text-[#00979C]">
+                            Ngày 2 · Chủ Nhật, 11/07/2027
+                        </span>
+                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-[#00686B] leading-tight">
+                            Diễn đàn Công nghệ & Gala 30 Năm
+                        </h2>
+                        <p class="text-sm sm:text-base text-[#64748B]">
+                            Bao gồm bữa sáng, trưa, Gala Dinner
+                        </p>
+                        <div class="pt-2">
+                            <div class="rounded-2xl overflow-hidden border border-[#E2E8F0] shadow-sm">
+                                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=900&q=80" alt="Hội nghị & Đêm Gala Kỷ niệm 30 năm FAST" class="w-full h-56 sm:h-64 object-cover" onerror="this.src='https://placehold.co/800x520/00686B/FFFFFF?text=Gala+Dinner+FAST+30+Nam'">
+                            </div>
+                            <p class="text-xs text-[#64748B] mt-2.5">
+                                Tâm điểm hành trình 1997–2027: Diễn đàn công nghệ, Team Building & Đêm Gala Dinner 30 Năm.
                             </p>
                         </div>
                     </div>
 
-                    <div data-category="gala" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
-                        <div class="lg:w-44 shrink-0">
-                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#FF6B35]/15 text-[#FF6B35] font-display font-extrabold text-sm">11:30 – 14:00</span>
-                            <span class="block text-xs text-[#64748B] mt-1.5">Resort & Sân bay Đồng Hới</span>
+                    <!-- Cột Phải (8/12 - Danh sách thẻ khung giờ nền ấm #F3EFEA) -->
+                    <div class="lg:col-span-8 space-y-4">
+                        
+                        <!-- Khung giờ 1 -->
+                        <div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
+                            <div class="sm:w-40 shrink-0">
+                                <span class="font-display font-extrabold text-base sm:text-lg text-[#00979C]">06:30 – 08:30</span>
+                            </div>
+                            <ul class="flex-1 space-y-3 text-sm sm:text-[15px] text-[#2D3748] leading-relaxed">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">06:30</strong> Giải chạy bình minh "FAST 30 Run — Bước Chân Gắn Kết" (Cự ly 3km Fun Run & 10km dọc bán đảo Bảo Ninh).</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Dùng buffet sáng tại nhà hàng Sun Cafe & chuẩn bị trang phục tham dự Diễn đàn.</span>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="flex-1">
-                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Check-out, Bữa trưa chia tay (Farewell Lunch) & Tiễn đoàn</h3>
-                            <p class="text-sm text-[#64748B] leading-relaxed">
-                                Trả phòng resort, nhận quà lưu niệm đặc sản Quảng Bình, dùng bữa trưa thân mật và xe BTC đưa các đoàn ra Sân bay / Ga Đồng Hới trở về Hà Nội, Đà Nẵng, TP.HCM.
-                            </p>
+
+                        <!-- Khung giờ 2 -->
+                        <div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
+                            <div class="sm:w-40 shrink-0">
+                                <span class="font-display font-extrabold text-base sm:text-lg text-[#00979C]">09:00 – 13:30</span>
+                            </div>
+                            <ul class="flex-1 space-y-3 text-sm sm:text-[15px] text-[#2D3748] leading-relaxed">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">09:00</strong> Diễn đàn Lãnh đạo & Đối tác: <strong>"Beyond Tech, Beyond Trust"</strong> tại Hội trường Hoa Hồng – Sun Spa Resort.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Tọa đàm ứng dụng AI, Cloud & Open API trong quản trị ERP – Kế toán – Tài chính cùng chuyên gia FAST và đối tác chiến lược.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">12:00</strong> Dùng bữa trưa tại Nhà hàng Golden Lotus và nghỉ ngơi tại Resort.</span>
+                                </li>
+                            </ul>
                         </div>
+
+                        <!-- Khung giờ 3 -->
+                        <div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
+                            <div class="sm:w-40 shrink-0">
+                                <span class="font-display font-extrabold text-base sm:text-lg text-[#00979C]">15:00 – 22:00</span>
+                            </div>
+                            <ul class="flex-1 space-y-3 text-sm sm:text-[15px] text-[#2D3748] leading-relaxed">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">15:00</strong> Chung kết Giải Pickleball 30 Năm, Team Building trên bãi biển Bảo Ninh & Chụp ảnh Flycam toàn thể xếp chữ <strong>"FAST 30"</strong>.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Đón khách thảm đỏ & chụp hình lưu niệm tại sảnh Grand Ballroom (Dress code: Xanh Teal / Vàng kim / Trắng).</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">18:00</strong> <strong>ĐÊM GALA DINNER KỶ NIỆM 30 NĂM FAST (1997 – 2027)</strong>: Nghi thức thắp sáng biểu tượng 30 năm, lễ tri ân Khách hàng & Đối tác, vinh danh các thế hệ FASTer và đại tiệc nghệ thuật đặc sắc.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Nghỉ đêm tại Sun Spa Resort Quảng Bình.</span>
+                                </li>
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
             </div>
+
+            <!-- ==================== NGÀY 3: THỨ HAI 12/07/2027 ==================== -->
+            <div id="dp-day-panel-3" class="dp-day-section hidden">
+                <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+                    
+                    <!-- Cột Trái (4/12 - Sticky trên desktop) -->
+                    <div class="lg:col-span-4 lg:sticky lg:top-44 space-y-4">
+                        <span class="block font-display font-bold text-sm text-[#00979C]">
+                            Ngày 3 · Thứ Hai, 12/07/2027
+                        </span>
+                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-[#00686B] leading-tight">
+                            Di sản Phong Nha – Lời hẹn tương lai
+                        </h2>
+                        <p class="text-sm sm:text-base text-[#64748B]">
+                            Bao gồm bữa sáng, trưa
+                        </p>
+                        <div class="pt-2">
+                            <div class="rounded-2xl overflow-hidden border border-[#E2E8F0] shadow-sm">
+                                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80" alt="Khám phá di sản Quảng Bình và tạm biệt" class="w-full h-56 sm:h-64 object-cover" onerror="this.src='https://placehold.co/800x520/00979C/FFFFFF?text=Phong+Nha+-+Quang+Binh'">
+                            </div>
+                            <p class="text-xs text-[#64748B] mt-2.5">
+                                Tham quan Di sản Phong Nha – Kẻ Bàng, bữa trưa chia tay và tiễn đoàn về 3 miền.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Cột Phải (8/12 - Danh sách thẻ khung giờ nền ấm #F3EFEA) -->
+                    <div class="lg:col-span-8 space-y-4">
+                        
+                        <!-- Khung giờ 1 -->
+                        <div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
+                            <div class="sm:w-40 shrink-0">
+                                <span class="font-display font-extrabold text-base sm:text-lg text-[#00979C]">07:00 – 11:00</span>
+                            </div>
+                            <ul class="flex-1 space-y-3 text-sm sm:text-[15px] text-[#2D3748] leading-relaxed">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Dùng buffet sáng tự chọn tại Nhà hàng Sun Cafe.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">08:30</strong> Khởi hành tham quan Di sản Thiên nhiên Thế giới <strong>Động Phong Nha</strong> hoặc City Tour Đồng Hới (Quảng Bình Quan – Tượng đài Mẹ Suốt) theo nhóm đăng ký.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Các đại biểu không tham gia tour tự do tắm biển, trải nghiệm spa hoặc nghỉ dưỡng tại Sun Spa Resort.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Khung giờ 2 -->
+                        <div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
+                            <div class="sm:w-40 shrink-0">
+                                <span class="font-display font-extrabold text-base sm:text-lg text-[#00979C]">11:30 – 14:30</span>
+                            </div>
+                            <ul class="flex-1 space-y-3 text-sm sm:text-[15px] text-[#2D3748] leading-relaxed">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#94A3B8] mt-2 shrink-0"></span>
+                                    <span>Làm thủ tục trả phòng (check-out) tại lễ tân Sun Spa Resort và nhận hộp quà đặc sản Quảng Bình kỷ niệm 30 năm.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">12:00</strong> Bữa trưa chia tay (Farewell Lunch) thân mật trước khi lên đường.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2.5 h-2 rounded-sm bg-[#00979C] mt-2 shrink-0"></span>
+                                    <span><strong class="text-[#00979C]">13:30</strong> Xe BTC tiễn các đoàn ra Sân bay Đồng Hới (VDH) và Ga Đồng Hới trở về Hà Nội, Đà Nẵng, TP.HCM. Kết thúc chương trình.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Đường kẻ ngang phân tách phía dưới như ảnh mẫu -->
+            <div class="border-t-2 border-[#00686B]/25 mt-12"></div>
 
             <!-- Bottom Action Card -->
-            <div class="mt-14 p-7 sm:p-9 rounded-3xl bg-[#EAE6DF] border border-[#E2E8F0] flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="mt-10 p-7 sm:p-9 rounded-3xl bg-[#EAE6DF] border border-[#E2E8F0] flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
                     <span class="text-xs font-bold uppercase tracking-wider text-[#00979C] block mb-1">Quảng Bình · 10–12/07/2027</span>
-                    <h3 class="font-display font-extrabold text-xl sm:text-2xl text-[#00686B]">Đăng ký tham dự Đại lễ 30 Năm cùng FAST</h3>
+                    <h3 class="font-display font-extrabold text-xl sm:text-2xl text-[#00686B]">Đăng ký tham dự Chương trình kỷ niệm 30 Năm cùng FAST</h3>
                     <p class="text-sm text-[#2D3748] mt-1">Hạn chốt danh sách vé máy bay, phòng nghỉ 5 sao và áo đồng phục: <strong>20/06/2027</strong>.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 shrink-0">
@@ -1207,7 +1298,7 @@
                     </div>
                     <div>
                         <span class="font-display font-bold text-white text-base block">Công ty Cổ phần Phần mềm Quản lý Doanh nghiệp (FAST)</span>
-                        <span class="text-xs text-amber-200 block mt-0.5">Đại lễ Kỷ niệm 30 Năm (1997 – 2027) · Sun Spa Resort, Quảng Bình</span>
+                        <span class="text-xs text-amber-200 block mt-0.5">Chương trình Kỷ niệm 30 Năm (1997 – 2027) · Sun Spa Resort, Quảng Bình</span>
                         <span class="text-xs text-teal-100/85 block mt-1">Email BTC: fast30@fast.com.vn</span>
                     </div>
                 </div>
@@ -1331,7 +1422,7 @@
                     </div>
                     <h3 class="font-display font-extrabold text-2xl text-[#00686B] mb-2">Đăng Ký Thành Công!</h3>
                     <p class="text-sm text-[#64748B] max-w-md mx-auto mb-6">
-                        Chào mừng <strong id="succ-name" class="text-[#2D3748]"></strong> đến với Đại lễ FAST 30 Năm tại Quảng Bình (10–12/07/2027). Mã đại biểu của bạn là:
+                        Chào mừng <strong id="succ-name" class="text-[#2D3748]"></strong> đến với Chương trình kỷ niệm FAST 30 Năm tại Quảng Bình (10–12/07/2027). Mã đại biểu của bạn là:
                     </p>
 
                     <div class="max-w-sm mx-auto p-5 rounded-3xl fast-hero-gradient text-white mb-6 shadow-lg border border-[#D4AF37]">
@@ -1504,58 +1595,55 @@
             }
 
             document.querySelectorAll('.dp-day-tab').forEach(tab => {
-                tab.classList.remove('border-[#00686B]');
-                tab.classList.add('border-transparent');
+                tab.classList.remove('bg-[#00979C]', 'text-white', 'shadow-sm');
+                tab.classList.add('bg-transparent', 'hover:bg-[#FAF9F6]', 'text-[#2D3748]');
                 const titleSpan = tab.querySelector('span:first-child');
+                const subSpan = tab.querySelector('span:last-child');
                 if (titleSpan) {
-                    titleSpan.classList.remove('text-[#00686B]');
+                    titleSpan.classList.remove('text-white');
                     titleSpan.classList.add('text-[#2D3748]');
+                }
+                if (subSpan) {
+                    subSpan.classList.remove('text-white/90');
+                    subSpan.classList.add('text-[#64748B]');
                 }
             });
 
             const activeTab = document.getElementById(`dp-tab-${dayNum}`);
             if (activeTab) {
-                activeTab.classList.remove('border-transparent');
-                activeTab.classList.add('border-[#00686B]');
+                activeTab.classList.remove('bg-transparent', 'hover:bg-[#FAF9F6]', 'text-[#2D3748]');
+                activeTab.classList.add('bg-[#00979C]', 'text-white', 'shadow-sm');
                 const titleSpan = activeTab.querySelector('span:first-child');
+                const subSpan = activeTab.querySelector('span:last-child');
                 if (titleSpan) {
                     titleSpan.classList.remove('text-[#2D3748]');
-                    titleSpan.classList.add('text-[#00686B]');
+                    titleSpan.classList.add('text-white');
+                }
+                if (subSpan) {
+                    subSpan.classList.remove('text-[#64748B]');
+                    subSpan.classList.add('text-white/90');
                 }
             }
 
-            document.querySelectorAll('.dp-day-section').forEach(sec => sec.classList.add('hidden'));
+            document.querySelectorAll('.dp-day-section').forEach(sec => {
+                sec.classList.add('hidden');
+                sec.classList.remove('pt-12', 'mt-12', 'border-t-2', 'border-[#00686B]/20');
+            });
             const activeSection = document.getElementById(`dp-day-panel-${dayNum}`);
             if (activeSection) activeSection.classList.remove('hidden');
         }
 
         function toggleShowAllDetailedDays(checked) {
             if (checked) {
-                document.querySelectorAll('.dp-day-section').forEach(sec => sec.classList.remove('hidden'));
+                document.querySelectorAll('.dp-day-section').forEach((sec, idx) => {
+                    sec.classList.remove('hidden');
+                    if (idx > 0) {
+                        sec.classList.add('pt-12', 'mt-12', 'border-t-2', 'border-[#00686B]/20');
+                    }
+                });
             } else {
                 selectDetailedDay(currentDetailedDay);
             }
-        }
-
-        function filterDetailedCategory(cat) {
-            document.querySelectorAll('.dp-cat-btn').forEach(btn => {
-                if (btn.getAttribute('data-cat') === cat) {
-                    btn.classList.remove('bg-[#FFFFFF]', 'text-[#2D3748]', 'border', 'border-[#E2E8F0]');
-                    btn.classList.add('bg-[#00686B]', 'text-white');
-                } else {
-                    btn.classList.remove('bg-[#00686B]', 'text-white');
-                    btn.classList.add('bg-[#FFFFFF]', 'text-[#2D3748]', 'border', 'border-[#E2E8F0]');
-                }
-            });
-
-            document.querySelectorAll('.dp-item').forEach(item => {
-                const itemCats = item.getAttribute('data-category') || '';
-                if (cat === 'all' || itemCats.includes(cat)) {
-                    item.classList.remove('hidden');
-                } else {
-                    item.classList.add('hidden');
-                }
-            });
         }
 
         // 4. TOAST & CLIPBOARD
@@ -1596,7 +1684,7 @@
                 'DTSTART:20270710T010000Z',
                 'DTEND:20270712T100000Z',
                 'SUMMARY:FAST 30 Năm (1997–2027) — Vững Nền Tảng, Vươn Tầm Cao',
-                'DESCRIPTION:Đại lễ kỷ niệm 30 năm thành lập Công ty Phần mềm FAST tại Sun Spa Resort, Bán đảo Bảo Ninh, Đồng Hới, Quảng Bình (10–12/07/2027).',
+                'DESCRIPTION:Chương trình kỷ niệm kỷ niệm 30 năm thành lập Công ty Phần mềm FAST tại Sun Spa Resort, Bán đảo Bảo Ninh, Đồng Hới, Quảng Bình (10–12/07/2027).',
                 'LOCATION:Sun Spa Resort, Bán đảo Bảo Ninh, Đồng Hới, Quảng Bình',
                 'END:VEVENT',
                 'END:VCALENDAR'
