@@ -1,736 +1,1868 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Minigame Pickleball TCT Club</title>
-    <!-- Thư viện Firebase Realtime Database SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAST 30 Năm (1997–2027) — Am Hiểu Nghiệp Vụ, Tận Tâm Đồng Hành | Quảng Bình</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans & Be Vietnam Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyBpEqXWixeZM0ecwr_yL13t9SGfseRtgEY",
-          authDomain: "pickleball-tct70.firebaseapp.com",
-          databaseURL: "https://pickleball-tct70-default-rtdb.asia-southeast1.firebasedatabase.app",
-          projectId: "pickleball-tct70",
-          storageBucket: "pickleball-tct70.firebasestorage.app",
-          messagingSenderId: "1015003889551",
-          appId: "1:1015003889551:web:609af4b91d27eb7a8a55fa",
-          measurementId: "G-CG8E9J8S2W"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        
-        window.dbMinigameMatchesRef = ref(db, 'minigame_matches');
-        window.dbMinigamePairsRef = ref(db, 'minigame_pairs');
-        window.dbSet = set;
-
-        onValue(window.dbMinigameMatchesRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                matchesData = data;
-            } else {
-                initDefaultMatches();
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
+                        display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        fast: {
+                            primary: '#00979C',
+                            dark: '#00686B',
+                            lightBg: '#EAE6DF',
+                            body: '#FAF9F6',
+                            card: '#FFFFFF',
+                            textMain: '#2D3748',
+                            textMuted: '#64748B',
+                            border: '#E2E8F0',
+                            orange: '#FF6B35',
+                            gold: '#D4AF37'
+                        }
+                    }
+                }
             }
-            renderScheduleAndCourts();
-            updateStandings();
-        });
-
-        onValue(window.dbMinigamePairsRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                teamPairsData = data;
-            } else {
-                initDefaultPairs();
-            }
-            renderTeamPairsUI();
-            renderScheduleAndCourts();
-        });
+        }
     </script>
 
     <style>
-        /* CHUYỂN TOÀN BỘ SANG GAM MÀU TỐI (DARK MODE) */
-        body { 
-            font-family: 'Segoe UI', Arial, sans-serif; 
-            margin: 8px; 
-            background-color: #0f172a; /* Nền tối hẳn */
-            color: #e2e8f0; /* Chữ sáng nhạt */
+        :root {
+            --fast-primary: #00979C;
+            --fast-dark: #00686B;
+            --fast-light-bg: #EAE6DF;
+            --bg-body: #FAF9F6;
+            --bg-card: #FFFFFF;
+            --text-main: #2D3748;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+            --fast-orange: #FF6B35;
+            --fast-gold: #D4AF37;
         }
-        .container { 
-            max-width: 1100px; 
-            margin: 0 auto; 
-            background: #1e293b; /* Khung tối vừa */
-            padding: 15px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4); 
+
+        *, *::before, *::after {
+            box-sizing: border-box;
         }
-        
-        /* HEADER VỚI LOGO KHOA TOÁN - TIN HỌC MỚI */
-        .header { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            border-bottom: 2px solid #334155; 
-            padding-bottom: 12px; 
-            margin-bottom: 15px; 
+
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            line-height: 1.65;
+        }
+
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Hero & Gala Gradient theo màu chủ đạo FAST #00979C */
+        .fast-hero-gradient {
+            background: linear-gradient(135deg, #00686B 0%, #00979C 52%, #00B2B8 100%);
+            background-image:
+                radial-gradient(at 88% 12%, rgba(212, 175, 55, 0.24) 0px, transparent 48%),
+                radial-gradient(at 10% 90%, rgba(255, 107, 53, 0.22) 0px, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+                linear-gradient(135deg, #00686B 0%, #00979C 52%, #00B2B8 100%);
+            background-size: 100% 100%, 100% 100%, 44px 44px, 44px 44px, 100% 100%;
+        }
+
+        .fast-gala-gradient {
+            background: linear-gradient(135deg, #00585B 0%, #00686B 48%, #00979C 100%);
+        }
+
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FEF9C3 50%, #FDE047 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Khung Logo FAST 30 nền trắng bo viền vàng kim */
+        .logo-white-gold-frame {
+            background-color: #FFFFFF;
+            border: 2px solid var(--fast-gold);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(212, 175, 55, 0.28);
+            border-radius: 16px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .logo-white-gold-frame:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 26px rgba(212, 175, 55, 0.35), 0 0 0 1px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-fast-orange {
+            background-color: var(--fast-orange);
+            color: #FFFFFF;
+            transition: all 0.25s ease;
+        }
+        .btn-fast-orange:hover {
+            background-color: #E85A24;
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.38);
+            transform: translateY(-1px);
+        }
+
+        .btn-fast-primary {
+            background-color: var(--fast-primary);
+            color: #FFFFFF;
+            transition: all 0.25s ease;
+        }
+        .btn-fast-primary:hover {
+            background-color: var(--fast-dark);
+        }
+
+        /* Banner trang Chương trình chi tiết */
+        .program-resort-banner {
+            background-color: #005457;
+            background-image:
+                linear-gradient(95deg, rgba(0, 68, 71, 0.92) 0%, rgba(0, 104, 107, 0.82) 50%, rgba(0, 151, 156, 0.62) 100%),
+                url('https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center 42%;
+        }
+
+        .nav-link-active {
+            color: #00979C !important;
             position: relative;
         }
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-align: left;
-        }
-        .header-logo img {
-            max-height: 65px;
-            width: auto;
-            object-fit: contain;
-            border-radius: 4px;
-        }
-        .header-text h1 { 
-            color: #38bdf8; /* Màu xanh toán tin */
-            margin: 0; 
-            font-size: 18px; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .header-text .club-title {
-            font-size: 11px;
-            color: #94a3b8;
-            font-weight: bold;
-            margin-bottom: 2px;
-            letter-spacing: 1px;
-        }
-        .header-text .subtitle { 
-            color: #f59e0b; /* Vàng neon */
-            font-weight: bold; 
-            font-size: 13px; 
-            margin-top: 3px; 
-        }
-        .header-text .info { 
-            color: #94a3b8; 
-            font-size: 11px; 
-            margin-top: 2px; 
-        }
-
-        /* NÚT ĐĂNG NHẬP GÓC TRÊN BÊN PHẢI */
-        .btn-auth { 
-            background-color: #334155; 
-            color: #f8fafc; 
-            border: 1px solid #475569; 
-            padding: 8px 14px; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            font-size: 12px; 
-            cursor: pointer; 
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .btn-auth:hover {
-            background-color: #475569;
-            border-color: #64748b;
-        }
-
-        .nav-tabs { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 15px; }
-        .tab-btn { 
-            flex: 1; 
-            padding: 12px 6px; 
-            border: 1px solid #334155; 
-            background: #1e293b; 
-            color: #94a3b8; 
-            font-weight: bold; 
-            font-size: 12px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            text-align: center; 
-            transition: all 0.2s;
-        }
-        .tab-btn.active { 
-            background: #0284c7; 
-            color: white; 
-            border-color: #0ea5e9;
-            box-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
-        }
-
-        .section-title { 
-            background: #0f172a; 
-            color: #38bdf8; 
-            padding: 10px 14px; 
-            border-radius: 8px; 
-            font-size: 14px; 
-            font-weight: bold; 
-            margin-top: 15px; 
-            margin-bottom: 12px; 
-            border-left: 4px solid #0ea5e9;
-        }
-
-        /* STYLE  TEAM */
-        .teams-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
-        .team-box { 
-            border: 1px solid #334155; 
-            border-radius: 10px; 
-            background: #1e293b; 
-            padding: 12px; 
-            border-top: 4px solid #0ea5e9; 
-        }
-        .team-title { font-weight: bold; color: #38bdf8; font-size: 15px; margin-bottom: 8px; }
-        
-        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 5px; }
-        th, td { border: 1px solid #334155; padding: 8px 5px; text-align: center; color: #cbd5e1; }
-        th { background: #0f172a; color: #38bdf8; }
-
-        .pair-input { 
-            width: 95%; 
-            padding: 5px; 
-            background: #0f172a;
-            color: #fff;
-            border: 1px solid #475569; 
-            border-radius: 4px; 
-            font-size: 12px; 
-            box-sizing: border-box; 
-        }
-
-        /* STYLE SÂN ĐẤU & LỊCH THI ĐẤU */
-        .rounds-container { display: flex; flex-direction: column; gap: 15px; }
-        .round-box { border: 1px solid #334155; border-radius: 10px; padding: 12px; background: #1e293b; }
-        .round-header { 
-            font-weight: bold; 
-            color: #f59e0b; 
-            background: #2d2006; 
-            padding: 8px 12px; 
-            border-radius: 6px; 
-            margin-bottom: 10px; 
-            font-size: 13px; 
-            border-left: 3px solid #f59e0b;
-        }
-        
-        .matches-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; }
-        .match-card { 
-            border: 1px dashed #475569; 
-            background: #0f172a; 
-            padding: 12px; 
-            border-radius: 8px; 
-            text-align: center; 
-        }
-        .match-title { font-weight: bold; color: #f8fafc; font-size: 13px; margin-bottom: 4px; }
-        .match-category { font-size: 11px; color: #38bdf8; font-weight: bold; margin-bottom: 8px; }
-
-        .score-control { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 8px 0; }
-        .btn-step { width: 36px; height: 36px; font-size: 18px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; color: white; }
-        .btn-minus { background: #ef4444; }
-        .btn-plus { background: #22c55e; }
-        .btn-step:disabled { opacity: 0.2; cursor: not-allowed; }
-        
-        .score-display { 
-            width: 45px; 
-            height: 36px; 
-            font-size: 20px; 
-            font-weight: bold; 
-            text-align: center; 
-            background: #1e293b;
-            color: #fff;
-            border: 2px solid #f59e0b; 
-            border-radius: 6px; 
-        }
-
-        .winner-tag { background: #22c55e; color: white; font-weight: bold; padding: 5px; border-radius: 4px; font-size: 11px; margin-top: 6px; }
-
-        /* Rules card */
-        .rules-card { background: #0f172a; border-left: 4px solid #0ea5e9; padding: 12px; font-size: 11px; line-height: 1.6; margin-top: 15px; border-radius: 0 8px 8px 0; color: #94a3b8; }
-
-        .btc-btn { background: #ef4444; color: white; border: none; padding: 6px 10px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-left: 5px; }
-
-        @media (max-width: 600px) {
-            .header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-            .header-logo img {
-                max-height: 48px;
-            }
-            .header-text h1 { font-size: 14px; }
-            .header-text .subtitle { font-size: 11px; }
-            .header-text .club-title { font-size: 9px; }
-            .header-text .info { font-size: 9px; }
-            .btn-auth {
-                padding: 6px 10px;
-                font-size: 11px;
-            }
+        .nav-link-active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 3px;
+            border-radius: 999px;
+            background-color: #FF6B35;
         }
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-[#FF6B35] selection:text-white">
 
-
-<div class="container">
-    <div class="header">
-        <div class="header-left">
-            <div class="header-logo">
-                <!-- Thay thế logo cũ bằng Logo Khoa Toán - Tin học mới của bạn -->
-                <img src="data:image/png;base64," alt="Logo TCT Pickleball Club">
-            </div>
-            <div class="header-text">
-                <div class="club-title">TCT PICKLEBALL CLUB</div>
-                <h1>MINIGAME LẦN 1 - 01/11/2026</h1>
-                <div class="subtitle">GIAO LƯU & RA MẮT BĐH CLB</div>
-                <div class="info">📍 Sân Pickleball 85 Láng Hạ | ⏰ Tập trung: 07h30</div>
-            </div>
-        </div>
-        <button id="authBtn" class="btn-auth" onclick="toggleAuthRole()">🔑 Khán giả</button>
-    </div>
-
-    <div class="nav-tabs">
-        <button id="tabScheduleBtn" class="tab-btn active" onclick="switchTab('schedule')">📅 LỊCH THI ĐẤU</button>
-        <button id="tabTeamsBtn" class="tab-btn" onclick="switchTab('teams')">👥 DANH SÁCH</button>
-        <button id="tabStandingsBtn" class="tab-btn" onclick="switchTab('standings')">🏆 BẢNG XẾP HẠNG</button>
-    </div>
-
-    <!-- TAB 1: LỊCH THI ĐẤU & CẶP ĐẤU -->
-    <div id="tabSchedule" class="tab-content">
-        <div class="section-title">📅 LỊCH THI ĐẤU CHI TIẾT</div>
-        <div id="roundsGrid" class="rounds-container"></div>
-
-        <div class="rules-card">
-            <strong style="color: #f59e0b;">📋 LUẬT TÍNH ĐIỂM & XẾP HẠNG:</strong><br>
-            • Thi đấu Rally Scoring chạm 21 điểm (Đổi sân ở mốc 11 điểm).<br>
-            • Mốc 21 điểm áp dụng <i>Side-Out Match Point</i> (Đội Giao bóng mới được ăn điểm quyết định).<br>
-            • Xếp hạng: 1. Tổng số trận thắng Đôi ➔ 2. Hiệu số điểm ➔ 3. Tổng điểm ghi được.
-        </div>
-    </div>
-
-    <!-- TAB 2: DANH SÁCH TEAM & ĐÔI THI ĐẤU -->
-    <div id="tabTeams" class="tab-content" style="display: none;">
-        <div class="section-title">
-            👥 DANH SÁCH CÁC CẶP ĐẤU NỘI BỘ 
-            <span class="btc-only" style="display:none; font-size:11px; font-weight:normal; color:#cbd5e1;">(BTC có thể chỉnh sửa ghép cặp)</span>
-        </div>
-        <div id="teamsGrid" class="teams-grid"></div>
-    </div>
-
-    <!-- TAB 3: BẢNG XẾP HẠNG -->
-    <div id="tabStandings" class="tab-content" style="display: none;">
-        <div class="section-title">🏆 BẢNG XẾP HẠNG</div>
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 50px;">Hạng</th>
-                    <th>Tên Team</th>
-                    <th>Trận Thắng</th>
-                    <th>Trận Thua</th>
-                    <th>Hiệu Số</th>
-                    <th>Tổng Điểm</th>
-                </tr>
-            </thead>
-            <tbody id="standingsTableBody"></tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-const PIN_BTC = "1956";
-const PIN_REFEREE = "1234";
-let currentRole = "guest"; 
-
-const CATEGORIES = [
-    { id: 1, name: "1️⃣ Đôi Nữ" },
-    { id: 2, name: "2️⃣ Đôi Nam 1" },
-    { id: 3, name: "3️⃣ Đôi Nam Nữ 1" },
-    { id: 4, name: "4️⃣ Đôi Nam 2" },
-    { id: 5, name: "5️⃣ Đôi Nam Nữ 2" }
-];
-
-const defaultTeams = {
-    A: { name: "Team A (K44+)", members: ["A. Tùng", "A. Hùng", "A Vỹ", "C Linh", "C Mai Lê", "A Bằng"] },
-    B: { name: "Team B (K48+)", members: ["Trưởng", "Minh", "Cường", "Hảo", "Thư", "A Hải"] },
-    C: { name: "Team C (Mix)", members: ["A Tú", "A Thi", "A Kiên", "C Đan Mai", "C Luyến", "A Tuấn"] }
-};
-
-let teamPairsData = {};
-
-function initDefaultPairs() {
-    teamPairsData = {
-        A: { 1: "C Linh & C Mai Lê", 2: "A Tùng & A Hùng", 3: "A Vỹ & C Linh", 4: "A Bằng & A Vỹ", 5: "A Hùng & C Mai Lê" },
-        B: { 1: "Hảo & Thư", 2: "Trưởng & Minh", 3: "Cường & Hảo", 4: "A Hải & Cường", 5: "Trưởng & Thư" },
-        C: { 1: "C Đan Mai & C Luyến", 2: "A Tú & A Thi", 3: "A Kiên & C Đan Mai", 4: "A Tuấn & A Kiên", 5: "A Tú & C Luyến" }
-    };
-}
-
-const SCHEDULE_CONFIG = [
-    {
-        round: 1,
-        title: "🔹 LƯỢT 1: TEAM A vs TEAM B",
-        refereeTeam: "Team C",
-        courts: [
-            { courtNum: 1, matchKey: "A_B_1", catId: 1, team1: "A", team2: "B" },
-            { courtNum: 2, matchKey: "A_B_2", catId: 2, team1: "A", team2: "B" }
-        ]
-    },
-    {
-        round: 2,
-        title: "🔹 LƯỢT 2: TEAM A vs TEAM B",
-        refereeTeam: "Team C",
-        courts: [
-            { courtNum: 1, matchKey: "A_B_3", catId: 3, team1: "A", team2: "B" },
-            { courtNum: 2, matchKey: "A_B_4", catId: 4, team1: "A", team2: "B" }
-        ]
-    },
-    {
-        round: 3,
-        title: "🔹 LƯỢT 3: TEAM A vs TEAM B",
-        refereeTeam: "Team C / Team B",
-        courts: [
-            { courtNum: 1, matchKey: "A_B_5", catId: 5, team1: "A", team2: "B", label: "Chốt trận 1 (A vs B)" },
-            { courtNum: 2, matchKey: "C_A_1", catId: 1, team1: "C", team2: "A", label: "Vòng 2: C1 vs A1 (Đôi Nữ)" }
-        ]
-    },
-    {
-        round: 4,
-        title: "🔹 LƯỢT 4: TEAM C vs TEAM A",
-        refereeTeam: "Team B",
-        courts: [
-            { courtNum: 1, matchKey: "C_A_2", catId: 2, team1: "C", team2: "A" },
-            { courtNum: 2, matchKey: "C_A_3", catId: 3, team1: "C", team2: "A" }
-        ]
-    },
-    {
-        round: 5,
-        title: "🔹 LƯỢT 5: TEAM C vs TEAM A",
-        refereeTeam: "Team B",
-        courts: [
-            { courtNum: 1, matchKey: "C_A_4", catId: 4, team1: "C", team2: "A" },
-            { courtNum: 2, matchKey: "C_A_5", catId: 5, team1: "C", team2: "A", label: "Chốt trận 2 (C vs A)" }
-        ]
-    },
-    {
-        round: 6,
-        title: "🔹 LƯỢT 6: TEAM B vs TEAM C",
-        refereeTeam: "Team A",
-        courts: [
-            { courtNum: 1, matchKey: "B_C_1", catId: 1, team1: "B", team2: "C" },
-            { courtNum: 2, matchKey: "B_C_2", catId: 2, team1: "B", team2: "C" }
-        ]
-    },
-    {
-        round: 7,
-        title: "🔹 LƯỢT 7: TEAM B vs TEAM C",
-        refereeTeam: "Team A",
-        courts: [
-            { courtNum: 1, matchKey: "B_C_3", catId: 3, team1: "B", team2: "C" },
-            { courtNum: 2, matchKey: "B_C_4", catId: 4, team1: "B", team2: "C" }
-        ]
-    },
-    {
-        round: 8,
-        title: "🔹 LƯỢT 8: TEAM B vs TEAM C",
-        refereeTeam: "Team A",
-        courts: [
-            { courtNum: 1, matchKey: "B_C_5", catId: 5, team1: "B", team2: "C", label: "Chốt trận 3 (Chung kết)" }
-        ]
-    }
-];
-
-let matchesData = {};
-
-function initDefaultMatches() {
-    SCHEDULE_CONFIG.forEach(r => {
-        r.courts.forEach(c => {
-            if (!matchesData[c.matchKey]) {
-                matchesData[c.matchKey] = { score1: 0, score2: 0, finished: false };
-            }
-        });
-    });
-}
-
-function toggleAuthRole() {
-    if (currentRole !== 'guest') {
-        currentRole = 'guest';
-        alert("🔒 Đã chuyển về giao diện Khán giả.");
-    } else {
-        const pin = prompt("Nhập mã:");
-        if (pin === PIN_BTC) {
-            currentRole = 'btc';
-            alert("👑 Đã đăng nhập vai trò BAN TỔ CHỨC!");
-        } else if (pin === PIN_REFEREE) {
-            currentRole = 'referee';
-            alert("🏓 Đã đăng nhập vai trò TRỌNG TÀI!");
-        } else if (pin !== null) {
-            alert("❌ Mã PIN không đúng!");
-        }
-    }
-    updateAccessUI();
-}
-
-function updateAccessUI() {
-    const authBtn = document.getElementById('authBtn');
-    if (currentRole === 'btc') {
-        authBtn.innerText = "👑 BTC"; authBtn.style.background = "#ef4444";
-    } else if (currentRole === 'referee') {
-        authBtn.innerText = "🏓 Trọng tài"; authBtn.style.background = "#22c55e";
-    } else {
-        authBtn.innerText = "🔑 Khán giả"; authBtn.style.background = "#334155";
-    }
-
-    const btcEls = document.querySelectorAll('.btc-only');
-    btcEls.forEach(el => el.style.display = (currentRole === 'btc') ? '' : 'none');
-
-    renderScheduleAndCourts();
-    renderTeamPairsUI();
-}
-
-function switchTab(tab) {
-    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-
-    if (tab === 'schedule') {
-        document.getElementById('tabSchedule').style.display = 'block';
-        document.getElementById('tabScheduleBtn').classList.add('active');
-    } else if (tab === 'teams') {
-        document.getElementById('tabTeams').style.display = 'block';
-        document.getElementById('tabTeamsBtn').classList.add('active');
-    } else if (tab === 'standings') {
-        document.getElementById('tabStandings').style.display = 'block';
-        document.getElementById('tabStandingsBtn').classList.add('active');
-        updateStandings();
-    }
-}
-
-function renderTeamPairsUI() {
-    const container = document.getElementById('teamsGrid');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const isBtc = (currentRole === 'btc');
-
-    ['A', 'B', 'C'].forEach(tKey => {
-        const teamInfo = defaultTeams[tKey];
-        const teamBox = document.createElement('div');
-        teamBox.className = 'team-box';
-
-        let rowsHTML = '';
-        CATEGORIES.forEach(cat => {
-            const pairName = (teamPairsData[tKey] && teamPairsData[tKey][cat.id]) ? teamPairsData[tKey][cat.id] : '';
-            
-            rowsHTML += `
-                <tr>
-                    <td style="text-align:left; font-weight:bold; color:#cbd5e1;">${cat.name}</td>
-                    <td>
-                        ${isBtc ? `<input type="text" class="pair-input" value="${pairName}" onchange="updatePairName('${tKey}', ${cat.id}, this.value)">` : `<b style="color:#38bdf8;">${pairName}</b>`}
-                    </td>
-                </tr>
-            `;
-        });
-
-        teamBox.innerHTML = `
-            <div class="team-title">
-                <span>${teamInfo.name}</span>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width:45%; color:#38bdf8;">Thể loại Đôi</th>
-                        <th style="color:#38bdf8;">Đôi thi đấu thực tế</th>
-                    </tr>
-                </thead>
-                <tbody>${rowsHTML}</tbody>
-            </table>
-        `;
-        container.appendChild(teamBox);
-    });
-}
-
-function updatePairName(teamKey, catId, val) {
-    if (currentRole !== 'btc') return;
-    if (!teamPairsData[teamKey]) teamPairsData[teamKey] = {};
-    teamPairsData[teamKey][catId] = val.trim();
-
-    if (window.dbSet && window.dbMinigamePairsRef) {
-        window.dbSet(window.dbMinigamePairsRef, teamPairsData);
-    }
-    renderScheduleAndCourts();
-}
-
-function renderScheduleAndCourts() {
-    const container = document.getElementById('roundsGrid');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const canEdit = (currentRole === 'btc' || currentRole === 'referee');
-
-    SCHEDULE_CONFIG.forEach(rConfig => {
-        const roundDiv = document.createElement('div');
-        roundDiv.className = 'round-box';
-
-        let matchesHTML = '';
-        rConfig.courts.forEach(c => {
-            const mData = matchesData[c.matchKey] || { score1: 0, score2: 0, finished: false };
-            const catObj = CATEGORIES.find(cat => cat.id === c.catId);
-
-            const pair1 = (teamPairsData[c.team1] && teamPairsData[c.team1][c.catId]) ? teamPairsData[c.team1][c.catId] : `Đôi ${c.team1}`;
-            const pair2 = (teamPairsData[c.team2] && teamPairsData[c.team2][c.catId]) ? teamPairsData[c.team2][c.catId] : `Đôi ${c.team2}`;
-
-            let winnerText = '';
-            if (mData.finished || mData.score1 >= 21 || mData.score2 >= 21) {
-                if (mData.score1 > mData.score2) winnerText = `<div class="winner-tag">🏆 THẮNG: Team ${c.team1} (${mData.score1} - ${mData.score2})</div>`;
-                else if (mData.score2 > mData.score1) winnerText = `<div class="winner-tag">🏆 THẮNG: Team ${c.team2} (${mData.score2} - ${mData.score1})</div>`;
-                else winnerText = `<div class="winner-tag" style="background:#e67e22;">🤝 HÒA (${mData.score1} - ${mData.score2})</div>`;
-            }
-
-            let controlHTML = canEdit ? `
-                <div class="score-control">
-                    <button class="btn-step btn-minus" onclick="adjustScore('${c.matchKey}', 1, -1)" ${mData.finished ? 'disabled' : ''}>-</button>
-                    <input type="number" class="score-display" value="${mData.score1}" onchange="updateMatchScore('${c.matchKey}', 1, this.value)" ${mData.finished ? 'disabled' : ''}>
-                    <button class="btn-step btn-plus" onclick="adjustScore('${c.matchKey}', 1, 1)" ${mData.finished ? 'disabled' : ''}>+</button>
-                    <span style="font-size:18px; font-weight:bold; color:#cbd5e1;"> - </span>
-                    <button class="btn-step btn-minus" onclick="adjustScore('${c.matchKey}', 2, -1)" ${mData.finished ? 'disabled' : ''}>-</button>
-                    <input type="number" class="score-display" value="${mData.score2}" onchange="updateMatchScore('${c.matchKey}', 2, this.value)" ${mData.finished ? 'disabled' : ''}>
-                    <button class="btn-step btn-plus" onclick="adjustScore('${c.matchKey}', 2, 1)" ${mData.finished ? 'disabled' : ''}>+</button>
-                </div>
-                <div>
-                    <button class="btc-btn" style="background:#0284c7;" onclick="toggleFinish('${c.matchKey}')">${mData.finished ? 'Mở Lại' : 'Chốt'}</button>
-                    <button class="btc-btn" style="background:#475569;" onclick="resetMatch('${c.matchKey}')">Reset</button>
-                </div>
-            ` : `<div style="font-size:22px; font-weight:bold; color:#f59e0b; margin:6px 0;">${mData.score1} - ${mData.score2}</div>`;
-
-            matchesHTML += `
-                <div class="match-card">
-                    <div class="match-title">SÂN ${c.courtNum}: Team ${c.team1} vs Team ${c.team2}</div>
-                    <div class="match-category">${catObj.name}</div>
-                    <div style="font-size:12px; margin-bottom:5px; color:#cbd5e1; line-height:1.5;">
-                        <b>Team ${c.team1}:</b> <span style="color:#38bdf8;">${pair1}</span><br>
-                        <span style="color:#64748b;">--- VS ---</span><br>
-                        <b>Team ${c.team2}:</b> <span style="color:#38bdf8;">${pair2}</span>
+    <!-- ==================== 1. STICKY HEADER (VỊ TRÍ LOGO 1 & 4 MENU CHÍNH) ==================== -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-[#FAF9F6]/95 backdrop-blur-md border-b border-[#E2E8F0]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- VỊ TRÍ LOGO 1: Góc trái Sticky Header (Logo nền trắng viền vàng) -->
+                <a href="#" onclick="switchPageView('home'); return false;" class="flex items-center gap-3 shrink-0" title="Trang chủ FAST 30 Năm">
+                    <div class="px-2.5 py-1 logo-white-gold-frame flex items-center justify-center">
+                        <!-- Custom SVG Logo FAST 30 (1997 - 2027) trên nền trắng -->
+                        <svg viewBox="0 0 320 225" class="h-10 sm:h-11 w-auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo FAST 30 Năm 1997 - 2027">
+                            <defs>
+                                <linearGradient id="tealNum1" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#00B5BC"/>
+                                    <stop offset="55%" stop-color="#00898E"/>
+                                    <stop offset="100%" stop-color="#005F63"/>
+                                </linearGradient>
+                                <linearGradient id="goldRing1" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#F7E08B"/>
+                                    <stop offset="45%" stop-color="#D4AF37"/>
+                                    <stop offset="100%" stop-color="#A67C1E"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Chữ FAST góc trên trái -->
+                            <text x="26" y="30" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="25" letter-spacing="4" fill="#00898E">FAST</text>
+                            <polygon points="68,18 73,27 63,27" fill="#E53E3E"/>
+                            <!-- Số 3 -->
+                            <path d="M32,42 H126 L104,84 H114 C136,84 148,98 148,120 C148,148 126,166 90,166 C60,166 36,154 24,134 L48,118 C56,130 70,138 88,138 C106,138 118,129 118,116 C118,104 108,97 90,97 H72 L94,64 H32 Z" fill="url(#tealNum1)" stroke="#D4AF37" stroke-width="3.5" stroke-linejoin="round"/>
+                            <!-- Số 0 với vòng 3D vàng kim bên trong -->
+                            <g transform="translate(216, 103)">
+                                <ellipse cx="0" cy="0" rx="64" ry="62" fill="url(#tealNum1)" stroke="#D4AF37" stroke-width="3.5"/>
+                                <ellipse cx="4" cy="2" rx="46" ry="45" fill="url(#goldRing1)"/>
+                                <ellipse cx="-5" cy="0" rx="34" ry="35" fill="#FFFFFF"/>
+                            </g>
+                            <!-- Nét cọ cong xanh Teal viền vàng bên dưới số 30 -->
+                            <path d="M44,183 C112,163 202,155 292,158 C296,158 297,163 292,164 C206,169 118,179 50,195 C42,197 38,185 44,183 Z" fill="#00979C" stroke="#D4AF37" stroke-width="2.2"/>
+                            <!-- Năm 1997 - 2027 màu đỏ cam -->
+                            <text x="288" y="185" text-anchor="end" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="18" letter-spacing="1" fill="#E53E3E">1997 - 2027</text>
+                            <!-- Slogan đáy -->
+                            <text x="160" y="213" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="13.2" letter-spacing="0.4" fill="#007A7E">AM HIỂU NGHIỆP VỤ, TẬN TÂM ĐỒNG HÀNH</text>
+                        </svg>
                     </div>
-                    ${controlHTML}
-                    ${winnerText}
+                    <div class="hidden sm:flex flex-col">
+                        <span class="font-display font-extrabold text-sm text-[#00686B] tracking-tight">FAST 30 NĂM</span>
+                        <span class="text-[11px] font-medium text-[#64748B]">Quảng Bình · 10–12/07/2027</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation: CHỈ 4 MENU CHÍNH -->
+                <nav class="hidden md:flex items-center gap-8 text-sm font-bold text-[#2D3748]">
+                    <a href="#btc" onclick="navigateToHomeSection('btc'); return false;" class="hover:text-[#00979C] transition-colors py-2">Ban tổ chức</a>
+					<a href="#chuong-trinh" id="nav-link-program" onclick="switchPageView('program'); return false;" class="hover:text-[#00979C] transition-colors py-2">Chương trình</a>
+                    <a href="#dia-diem" onclick="navigateToHomeSection('dia-diem'); return false;" class="hover:text-[#00979C] transition-colors py-2">Địa điểm</a>
+                    <a href="#an-pham" onclick="navigateToHomeSection('an-pham'); return false;" class="hover:text-[#00979C] transition-colors py-2">Ấn phẩm</a>                    
+                </nav>
+
+                <!-- Action Buttons: Tra cứu & Đăng ký -->
+                <div class="hidden sm:flex items-center gap-2.5 shrink-0">
+                    <button type="button" onclick="openLookupModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-semibold text-[#00686B] bg-[#EAE6DF]/80 hover:bg-[#EAE6DF] border border-[#E2E8F0] transition-colors">
+                        <i data-lucide="search" class="w-4 h-4 text-[#00979C]"></i>
+                        <span>Tra cứu</span>
+                    </button>
+                    <button type="button" onclick="openRegisterModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold btn-fast-orange shadow-md">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span>Đăng ký</span>
+                    </button>
                 </div>
-            `;
-        });
 
-        roundDiv.innerHTML = `
-            <div class="round-header">${rConfig.title}</div>
-            <div class="matches-grid">${matchesHTML}</div>
-        `;
-        container.appendChild(roundDiv);
-    });
-}
+                <!-- Mobile Hamburger Button -->
+                <button type="button" onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-2xl text-[#2D3748] hover:bg-[#EAE6DF]/60 focus:outline-none" aria-label="Mở menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
 
-function adjustScore(matchKey, teamNum, delta) {
-    if (currentRole === 'guest') return;
-    if (!matchesData[matchKey]) matchesData[matchKey] = { score1: 0, score2: 0, finished: false };
+        <!-- Mobile Dropdown Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[#FFFFFF] border-t border-[#E2E8F0] px-4 pt-3 pb-6 shadow-xl rounded-b-3xl">
+            <div class="flex flex-col space-y-1 text-base font-bold text-[#2D3748]">
+                <a href="#btc" onclick="closeMobileMenu(); navigateToHomeSection('btc'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-[#FAF9F6] hover:text-[#00979C]">Ban tổ chức</a>
+				<a href="#chuong-trinh" onclick="closeMobileMenu(); switchPageView('program'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-[#FAF9F6] hover:text-[#00979C]">Chương trình</a>
+                <a href="#dia-diem" onclick="closeMobileMenu(); navigateToHomeSection('dia-diem'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-[#FAF9F6] hover:text-[#00979C]">Địa điểm</a>
+                <a href="#an-pham" onclick="closeMobileMenu(); navigateToHomeSection('an-pham'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-[#FAF9F6] hover:text-[#00979C]">Ấn phẩm</a>                
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-[#E2E8F0]">
+                <button type="button" onclick="closeMobileMenu(); openLookupModal();" class="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold text-[#00686B] bg-[#EAE6DF]">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                    <span>Tra cứu</span>
+                </button>
+                <button type="button" onclick="closeMobileMenu(); openRegisterModal();" class="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-bold btn-fast-orange">
+                    <i data-lucide="ticket" class="w-4 h-4"></i>
+                    <span>Đăng ký</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-    const m = matchesData[matchKey];
-    if (teamNum === 1) m.score1 = Math.max(0, (m.score1 || 0) + delta);
-    if (teamNum === 2) m.score2 = Math.max(0, (m.score2 || 0) + delta);
+    <!-- ==================== VIEW A: TRANG CHỦ SỰ KIỆN ==================== -->
+    <main id="home-view">
 
-    if (m.score1 >= 21 || m.score2 >= 21) m.finished = true;
+        <!-- ==================== A. HERO BANNER (VỊ TRÍ LOGO 2: TRUNG TÂM HERO) ==================== -->
+        <section class="relative pt-28 pb-20 lg:pt-36 lg:pb-28 fast-hero-gradient text-white overflow-hidden">
+            <div class="absolute top-16 right-10 w-80 h-80 bg-[#D4AF37]/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-10 left-10 w-96 h-96 bg-[#FF6B35]/20 rounded-full blur-3xl pointer-events-none"></div>
 
-    syncFirebaseMatches();
-}
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-4xl mx-auto text-center">
+                    
+                    <!-- VỊ TRÍ LOGO 2: Thẻ Logo FAST 30 nền trắng viền vàng nổi bật trung tâm Hero -->
+                    <div class="inline-block p-4 sm:p-5 logo-white-gold-frame mb-6">
+                        <svg viewBox="0 0 320 225" class="h-28 sm:h-36 w-auto mx-auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Biểu trưng FAST 30 Năm 1997 - 2027">
+                            <defs>
+                                <linearGradient id="tealNum2" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#00B5BC"/>
+                                    <stop offset="55%" stop-color="#00898E"/>
+                                    <stop offset="100%" stop-color="#005F63"/>
+                                </linearGradient>
+                                <linearGradient id="goldRing2" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#F7E08B"/>
+                                    <stop offset="45%" stop-color="#D4AF37"/>
+                                    <stop offset="100%" stop-color="#A67C1E"/>
+                                </linearGradient>
+                            </defs>
+                            <text x="26" y="30" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="25" letter-spacing="4" fill="#00898E">FAST</text>
+                            <polygon points="68,18 73,27 63,27" fill="#E53E3E"/>
+                            <path d="M32,42 H126 L104,84 H114 C136,84 148,98 148,120 C148,148 126,166 90,166 C60,166 36,154 24,134 L48,118 C56,130 70,138 88,138 C106,138 118,129 118,116 C118,104 108,97 90,97 H72 L94,64 H32 Z" fill="url(#tealNum2)" stroke="#D4AF37" stroke-width="3.5" stroke-linejoin="round"/>
+                            <g transform="translate(216, 103)">
+                                <ellipse cx="0" cy="0" rx="64" ry="62" fill="url(#tealNum2)" stroke="#D4AF37" stroke-width="3.5"/>
+                                <ellipse cx="4" cy="2" rx="46" ry="45" fill="url(#goldRing2)"/>
+                                <ellipse cx="-5" cy="0" rx="34" ry="35" fill="#FFFFFF"/>
+                            </g>
+                            <path d="M44,183 C112,163 202,155 292,158 C296,158 297,163 292,164 C206,169 118,179 50,195 C42,197 38,185 44,183 Z" fill="#00979C" stroke="#D4AF37" stroke-width="2.2"/>
+                            <text x="288" y="185" text-anchor="end" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="18" letter-spacing="1" fill="#E53E3E">1997 - 2027</text>
+                            <text x="160" y="213" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="13.2" letter-spacing="0.4" fill="#007A7E">AM HIỂU NGHIỆP VỤ, TẬN TÂM ĐỒNG HÀNH</text>
+                        </svg>
+                    </div>
 
-function updateMatchScore(matchKey, teamNum, val) {
-    if (currentRole === 'guest') return;
-    if (!matchesData[matchKey]) matchesData[matchKey] = { score1: 0, score2: 0, finished: false };
+                    <!-- Gold Pill Badge -->
+                    <div class="mb-4">
+                        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#004A4D]/65 border border-[#D4AF37] text-amber-200 font-display font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow">
+                            <i data-lucide="award" class="w-4 h-4 text-[#FDE047]"></i>
+                            <span>KỶ NIỆM 30 NĂM THÀNH LẬP FAST · 1997 – 2027</span>
+                        </span>
+                    </div>
 
-    const scoreVal = parseInt(val) || 0;
-    const m = matchesData[matchKey];
-    if (teamNum === 1) m.score1 = scoreVal;
-    if (teamNum === 2) m.score2 = scoreVal;
+                    <!-- Main Heading -->
+                    <h1 class="font-display font-extrabold text-3xl sm:text-5xl lg:text-[54px] tracking-tight leading-[1.16] mb-5">
+                        Vững Nền Tảng — <span class="text-gradient-gold">Vươn Tầm Cao</span>
+                    </h1>
 
-    if (m.score1 >= 21 || m.score2 >= 21) m.finished = true;
+                    <!-- Subtitle -->
+                    <p class="text-white/95 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed mb-8">
+                        Hành trình 30 năm <strong class="text-amber-200">Am hiểu nghiệp vụ, Tận tâm đồng hành</strong> cùng cộng đồng <strong class="text-white">Doanh nghiệp Khách hàng</strong>, <strong class="text-white">Đối tác hệ sinh thái</strong> và <strong class="text-amber-200">Đại gia đình FAST 3 miền</strong> hội tụ tại biển Bảo Ninh, Quảng Bình.
+                    </p>
 
-    syncFirebaseMatches();
-}
+                    <!-- Live Countdown Timer to 2027-07-10T08:00:00+07:00 -->
+                    <div class="max-w-lg mx-auto mb-9">
+                        <p class="text-xs font-bold uppercase tracking-widest text-amber-200 mb-3">Đếm ngược tới lễ khai mạc · 08:00 ngày 10/07/2027</p>
+                        <div class="grid grid-cols-4 gap-2.5 sm:gap-3.5">
+                            <div class="p-3 sm:p-4 rounded-2xl bg-[#004A4D]/75 border border-[#D4AF37]/50 backdrop-blur-md">
+                                <span id="cd-days" class="block font-display font-extrabold text-2xl sm:text-3xl text-white">00</span>
+                                <span class="text-[11px] uppercase tracking-wider text-teal-100">Ngày</span>
+                            </div>
+                            <div class="p-3 sm:p-4 rounded-2xl bg-[#004A4D]/75 border border-[#D4AF37]/50 backdrop-blur-md">
+                                <span id="cd-hours" class="block font-display font-extrabold text-2xl sm:text-3xl text-[#FF6B35]">00</span>
+                                <span class="text-[11px] uppercase tracking-wider text-teal-100">Giờ</span>
+                            </div>
+                            <div class="p-3 sm:p-4 rounded-2xl bg-[#004A4D]/75 border border-[#D4AF37]/50 backdrop-blur-md">
+                                <span id="cd-minutes" class="block font-display font-extrabold text-2xl sm:text-3xl text-[#FDE047]">00</span>
+                                <span class="text-[11px] uppercase tracking-wider text-teal-100">Phút</span>
+                            </div>
+                            <div class="p-3 sm:p-4 rounded-2xl bg-[#004A4D]/75 border border-[#D4AF37]/50 backdrop-blur-md">
+                                <span id="cd-seconds" class="block font-display font-extrabold text-2xl sm:text-3xl text-teal-200">00</span>
+                                <span class="text-[11px] uppercase tracking-wider text-teal-100">Giây</span>
+                            </div>
+                        </div>
+                    </div>
 
-function toggleFinish(matchKey) {
-    if (currentRole === 'guest') return;
-    if (!matchesData[matchKey]) return;
-    matchesData[matchKey].finished = !matchesData[matchKey].finished;
-    syncFirebaseMatches();
-}
+                    <!-- Primary Hero CTAs -->
+                    <div class="flex flex-wrap items-center justify-center gap-3.5 sm:gap-4 mb-12">
+                        <button type="button" onclick="openRegisterModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl font-display font-bold text-base btn-fast-orange shadow-lg">
+                            <i data-lucide="user-plus" class="w-5 h-5"></i>
+                            <span>Đăng ký tham dự</span>
+                        </button>
+                        <button type="button" onclick="switchPageView('program')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-base text-white bg-white/15 hover:bg-white/25 border border-white/35 transition-all">
+                            <i data-lucide="calendar-days" class="w-5 h-5 text-amber-200"></i>
+                            <span>Xem chương trình chi tiết</span>
+                        </button>
+                        <button type="button" onclick="openLookupModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-4 rounded-2xl font-semibold text-sm text-white bg-[#004A4D]/65 hover:bg-[#004A4D] border border-[#D4AF37]/60 transition-all">
+                            <i data-lucide="search" class="w-4 h-4 text-[#FDE047]"></i>
+                            <span>Tra cứu đăng ký</span>
+                        </button>
+                    </div>
 
-function resetMatch(matchKey) {
-    if (currentRole === 'guest') return;
-    matchesData[matchKey] = { score1: 0, score2: 0, finished: false };
-    syncFirebaseMatches();
-}
+                    <!-- 4 Quick Info Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-left">
+                        <div class="p-4 rounded-2xl bg-white/15 border border-white/25 backdrop-blur-sm">
+                            <div class="flex items-center gap-2 text-amber-200 text-xs font-bold uppercase tracking-wider mb-1">
+                                <i data-lucide="calendar" class="w-4 h-4"></i>
+                                <span>Thời gian</span>
+                            </div>
+                            <p class="font-display font-bold text-white text-base">10–12/07/2027</p>
+                            <p class="text-xs text-white/85">Thứ 7 – Thứ 2 (3N2Đ)</p>
+                        </div>
 
-function syncFirebaseMatches() {
-    renderScheduleAndCourts();
-    updateStandings();
-    if (window.dbSet && window.dbMinigameMatchesRef && currentRole !== 'guest') {
-        window.dbSet(window.dbMinigameMatchesRef, matchesData);
-    }
-}
+                        <div class="p-4 rounded-2xl bg-white/15 border border-white/25 backdrop-blur-sm">
+                            <div class="flex items-center gap-2 text-amber-200 text-xs font-bold uppercase tracking-wider mb-1">
+                                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                                <span>Địa điểm</span>
+                            </div>
+                            <p class="font-display font-bold text-white text-base">Sun Spa Resort</p>
+                            <p class="text-xs text-white/85">Bảo Ninh, Đồng Hới, Quảng Bình</p>
+                        </div>
 
-function updateStandings() {
-    const tbody = document.getElementById('standingsTableBody');
-    if (!tbody) return;
+                        <div class="p-4 rounded-2xl bg-white/15 border border-white/25 backdrop-blur-sm">
+                            <div class="flex items-center gap-2 text-amber-200 text-xs font-bold uppercase tracking-wider mb-1">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                <span>Gala 30 Năm</span>
+                            </div>
+                            <p class="font-display font-bold text-white text-base">18:00 · Chủ Nhật 11/07</p>
+                            <p class="text-xs text-white/85">Grand Ballroom · Resort</p>
+                        </div>
 
-    let stats = {
-        A: { name: defaultTeams.A.name, won: 0, lost: 0, ptsFor: 0, ptsAgainst: 0 },
-        B: { name: defaultTeams.B.name, won: 0, lost: 0, ptsFor: 0, ptsAgainst: 0 },
-        C: { name: defaultTeams.C.name, won: 0, lost: 0, ptsFor: 0, ptsAgainst: 0 }
-    };
+                        <div class="p-4 rounded-2xl bg-white/15 border border-white/25 backdrop-blur-sm">
+                            <div class="flex items-center gap-2 text-amber-200 text-xs font-bold uppercase tracking-wider mb-1">
+                                <i data-lucide="users" class="w-4 h-4"></i>
+                                <span>Quy mô</span>
+                            </div>
+                            <p class="font-display font-bold text-white text-base">500+ Đại biểu</p>
+                            <p class="text-xs text-white/85">Khách hàng, Đối tác & FASTer</p>
+                        </div>
+                    </div>
 
-    SCHEDULE_CONFIG.forEach(r => {
-        r.courts.forEach(c => {
-            const mData = matchesData[c.matchKey];
-            if (mData && (mData.finished || mData.score1 >= 21 || mData.score2 >= 21)) {
-                const t1 = c.team1;
-                const t2 = c.team2;
+                </div>
+            </div>
+        </section>
 
-                stats[t1].ptsFor += mData.score1; stats[t1].ptsAgainst += mData.score2;
-                stats[t2].ptsFor += mData.score2; stats[t2].ptsAgainst += mData.score1;
+        <!-- ==================== B. DẤU ẤN 30 NĂM & 3 TRỤ CỘT HỘI TỤ ==================== -->
+        <section class="py-20 bg-[#FAF9F6]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-14">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-[#00979C]/10 text-[#00686B] text-xs font-bold uppercase tracking-wider mb-3">
+                        1997 — 2027 · Ba Thập Kỷ Kiến Tạo
+                    </span>
+                    <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-[#00686B] mb-4">
+                        Ba Trụ Cột Hội Tụ Tại Chương trình
+                    </h2>
+                    <p class="text-[#64748B] text-base">
+                        Từ những dòng mã nguồn kế toán đầu tiên năm 1997 đến hệ sinh thái quản trị doanh nghiệp toàn diện phục vụ hơn 50.000 khách hàng trên cả nước.
+                    </p>
+                </div>
 
-                if (mData.score1 > mData.score2) {
-                    stats[t1].won++; stats[t2].lost++;
-                } else if (mData.score2 > mData.score1) {
-                    stats[t2].won++; stats[t1].lost++;
+                <div class="grid md:grid-cols-3 gap-7">
+                    <!-- Pillar 1 -->
+                    <div class="bg-[#FFFFFF] p-8 rounded-3xl border border-[#E2E8F0] shadow-sm hover:border-[#00979C] transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-[#00979C]/10 text-[#00979C] flex items-center justify-center mb-5">
+                            <i data-lucide="handshake" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#00979C]">Trụ cột 01</span>
+                        <h3 class="font-display font-extrabold text-xl text-[#00686B] mt-1 mb-3">Tri Ân Khách Hàng & Đối Tác</h3>
+                        <p class="text-sm text-[#64748B] leading-relaxed">
+                            Gặp gỡ, tri ân cộng đồng doanh nghiệp khách hàng và các đối tác công nghệ, ngân hàng số, hóa đơn điện tử đã tin tưởng đồng hành cùng FAST suốt 30 năm qua.
+                        </p>
+                    </div>
+
+                    <!-- Pillar 2 -->
+                    <div class="bg-[#FFFFFF] p-8 rounded-3xl border border-[#E2E8F0] shadow-sm hover:border-[#FF6B35] transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-[#FF6B35]/10 text-[#FF6B35] flex items-center justify-center mb-5">
+                            <i data-lucide="globe" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#FF6B35]">Trụ cột 02</span>
+                        <h3 class="font-display font-extrabold text-xl text-[#00686B] mt-1 mb-3">Hội Ngộ 3 Miền & Alumni</h3>
+                        <p class="text-sm text-[#64748B] leading-relaxed">
+                            Đại gia đình CBNV FAST Hà Nội, Đà Nẵng, TP.HCM cùng các thế hệ cựu nhân viên (Alumni) hội tụ tại điểm hẹn di sản miền Trung.
+                        </p>
+                    </div>
+
+                    <!-- Pillar 3 -->
+                    <div class="bg-[#FFFFFF] p-8 rounded-3xl border border-[#E2E8F0] shadow-sm hover:border-[#D4AF37] transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-[#D4AF37]/15 text-[#9A7B1C] flex items-center justify-center mb-5">
+                            <i data-lucide="trophy" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-[#9A7B1C]">Trụ cột 03</span>
+                        <h3 class="font-display font-extrabold text-xl text-[#00686B] mt-1 mb-3">Gala 30 Năm & Thể Thao Biển</h3>
+                        <p class="text-sm text-[#64748B] leading-relaxed">
+                            Bùng nổ cảm xúc với Giải Pickleball 30 Năm, Team Building trên bãi biển Bảo Ninh và Đêm Gala Dinner vinh danh chặng đường 1997 – 2027.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== C. CHƯƠNG TRÌNH TÓM TẮT & GALA DINNER (#chuong-trinh-preview) ==================== -->
+        <section id="chuong-trinh-preview" class="py-20 bg-[#EAE6DF] border-y border-[#E2E8F0]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                    <div>
+                        <span class="inline-block px-4 py-1.5 rounded-full bg-[#FFFFFF] text-[#00686B] text-xs font-bold uppercase tracking-wider mb-3 border border-[#E2E8F0]">
+                            Lịch Trình 3 Ngày 2 Đêm
+                        </span>
+                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-[#00686B]">
+                            Tổng Quan Chương Trình Sự Kiện
+                        </h2>
+                    </div>
+                    <button type="button" onclick="switchPageView('program')" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl btn-fast-orange font-display font-bold text-sm shadow-md self-start md:self-auto">
+                        <span>Mở trang Chương trình chi tiết</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- 3 Days Summary Cards -->
+                <div class="grid lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Day 1 -->
+                    <div class="bg-[#FFFFFF] p-7 rounded-3xl border border-[#E2E8F0] shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-xs">NGÀY 1 · THỨ BẢY 10/07</span>
+                            <span class="text-xs font-semibold text-[#64748B]">Đồng Hới</span>
+                        </div>
+                        <h3 class="font-display font-extrabold text-xl text-[#2D3748] mb-3">Hội Ngộ & Khai Mạc Kết Nối</h3>
+                        <ul class="space-y-2.5 text-sm text-[#64748B]">
+                            <li class="flex items-start gap-2"><strong class="text-[#00686B] shrink-0">07:30:</strong><span>Đón đoàn 3 miền tại sân bay/ga Đồng Hới, check-in Sun Spa Resort & nhận Welcome Kit.</span></li>
+                            <li class="flex items-start gap-2"><strong class="text-[#00686B] shrink-0">14:30:</strong><span>Khai mạc Giải Pickleball 30 Năm & Giao lưu Khách hàng – Đối tác.</span></li>
+                            <li class="flex items-start gap-2"><strong class="text-[#FF6B35] shrink-0">18:30:</strong><span>Sunset Welcome Party & BBQ hải sản bên bờ biển Bảo Ninh.</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Day 2 -->
+                    <div class="bg-[#FFFFFF] p-7 rounded-3xl border-2 border-[#00979C]/40 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-xl bg-[#00979C] text-white font-display font-extrabold text-xs">NGÀY 2 · CHỦ NHẬT 11/07</span>
+                            <span class="text-xs font-bold text-[#FF6B35]">Tâm điểm</span>
+                        </div>
+                        <h3 class="font-display font-extrabold text-xl text-[#00686B] mb-3">Diễn Đàn & Gala Kỷ Niệm 30 Năm</h3>
+                        <ul class="space-y-2.5 text-sm text-[#64748B]">
+                            <li class="flex items-start gap-2"><strong class="text-[#00686B] shrink-0">09:00:</strong><span>Diễn đàn "Beyond Tech, Beyond Trust" — Tọa đàm công nghệ ERP, AI & Tri ân đối tác.</span></li>
+                            <li class="flex items-start gap-2"><strong class="text-[#00686B] shrink-0">15:00:</strong><span>Chung kết Pickleball, Team Building bãi biển & Ghi hình Flycam "FAST 30".</span></li>
+                            <li class="flex items-start gap-2"><strong class="text-[#FF6B35] shrink-0">18:00:</strong><span>Đêm Gala Dinner 30 Năm tại Grand Ballroom Sun Spa Resort.</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Day 3 -->
+                    <div class="bg-[#FFFFFF] p-7 rounded-3xl border border-[#E2E8F0] shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-xs">NGÀY 3 · THỨ HAI 12/07</span>
+                            <span class="text-xs font-semibold text-[#64748B]">Quảng Bình</span>
+                        </div>
+                        <h3 class="font-display font-extrabold text-xl text-[#2D3748] mb-3">Khám Phá Di Sản & Tiễn Đoàn</h3>
+                        <ul class="space-y-2.5 text-sm text-[#64748B]">
+                            <li class="flex items-start gap-2"><strong class="text-[#00686B] shrink-0">08:30:</strong><span>Tùy chọn tham quan Động Phong Nha / Động Thiên Đường hoặc nghỉ dưỡng tại Resort.</span></li>
+                            <li class="flex items-start gap-2"><strong class="text-[#00686B] shrink-0">11:30:</strong><span>Check-out, nhận quà đặc sản Quảng Bình & Dùng bữa trưa chia tay.</span></li>
+                            <li class="flex items-start gap-2"><strong class="text-[#00686B] shrink-0">14:00:</strong><span>Xe BTC tiễn các đoàn ra Sân bay / Ga Đồng Hới trở về 3 miền.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Gala Dinner Highlight Card on Teal Gradient -->
+                <div class="rounded-3xl fast-gala-gradient p-7 sm:p-10 text-white border border-[#D4AF37]/60 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div class="space-y-2 max-w-2xl">
+                        <span class="inline-block px-3.5 py-1 rounded-full bg-white/15 text-amber-200 text-xs font-extrabold uppercase tracking-wider">
+                            Đêm Hội Trọng Tâm · 18:00 Chủ Nhật 11/07/2027
+                        </span>
+                        <h3 class="font-display font-extrabold text-2xl sm:text-3xl text-white">
+                            GALA DINNER 30 NĂM: "AM HIỂU NGHIỆP VỤ, TẬN TÂM ĐỒNG HÀNH"
+                        </h3>
+                        <p class="text-sm sm:text-base text-white/90">
+                            Grand Ballroom · Sun Spa Resort Quảng Bình — Nghi thức thắp sáng hành trình 1997–2027, lễ tri ân Khách hàng & Đối tác chiến lược, vinh danh cống hiến và đại tiệc nghệ thuật đặc sắc.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-3 shrink-0">
+                        <button type="button" onclick="switchPageView('program')" class="px-6 py-3.5 rounded-2xl bg-white text-[#00686B] hover:bg-amber-50 font-display font-bold text-sm shadow transition-colors">
+                            Xem chi tiết từng khung giờ →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== D. ĐỊA ĐIỂM & HÀNH TRÌNH DI CHUYỂN (#dia-diem) ==================== -->
+        <section id="dia-diem" class="py-20 bg-[#FAF9F6]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-[#00979C]/10 text-[#00686B] text-xs font-bold uppercase tracking-wider mb-3">
+                        Không Gian Nghỉ Dưỡng 5 Sao & Di Chuyển
+                    </span>
+                    <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-[#00686B] mb-4">
+                        Sun Spa Resort Quảng Bình & Hướng Dẫn Di Chuyển
+                    </h2>
+                    <p class="text-[#64748B] text-base">
+                        Tọa lạc trên bán đảo Bảo Ninh thơ mộng giữa dòng sông Nhật Lệ và biển Đông xanh ngắt, Sun Spa Resort mang đến không gian hội nghị và nghỉ dưỡng đẳng cấp.
+                    </p>
+                </div>
+
+                <!-- Resort Highlight Card -->
+                <div class="bg-[#FFFFFF] rounded-3xl p-6 sm:p-8 border border-[#E2E8F0] shadow-sm mb-8 grid lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-5">
+                        <div class="rounded-2xl overflow-hidden border border-[#E2E8F0]">
+                            <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=900&q=80" alt="Không gian khu nghỉ dưỡng Sun Spa Resort Quảng Bình" class="w-full h-60 object-cover" onerror="this.src='https://placehold.co/800x500/00979C/FFFFFF?text=Sun+Spa+Resort+Quang+Binh'">
+                        </div>
+                    </div>
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FF6B35]/10 text-[#FF6B35] text-xs font-bold">
+                            <i data-lucide="map-pin" class="w-4 h-4"></i>
+                            <span>Đường Võ Nguyên Giáp, Bán đảo Bảo Ninh, Đồng Hới, Quảng Bình</span>
+                        </div>
+                        <h3 class="font-display font-extrabold text-2xl text-[#00686B]">Sun Spa Resort — Khu Nghỉ Dưỡng 5 Sao Bên Bờ Biển Bảo Ninh</h3>
+                        <p class="text-sm text-[#64748B] leading-relaxed">
+                            Sở hữu bãi biển riêng trải dài, hệ thống hồ bơi hướng biển, phòng hội nghị Grand Ballroom sức chứa 600 khách và cụm sân thể thao ngoài trời đạt chuẩn.
+                        </p>
+                        <div class="grid sm:grid-cols-3 gap-3 pt-1">
+                            <div class="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0]">
+                                <span class="text-xs text-[#64748B] block">Sân bay Đồng Hới (VDH)</span>
+                                <span class="font-bold text-sm text-[#00686B]">~ 8 km (15 phút xe)</span>
+                            </div>
+                            <div class="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0]">
+                                <span class="text-xs text-[#64748B] block">Ga Đồng Hới</span>
+                                <span class="font-bold text-sm text-[#00686B]">~ 6 km (10 phút xe)</span>
+                            </div>
+                            <div class="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0]">
+                                <span class="text-xs text-[#64748B] block">Nhận / Trả phòng</span>
+                                <span class="font-bold text-sm text-[#00686B]">10/07 – 12/07/2027</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3-Region Travel Guide -->
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-[#FFFFFF] p-7 rounded-3xl border border-[#E2E8F0] shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-3 py-1 rounded-full bg-[#00979C]/10 text-[#00686B] text-xs font-extrabold">TỪ HÀ NỘI (FHN)</span>
+                            <i data-lucide="plane-takeoff" class="w-5 h-5 text-[#00979C]"></i>
+                        </div>
+                        <h4 class="font-display font-bold text-lg text-[#00686B] mb-2">Miền Bắc → Đồng Hới</h4>
+                        <p class="text-sm text-[#64748B] leading-relaxed">
+                            Bay thẳng Nội Bài (HAN) – Đồng Hới (VDH) (~1h10p) sáng 10/07 hoặc đi tàu hỏa chất lượng cao QB1/SE19 tối 09/07. Xe BTC đón tận nơi tại sân bay và ga tàu.
+                        </p>
+                    </div>
+
+                    <div class="bg-[#FFFFFF] p-7 rounded-3xl border border-[#E2E8F0] shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-3 py-1 rounded-full bg-[#00979C]/10 text-[#00686B] text-xs font-extrabold">TỪ ĐÀ NẴNG (FĐN)</span>
+                            <i data-lucide="bus" class="w-5 h-5 text-[#00979C]"></i>
+                        </div>
+                        <h4 class="font-display font-bold text-lg text-[#00686B] mb-2">Miền Trung → Đồng Hới</h4>
+                        <p class="text-sm text-[#64748B] leading-relaxed">
+                            Di chuyển bằng xe Limousine / Giường nằm cao cấp của đoàn khởi hành 07:00 sáng 10/07 theo cao tốc Cam Lộ – La Sơn (~4h30p) hoặc tàu hỏa / Caravan tự lái.
+                        </p>
+                    </div>
+
+                    <div class="bg-[#FFFFFF] p-7 rounded-3xl border border-[#E2E8F0] shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="px-3 py-1 rounded-full bg-[#FF6B35]/15 text-[#FF6B35] text-xs font-extrabold">TỪ TP.HCM (FSG)</span>
+                            <i data-lucide="plane-takeoff" class="w-5 h-5 text-[#FF6B35]"></i>
+                        </div>
+                        <h4 class="font-display font-bold text-lg text-[#00686B] mb-2">Miền Nam → Đồng Hới</h4>
+                        <p class="text-sm text-[#64748B] leading-relaxed">
+                            Bay thẳng Tân Sơn Nhất (SGN) – Đồng Hới (VDH) (~1h45p) sáng Thứ Bảy 10/07/2027. Đội xe 45 chỗ của BTC đón thẳng từ sân bay về Sun Spa Resort.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Packing Checklist -->
+                <div class="bg-[#FFFFFF] rounded-3xl p-6 sm:p-8 border border-[#E2E8F0] shadow-sm">
+                    <h4 class="font-display font-bold text-lg text-[#00686B] mb-4 flex items-center gap-2">
+                        <i data-lucide="luggage" class="w-5 h-5 text-[#FF6B35]"></i>
+                        <span>Gợi ý hành trang chuẩn bị cho 3 ngày 2 đêm</span>
+                    </h4>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-sm">
+                        <div class="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] flex items-center gap-2.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-[#00979C] shrink-0"></i>
+                            <span>CCCD / Hộ chiếu làm thủ tục bay & nhận phòng</span>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] flex items-center gap-2.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-[#00979C] shrink-0"></i>
+                            <span>Trang phục dự Gala Dinner (Xanh Teal / Vàng kim / Trắng)</span>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] flex items-center gap-2.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-[#00979C] shrink-0"></i>
+                            <span>Giày thể thao & đồ bơi cho Pickleball, biển Bảo Ninh</span>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] flex items-center gap-2.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-[#00979C] shrink-0"></i>
+                            <span>Kính râm, kem chống nắng & giày đế bằng đi hang động</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== E. ẤN PHẨM & NHẬN DIỆN 30 NĂM (#an-pham - VỊ TRÍ LOGO 3) ==================== -->
+        <section id="an-pham" class="py-20 bg-[#EAE6DF] border-y border-[#E2E8F0]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-[#FFFFFF] text-[#00686B] text-xs font-bold uppercase tracking-wider mb-3 border border-[#D4AF37]/60">
+                        Bộ Nhận Diện Chính Thức
+                    </span>
+                    <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-[#00686B] mb-3">
+                        Ấn Phẩm & Không Gian Sự Kiện 30 Năm
+                    </h2>
+                    <p class="text-[#2D3748] text-base">
+                        Biểu trưng <strong>FAST 30 Năm (1997 – 2027)</strong> nền trắng viền vàng kim được ứng dụng đồng bộ trên toàn bộ vật phẩm đại biểu và sân khấu đại lễ.
+                    </p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- 1. Áo Polo -->
+                    <div class="bg-[#FFFFFF] rounded-3xl p-6 border border-[#E2E8F0] shadow-sm flex flex-col justify-between group">
+                        <div>
+                            <div onclick="openMockupModal('polo')" class="cursor-pointer h-52 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] flex items-center justify-center relative overflow-hidden mb-5">
+                                <svg viewBox="0 0 220 200" class="w-44 h-44 group-hover:scale-105 transition-transform" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M65 32 L155 32 L195 65 L175 95 L155 80 L155 180 L65 180 L65 80 L45 95 L25 65 Z" fill="#00979C"/>
+                                    <path d="M88 32 L110 52 L132 32 L122 24 L110 38 L98 24 Z" fill="#00686B"/>
+                                    <rect x="107" y="48" width="6" height="32" rx="2" fill="#FF6B35"/>
+                                </svg>
+                                <!-- Logo nền trắng viền vàng trên ngực trái -->
+                                <div class="absolute top-[74px] right-[52px] px-1.5 py-0.5 rounded-md bg-white border border-[#D4AF37] shadow-sm flex items-center justify-center">
+                                    <span class="text-[8px] font-display font-extrabold text-[#00898E]">FAST<span class="text-[#D4AF37]">30</span></span>
+                                </div>
+                                <span class="absolute bottom-2.5 left-2.5 px-2.5 py-0.5 rounded-lg bg-[#00686B] text-white text-[10px] font-bold">ÁO POLO ĐỒNG PHỤC</span>
+                            </div>
+                            <h3 class="font-display font-bold text-lg text-[#00686B] mb-1">Áo Polo Kỷ Niệm 30 Năm</h3>
+                            <p class="text-xs text-[#64748B] leading-relaxed">Sắc xanh Teal đặc trưng của FAST, logo 30 năm nền trắng viền vàng thêu nổi bật tại ngực trái.</p>
+                        </div>
+                        <button type="button" onclick="openMockupModal('polo')" class="mt-4 pt-3 border-t border-[#E2E8F0] text-left text-xs font-bold text-[#00979C] hover:text-[#FF6B35]">
+                            Xem quy cách ấn phẩm →
+                        </button>
+                    </div>
+
+                    <!-- 2. Thẻ Đại Biểu QR -->
+                    <div class="bg-[#FFFFFF] rounded-3xl p-6 border border-[#E2E8F0] shadow-sm flex flex-col justify-between group">
+                        <div>
+                            <div onclick="openMockupModal('badge')" class="cursor-pointer h-52 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] flex items-center justify-center relative overflow-hidden mb-5">
+                                <div class="absolute -top-4 w-24 h-20 border-x-8 border-[#00979C] transform rotate-3"></div>
+                                <div class="relative z-10 w-36 h-40 rounded-2xl bg-white border border-[#E2E8F0] shadow-md overflow-hidden flex flex-col group-hover:scale-105 transition-transform">
+                                    <div class="h-12 bg-gradient-to-r from-[#00686B] to-[#00979C] flex items-center justify-center px-2">
+                                        <div class="px-2 py-0.5 rounded-md bg-white border border-[#D4AF37]">
+                                            <span class="font-display font-extrabold text-[9px] text-[#00898E]">FAST <span class="text-[#D4AF37]">30</span> · 1997–2027</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-2.5 text-center flex-1 flex flex-col justify-between">
+                                        <div>
+                                            <p class="text-[10px] font-extrabold text-[#00686B]">THẺ ĐẠI BIỂU</p>
+                                            <p class="text-[7px] text-[#64748B] mt-0.5">AM HIỂU NGHIỆP VỤ, TẬN TÂM ĐỒNG HÀNH</p>
+                                        </div>
+                                        <div class="w-8 h-8 mx-auto rounded bg-[#FAF9F6] border border-[#E2E8F0] flex items-center justify-center">
+                                            <i data-lucide="qr-code" class="w-5 h-5 text-[#00686B]"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="absolute bottom-2.5 left-2.5 px-2.5 py-0.5 rounded-lg bg-[#00979C] text-white text-[10px] font-bold">THẺ ĐEO QR</span>
+                            </div>
+                            <h3 class="font-display font-bold text-lg text-[#00686B] mb-1">Thẻ Đại Biểu & Dây Đeo</h3>
+                            <p class="text-xs text-[#64748B] leading-relaxed">Tích hợp mã QR định danh cá nhân giúp check-in nhanh và lưu danh thiếp điện tử khi giao lưu.</p>
+                        </div>
+                        <button type="button" onclick="openMockupModal('badge')" class="mt-4 pt-3 border-t border-[#E2E8F0] text-left text-xs font-bold text-[#00979C] hover:text-[#FF6B35]">
+                            Xem quy cách ấn phẩm →
+                        </button>
+                    </div>
+
+                    <!-- 3. Backdrop Sân Khấu LED -->
+                    <div class="bg-[#FFFFFF] rounded-3xl p-6 border border-[#E2E8F0] shadow-sm flex flex-col justify-between group">
+                        <div>
+                            <div onclick="openMockupModal('stage')" class="cursor-pointer h-52 rounded-2xl bg-[#00686B] border border-[#E2E8F0] flex items-center justify-center relative overflow-hidden mb-5 p-4">
+                                <div class="w-full h-36 rounded-2xl fast-hero-gradient border border-white/30 shadow-inner flex flex-col items-center justify-center text-center p-3 relative group-hover:scale-105 transition-transform">
+                                    <div class="px-2.5 py-1 mb-2 rounded-lg bg-white border border-[#D4AF37] shadow-sm">
+                                        <span class="font-display font-extrabold text-[10px] text-[#00898E]">FAST <span class="text-[#D4AF37]">30</span> · 1997–2027</span>
+                                    </div>
+                                    <p class="font-display font-extrabold text-xs text-white tracking-wide">VỮNG NỀN TẢNG — VƯƠN TẦM CAO</p>
+                                    <p class="text-[9px] text-amber-200 mt-0.5">GALA DINNER · 11/07/2027</p>
+                                </div>
+                                <span class="absolute bottom-2.5 left-2.5 px-2.5 py-0.5 rounded-lg bg-[#FF6B35] text-white text-[10px] font-bold">SÂN KHẤU LED GALA</span>
+                            </div>
+                            <h3 class="font-display font-bold text-lg text-[#00686B] mb-1">Backdrop Sân Khấu Chính</h3>
+                            <p class="text-xs text-[#64748B] leading-relaxed">Màn hình LED Panoramic trung tâm tại Grand Ballroom Sun Spa Resort tôn vinh dấu ấn 30 năm.</p>
+                        </div>
+                        <button type="button" onclick="openMockupModal('stage')" class="mt-4 pt-3 border-t border-[#E2E8F0] text-left text-xs font-bold text-[#00979C] hover:text-[#FF6B35]">
+                            Xem quy cách ấn phẩm →
+                        </button>
+                    </div>
+
+                    <!-- 4. Cờ Phướn & Standee Resort -->
+                    <div class="bg-[#FFFFFF] rounded-3xl p-6 border border-[#E2E8F0] shadow-sm flex flex-col justify-between group">
+                        <div>
+                            <div onclick="openMockupModal('flag')" class="cursor-pointer h-52 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] flex items-center justify-center gap-4 relative overflow-hidden mb-5">
+                                <div class="w-16 h-36 rounded-t-2xl bg-[#00979C] border-2 border-white shadow-md flex flex-col items-center justify-between py-3 px-1 text-center group-hover:scale-105 transition-transform">
+                                    <div class="px-1.5 py-0.5 rounded bg-white border border-[#D4AF37]">
+                                        <span class="font-display font-extrabold text-[8px] text-[#00898E]">FAST 30</span>
+                                    </div>
+                                    <span class="text-[8px] text-amber-200 font-bold">1997–2027</span>
+                                    <span class="text-[7px] text-white font-bold uppercase leading-tight">Quảng Bình</span>
+                                </div>
+                                <div class="w-16 h-36 rounded-t-2xl bg-[#00686B] border-2 border-white shadow-md flex flex-col items-center justify-between py-3 px-1 text-center mt-4 group-hover:scale-105 transition-transform">
+                                    <div class="px-1.5 py-0.5 rounded bg-white border border-[#D4AF37]">
+                                        <span class="font-display font-extrabold text-[8px] text-[#00898E]">FAST 30</span>
+                                    </div>
+                                    <div class="w-[2px] h-8 bg-[#D4AF37]"></div>
+                                    <span class="text-[7px] text-amber-200 font-bold uppercase">10–12/07</span>
+                                </div>
+                                <span class="absolute bottom-2.5 left-2.5 px-2.5 py-0.5 rounded-lg bg-[#00686B] text-white text-[10px] font-bold">STANDEE & CỜ PHƯỚN</span>
+                            </div>
+                            <h3 class="font-display font-bold text-lg text-[#00686B] mb-1">Banner & Cờ Phướn Đón Khách</h3>
+                            <p class="text-xs text-[#64748B] leading-relaxed">Hệ thống nhận diện dọc lối vào sảnh lễ tân, khu thể thao và bãi biển Sun Spa Resort.</p>
+                        </div>
+                        <button type="button" onclick="openMockupModal('flag')" class="mt-4 pt-3 border-t border-[#E2E8F0] text-left text-xs font-bold text-[#00979C] hover:text-[#FF6B35]">
+                            Xem quy cách ấn phẩm →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== F. BAN TỔ CHỨC (#btc) ==================== -->
+        <section id="btc" class="py-20 bg-[#FAF9F6]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-[#00979C]/10 text-[#00686B] text-xs font-bold uppercase tracking-wider mb-3">
+                        Đầu Mối Điều Phối & Hỗ Trợ Đại Biểu
+                    </span>
+                    <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-[#00686B] mb-4">
+                        Ban Tổ Chức Đại Lễ 30 Năm
+                    </h2>
+                    <p class="text-[#64748B] text-base">
+                        Quý Khách hàng, Đối tác và CBNV cần hỗ trợ đăng ký, lưu trú hoặc lịch trình di chuyển vui lòng liên hệ trực tiếp đầu mối phụ trách từng khu vực.
+                    </p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- BTC Trung ương -->
+                    <div class="p-6 rounded-3xl bg-[#FFFFFF] border-2 border-[#D4AF37]/60 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <span class="inline-block px-3 py-1 rounded-full bg-[#D4AF37]/15 text-[#8A6D14] text-[11px] font-extrabold mb-3">BTC TRUNG ƯƠNG</span>
+                            <h3 class="font-display font-extrabold text-lg text-[#00686B] mb-1">Điều Phối Chung & Khách Mời</h3>
+                            <p class="text-xs text-[#64748B] mb-4">Phụ trách Khách hàng VIP, Đối tác chiến lược & Chương trình Gala</p>
+                            <div class="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] mb-4">
+                                <p class="font-bold text-sm text-[#2D3748]">Ban Truyền Thông & Sự Kiện</p>
+                                <p class="text-sm font-extrabold text-[#00979C] mt-1">0901 997 030</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="copyPhone('0901997030', 'BTC Trung ương')" class="w-full py-2.5 px-3 rounded-2xl bg-[#EAE6DF]/80 hover:bg-[#EAE6DF] text-[#2D3748] text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>Sao chép SĐT / Zalo</span>
+                        </button>
+                    </div>
+
+                    <!-- Miền Bắc (FHN) -->
+                    <div class="p-6 rounded-3xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-sm flex flex-col justify-between">
+                        <div>
+                            <span class="inline-block px-3 py-1 rounded-full bg-[#00979C]/10 text-[#00686B] text-[11px] font-extrabold mb-3">MIỀN BẮC (FHN)</span>
+                            <h3 class="font-display font-extrabold text-lg text-[#00686B] mb-1">Văn Phòng FAST Hà Nội</h3>
+                            <p class="text-xs text-[#64748B] mb-4">Tầng 3, Tòa nhà CT1B, KĐT VOV Mễ Trì, Nam Từ Liêm, Hà Nội</p>
+                            <div class="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] mb-4">
+                                <p class="font-bold text-sm text-[#2D3748]">Chị Nguyễn Minh Anh</p>
+                                <p class="text-sm font-extrabold text-[#00979C] mt-1">0912 345 678</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="copyPhone('0912345678', 'FAST Hà Nội')" class="w-full py-2.5 px-3 rounded-2xl bg-[#EAE6DF]/80 hover:bg-[#EAE6DF] text-[#2D3748] text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>Sao chép SĐT / Zalo</span>
+                        </button>
+                    </div>
+
+                    <!-- Miền Trung (FĐN) -->
+                    <div class="p-6 rounded-3xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-sm flex flex-col justify-between">
+                        <div>
+                            <span class="inline-block px-3 py-1 rounded-full bg-[#00979C]/10 text-[#00686B] text-[11px] font-extrabold mb-3">MIỀN TRUNG (FĐN)</span>
+                            <h3 class="font-display font-extrabold text-lg text-[#00686B] mb-1">Văn Phòng FAST Đà Nẵng</h3>
+                            <p class="text-xs text-[#64748B] mb-4">59B Lê Lợi, Phường Thạch Thang, Quận Hải Châu, Đà Nẵng</p>
+                            <div class="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] mb-4">
+                                <p class="font-bold text-sm text-[#2D3748]">Anh Trần Quốc Bảo</p>
+                                <p class="text-sm font-extrabold text-[#00979C] mt-1">0905 678 910</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="copyPhone('0905678910', 'FAST Đà Nẵng')" class="w-full py-2.5 px-3 rounded-2xl bg-[#EAE6DF]/80 hover:bg-[#EAE6DF] text-[#2D3748] text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>Sao chép SĐT / Zalo</span>
+                        </button>
+                    </div>
+
+                    <!-- Miền Nam (FSG) -->
+                    <div class="p-6 rounded-3xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-sm flex flex-col justify-between">
+                        <div>
+                            <span class="inline-block px-3 py-1 rounded-full bg-[#FF6B35]/15 text-[#FF6B35] text-[11px] font-extrabold mb-3">MIỀN NAM (FSG)</span>
+                            <h3 class="font-display font-extrabold text-lg text-[#00686B] mb-1">Văn Phòng FAST TP.HCM</h3>
+                            <p class="text-xs text-[#64748B] mb-4">Số 29 Đường số 18, Khu B, P. An Phú, TP. Thủ Đức, TP.HCM</p>
+                            <div class="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] mb-4">
+                                <p class="font-bold text-sm text-[#2D3748]">Chị Lê Thanh Thảo</p>
+                                <p class="text-sm font-extrabold text-[#FF6B35] mt-1">0938 246 810</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="copyPhone('0938246810', 'FAST TP.HCM')" class="w-full py-2.5 px-3 rounded-2xl bg-[#EAE6DF]/80 hover:bg-[#EAE6DF] text-[#2D3748] text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>Sao chép SĐT / Zalo</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <!-- ==================== END VIEW A: TRANG CHỦ SỰ KIỆN ==================== -->
+
+    <!-- ==================== VIEW B: FULL-SCREEN DETAILED PROGRAM VIEW ==================== -->
+    <section id="program-view" class="hidden pt-20 bg-[#FAF9F6] min-h-screen">
+        
+        <!-- 1. Hero Banner Toàn Màn Hình Khu Nghỉ Dưỡng Sun Spa Resort -->
+        <div class="program-resort-banner text-white relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-24 relative z-10">
+                
+                <!-- Breadcrumb: Trang chủ / Chương trình -->
+                <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs sm:text-sm text-white/85 mb-6">
+                    <a href="#" onclick="switchPageView('home'); return false;" class="underline underline-offset-4 hover:text-white transition-colors">Trang chủ</a>
+                    <span class="text-white/60">/</span>
+                    <span class="text-white font-semibold">Chương trình</span>
+                </nav>
+
+                <!-- Pill Badge -->
+                <div class="inline-flex items-center gap-2.5 mb-4">
+                    <span class="w-6 h-3.5 rounded-md bg-[#FF6B35] inline-block shadow-sm"></span>
+                    <span class="font-display font-extrabold text-xs sm:text-sm uppercase tracking-[0.14em] text-[#FDE047]">
+                        FAST 30 NĂM · 2027 · 3 NGÀY 2 ĐÊM
+                    </span>
+                </div>
+
+                <!-- Large Title -->
+                <h1 class="font-display font-extrabold text-4xl sm:text-5xl lg:text-[54px] tracking-tight text-white leading-[1.12] mb-4">
+                    Chương trình chi tiết
+                </h1>
+
+                <!-- Subtitle -->
+                <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-base sm:text-lg text-white/95 mb-8">
+                    <span class="font-bold">Thứ Bảy 10/07 – Thứ Hai 12/07/2027</span>
+                    <span class="text-white/85">Sun Spa Resort, Đồng Hới, Quảng Bình</span>
+                </div>
+
+                <!-- Action Row -->
+                <div class="flex flex-wrap items-center gap-4 sm:gap-6 mb-6">
+                    <button type="button" onclick="downloadICS()" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full btn-fast-orange font-display font-bold text-sm sm:text-base shadow-lg">
+                        <span>Lưu cả chương trình vào lịch</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+
+                    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=FAST+30+N%C4%83m+(1997%E2%80%932027)+%E2%80%94+Qu%E1%BA%A3ng+B%C3%ACnh&dates=20270710T003000Z/20270712T070000Z&details=%C4%90%E1%BA%A1i+l%E1%BB%85+k%E1%BB%B7+ni%E1%BB%87m+30+n%C4%83m+th%C3%A0nh+l%E1%BA%ADp+C%C3%B4ng+ty+Ph%E1%BA%A7n+m%E1%BB%81m+FAST+t%E1%BA%A1i+Sun+Spa+Resort%2C+Qu%E1%BA%A3ng+B%C3%ACnh.&location=Sun+Spa+Resort%2C+B%E1%BA%A3o+Ninh%2C+%C4%90%E1%BB%93ng+H%E1%BB%9Bi%2C+Qu%E1%BA%A3ng+B%C3%ACnh" target="_blank" rel="noopener noreferrer" class="text-sm sm:text-base font-semibold text-white underline underline-offset-4 hover:text-amber-200 transition-colors">
+                        Thêm vào Google Calendar
+                    </a>
+
+                    <button type="button" onclick="switchPageView('home')" class="text-sm sm:text-base font-semibold text-white underline underline-offset-4 hover:text-amber-200 transition-colors">
+                        Về trang chủ
+                    </button>
+                </div>
+
+                <p class="text-xs text-white/75 italic max-w-3xl">
+                    Khung giờ chi tiết từng đoàn di chuyển sẽ được Ban Tổ chức gửi kèm thẻ xác nhận đại biểu qua email.
+                </p>
+            </div>
+        </div>
+
+        <!-- 2. White Sticky Horizontal Day Selector Bar -->
+        <div class="sticky top-20 z-30 bg-[#FFFFFF] border-b border-[#E2E8F0] shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-3 max-w-3xl">
+                    <button type="button" onclick="selectDetailedDay(1)" id="dp-tab-1" class="dp-day-tab py-4 sm:py-5 text-left pr-4 border-b-[3px] border-[#00686B] transition-all">
+                        <span class="block font-display font-extrabold text-sm sm:text-base text-[#00686B]">Ngày 1</span>
+                        <span class="block text-xs sm:text-sm text-[#64748B] mt-0.5">Thứ Bảy 10/07</span>
+                    </button>
+
+                    <button type="button" onclick="selectDetailedDay(2)" id="dp-tab-2" class="dp-day-tab py-4 sm:py-5 text-left pr-4 border-b-[3px] border-transparent hover:border-[#E2E8F0] transition-all">
+                        <span class="block font-display font-extrabold text-sm sm:text-base text-[#2D3748]">Ngày 2</span>
+                        <span class="block text-xs sm:text-sm text-[#64748B] mt-0.5">Chủ Nhật 11/07</span>
+                    </button>
+
+                    <button type="button" onclick="selectDetailedDay(3)" id="dp-tab-3" class="dp-day-tab py-4 sm:py-5 text-left pr-4 border-b-[3px] border-transparent hover:border-[#E2E8F0] transition-all">
+                        <span class="block font-display font-extrabold text-sm sm:text-base text-[#2D3748]">Ngày 3</span>
+                        <span class="block text-xs sm:text-sm text-[#64748B] mt-0.5">Thứ Hai 12/07</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Filter Bar & Timeline Cards -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 mb-8 border-b border-[#00686B]/20">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-[#64748B] mr-1">Lọc hoạt động:</span>
+                    <button type="button" onclick="filterDetailedCategory('all')" data-cat="all" class="dp-cat-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#00686B] text-white transition-colors">
+                        Tất cả
+                    </button>
+                    <button type="button" onclick="filterDetailedCategory('b2b')" data-cat="b2b" class="dp-cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#FFFFFF] text-[#2D3748] border border-[#E2E8F0] hover:border-[#00979C] transition-colors">
+                        Khách hàng & Đối tác
+                    </button>
+                    <button type="button" onclick="filterDetailedCategory('sport')" data-cat="sport" class="dp-cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#FFFFFF] text-[#2D3748] border border-[#E2E8F0] hover:border-[#00979C] transition-colors">
+                        Thể thao & Team Building
+                    </button>
+                    <button type="button" onclick="filterDetailedCategory('gala')" data-cat="gala" class="dp-cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#FFFFFF] text-[#2D3748] border border-[#E2E8F0] hover:border-[#00979C] transition-colors">
+                        Gala & Ẩm thực
+                    </button>
+                </div>
+
+                <label class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#00686B] cursor-pointer select-none">
+                    <input type="checkbox" id="dp-show-all-days" onchange="toggleShowAllDetailedDays(this.checked)" class="w-4 h-4 rounded accent-[#00979C]">
+                    <span>Tất cả 3 ngày</span>
+                </label>
+            </div>
+
+            <!-- NGÀY 1: THỨ BẢY 10/07/2027 -->
+            <div id="dp-day-panel-1" class="dp-day-section space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-4 border-b border-[#E2E8F0]">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-[#00979C]">Ngày 01 · Hội ngộ & Khai mở Kết nối</span>
+                        <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-[#00686B] mt-1">Thứ Bảy, 10/07/2027</h2>
+                    </div>
+                    <span class="text-xs sm:text-sm font-medium text-[#64748B]">Sun Spa Resort, Bảo Ninh, Đồng Hới</span>
+                </div>
+
+                <div class="space-y-4">
+                    <div data-category="all" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">07:30 – 11:30</span>
+                            <span class="block text-xs text-[#64748B] mt-1.5">Sảnh Lễ Tân Resort</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Đón đoàn 3 miền (Hà Nội, Đà Nẵng, TP.HCM) & Nhận phòng Resort</h3>
+                            <p class="text-sm text-[#64748B] leading-relaxed">
+                                Xe đưa đón của BTC đón đại biểu tại Sân bay Đồng Hới / Ga Đồng Hới về Sun Spa Resort. Làm thủ tục check-in và nhận bộ <strong>Welcome Kit FAST 30 Năm</strong> (Áo Polo đồng phục, Thẻ đeo QR & Cẩm nang sự kiện).
+                            </p>
+                        </div>
+                    </div>
+
+                    <div data-category="gala" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">12:00 – 13:30</span>
+                            <span class="block text-xs text-[#64748B] mt-1.5">Nhà hàng Sun Cafe</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Tiệc trưa chào mừng (Welcome Lunch)</h3>
+                            <p class="text-sm text-[#64748B] leading-relaxed">
+                                Thưởng thức ẩm thực đặc sản miền Trung và giao lưu thân mật giữa Quý Khách hàng, Đối tác và CBNV 3 miền.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div data-category="b2b sport" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C] text-white font-display font-extrabold text-sm">14:30 – 17:30</span>
+                            <span class="block text-xs text-[#64748B] mt-1.5">Sân Pickleball & Bãi Biển</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#00686B] mb-2">Vòng loại Giải Pickleball 30 Năm & Giao lưu Khách hàng – Đối tác</h3>
+                            <p class="text-sm text-[#64748B] leading-relaxed">
+                                Khởi tranh các nội dung Đôi nam, Đôi nữ, Đôi nam nữ mở rộng giữa Khách hàng, Đối tác và CBNV 3 miền cùng các hoạt động khởi động bên bờ biển Bảo Ninh.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div data-category="gala" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#FF6B35]/15 text-[#FF6B35] font-display font-extrabold text-sm">18:30 – 21:30</span>
+                            <span class="block text-xs text-[#64748B] mt-1.5">Bãi Biển Riêng Bảo Ninh</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Sunset Welcome Party & Đêm Nhạc Acoustic Biển Quảng Bình</h3>
+                            <p class="text-sm text-[#64748B] leading-relaxed">
+                                Tiệc nướng hải sản bên bờ biển, thưởng thức âm nhạc acoustic và hàn huyên cùng các thế hệ người FAST (F1–F4, Alumni) và Quý Khách hàng thân thiết.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NGÀY 2: CHỦ NHẬT 11/07/2027 -->
+            <div id="dp-day-panel-2" class="dp-day-section hidden space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-4 border-b border-[#E2E8F0]">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-[#FF6B35]">Ngày 02 · Diễn Đàn Công Nghệ & Gala 30 Năm</span>
+                        <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-[#00686B] mt-1">Chủ Nhật, 11/07/2027</h2>
+                    </div>
+                    <span class="text-xs sm:text-sm font-medium text-[#64748B]">Tâm điểm kỷ niệm 30 năm FAST</span>
+                </div>
+
+                <div class="space-y-4">
+                    <div data-category="sport" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">06:30 – 08:30</span>
+                            <span class="block text-xs text-[#64748B] mt-1.5">Đường ven biển Bảo Ninh</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Buffet sáng & Giải chạy bình minh "FAST 30 Run — Bước Chân Gắn Kết"</h3>
+                            <p class="text-sm text-[#64748B] leading-relaxed">
+                                Cự ly 3km Fun Run và 10km Challenge dọc bán đảo Bảo Ninh, trao huy chương kỷ niệm 30 năm cho toàn bộ vận động viên về đích.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div data-category="b2b" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C] text-white font-display font-extrabold text-sm">09:00 – 11:30</span>
+                            <span class="block text-xs text-[#64748B] mt-1.5">Hội trường Hoa Hồng · Resort</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#00686B] mb-2">Diễn Đàn Lãnh Đạo & Đối Tác: "Beyond Tech, Beyond Trust"</h3>
+                            <p class="text-sm text-[#64748B] leading-relaxed">
+                                Triển lãm hành trình 30 năm FAST, tọa đàm ứng dụng AI & Cloud trong quản trị doanh nghiệp – kế toán và kết nối trực tiếp giữa Khách hàng, Đối tác cùng Ban Lãnh đạo FAST.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div data-category="gala" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#EAE6DF] text-[#2D3748] font-display font-extrabold text-sm">12:00 – 13:30</span>
+                            <span class="block text-xs text-[#64748B] mt-1.5">Nhà hàng Golden Lotus</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg text-[#2D3748] mb-1">Dùng bữa trưa & Nghỉ ngơi</h3>
+                            <p class="text-sm text-[#64748B]">Thưởng thức buffet trưa và nghỉ ngơi tại khu nghỉ dưỡng.</p>
+                        </div>
+                    </div>
+
+                    <div data-category="sport" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">15:00 – 17:15</span>
+                            <span class="block text-xs text-[#64748B] mt-1.5">Bãi Biển & Sân Pickleball</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Chung kết Giải Pickleball, Team Building Bãi Biển & Flycam Xếp Chữ "FAST 30"</h3>
+                            <p class="text-sm text-[#64748B] leading-relaxed">
+                                Tranh cúp vô địch Pickleball 30 Năm, chuỗi trò chơi đồng đội gắn kết 3 miền và chụp hình toàn thể 500+ đại biểu trên bãi biển Bảo Ninh.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div data-category="gala b2b" class="dp-item rounded-3xl p-6 sm:p-8 fast-gala-gradient text-white shadow-xl border border-[#D4AF37]/60 flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-4 py-1.5 rounded-xl bg-[#FF6B35] text-white font-display font-extrabold text-sm shadow">18:00 – 22:00</span>
+                            <span class="block text-xs text-amber-200 mt-1.5 font-semibold">Grand Ballroom · Resort</span>
+                        </div>
+                        <div class="flex-1">
+                            <span class="inline-block px-3 py-0.5 rounded-full bg-white/20 text-amber-200 text-[11px] font-extrabold uppercase tracking-wider mb-2">SỰ KIỆN TRỌNG TÂM</span>
+                            <h3 class="font-display font-extrabold text-xl sm:text-2xl text-white mb-2">
+                                ĐÊM GALA DINNER KỶ NIỆM 30 NĂM FAST (1997 – 2027)
+                            </h3>
+                            <p class="text-sm text-white/95 leading-relaxed">
+                                Nghi thức thắp sáng biểu tượng 30 năm, Tri ân Khách hàng & Đối tác đồng hành, Vinh danh các thế hệ kiến tạo FAST, chương trình nghệ thuật đặc sắc và bốc thăm may mắn.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NGÀY 3: THỨ HAI 12/07/2027 -->
+            <div id="dp-day-panel-3" class="dp-day-section hidden space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-4 border-b border-[#E2E8F0]">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-[#00979C]">Ngày 03 · Khám phá Di sản & Hẹn ngày tái ngộ</span>
+                        <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-[#00686B] mt-1">Thứ Hai, 12/07/2027</h2>
+                    </div>
+                    <span class="text-xs sm:text-sm font-medium text-[#64748B]">Phong Nha – Kẻ Bàng & Đồng Hới</span>
+                </div>
+
+                <div class="space-y-4">
+                    <div data-category="gala" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">07:00 – 08:30</span>
+                            <span class="block text-xs text-[#64748B] mt-1.5">Nhà hàng Sun Cafe</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-1">Điểm tâm sáng & Tắm biển tự do</h3>
+                            <p class="text-sm text-[#64748B]">Thưởng thức buffet sáng tự chọn và tận hưởng không khí trong lành tại Sun Spa Resort.</p>
+                        </div>
+                    </div>
+
+                    <div data-category="sport b2b" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#00979C]/10 text-[#00686B] font-display font-extrabold text-sm">08:30 – 11:00</span>
+                            <span class="block text-xs text-[#64748B] mt-1.5">Phong Nha – Kẻ Bàng / City Tour</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Tham quan Động Phong Nha / City Tour Đồng Hới (Tùy chọn)</h3>
+                            <p class="text-sm text-[#64748B] leading-relaxed">
+                                Đại biểu lựa chọn tour tham quan Di sản Thiên nhiên Thế giới Phong Nha – Kẻ Bàng, tham quan Quảng Bình Quan – Tượng đài Mẹ Suốt hoặc tự do nghỉ dưỡng tại Resort.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div data-category="gala" class="dp-item bg-[#FFFFFF] rounded-3xl p-6 sm:p-7 border border-[#E2E8F0] shadow-sm flex flex-col lg:flex-row lg:items-start gap-5">
+                        <div class="lg:w-44 shrink-0">
+                            <span class="inline-block px-3.5 py-1.5 rounded-xl bg-[#FF6B35]/15 text-[#FF6B35] font-display font-extrabold text-sm">11:30 – 14:00</span>
+                            <span class="block text-xs text-[#64748B] mt-1.5">Resort & Sân bay Đồng Hới</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg sm:text-xl text-[#2D3748] mb-2">Check-out, Bữa trưa chia tay (Farewell Lunch) & Tiễn đoàn</h3>
+                            <p class="text-sm text-[#64748B] leading-relaxed">
+                                Trả phòng resort, nhận quà lưu niệm đặc sản Quảng Bình, dùng bữa trưa thân mật và xe BTC đưa các đoàn ra Sân bay / Ga Đồng Hới trở về Hà Nội, Đà Nẵng, TP.HCM.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Action Card -->
+            <div class="mt-14 p-7 sm:p-9 rounded-3xl bg-[#EAE6DF] border border-[#E2E8F0] flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-[#00979C] block mb-1">Quảng Bình · 10–12/07/2027</span>
+                    <h3 class="font-display font-extrabold text-xl sm:text-2xl text-[#00686B]">Đăng ký tham dự Đại lễ 30 Năm cùng FAST</h3>
+                    <p class="text-sm text-[#2D3748] mt-1">Hạn chốt danh sách vé máy bay, phòng nghỉ 5 sao và áo đồng phục: <strong>20/06/2027</strong>.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 shrink-0">
+                    <button type="button" onclick="switchPageView('home')" class="px-5 py-3 rounded-2xl bg-[#FFFFFF] hover:bg-[#FAF9F6] text-[#00686B] border border-[#E2E8F0] text-sm font-bold transition-colors">
+                        ← Về trang chủ
+                    </button>
+                    <button type="button" onclick="openRegisterModal()" class="px-6 py-3 rounded-2xl btn-fast-orange text-sm font-bold shadow-md">
+                        Đăng ký ngay
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <!-- ==================== END VIEW B: DETAILED PROGRAM VIEW ==================== -->
+
+    <!-- ==================== G. FOOTER (VỊ TRÍ LOGO 4: GÓC TRÁI FOOTER) ==================== -->
+    <footer class="bg-[#00686B] text-white/90 py-14 border-t border-[#D4AF37]/40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-10 border-b border-white/15">
+                
+                <!-- VỊ TRÍ LOGO 4: Góc trái Footer trên nền xanh đậm #00686B -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    <div class="px-3 py-1.5 logo-white-gold-frame flex items-center justify-center">
+                        <svg viewBox="0 0 320 225" class="h-14 sm:h-16 w-auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo FAST 30 Năm">
+                            <defs>
+                                <linearGradient id="tealNum3" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#00B5BC"/>
+                                    <stop offset="55%" stop-color="#00898E"/>
+                                    <stop offset="100%" stop-color="#005F63"/>
+                                </linearGradient>
+                                <linearGradient id="goldRing3" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#F7E08B"/>
+                                    <stop offset="45%" stop-color="#D4AF37"/>
+                                    <stop offset="100%" stop-color="#A67C1E"/>
+                                </linearGradient>
+                            </defs>
+                            <text x="26" y="30" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="25" letter-spacing="4" fill="#00898E">FAST</text>
+                            <polygon points="68,18 73,27 63,27" fill="#E53E3E"/>
+                            <path d="M32,42 H126 L104,84 H114 C136,84 148,98 148,120 C148,148 126,166 90,166 C60,166 36,154 24,134 L48,118 C56,130 70,138 88,138 C106,138 118,129 118,116 C118,104 108,97 90,97 H72 L94,64 H32 Z" fill="url(#tealNum3)" stroke="#D4AF37" stroke-width="3.5" stroke-linejoin="round"/>
+                            <g transform="translate(216, 103)">
+                                <ellipse cx="0" cy="0" rx="64" ry="62" fill="url(#tealNum3)" stroke="#D4AF37" stroke-width="3.5"/>
+                                <ellipse cx="4" cy="2" rx="46" ry="45" fill="url(#goldRing3)"/>
+                                <ellipse cx="-5" cy="0" rx="34" ry="35" fill="#FFFFFF"/>
+                            </g>
+                            <path d="M44,183 C112,163 202,155 292,158 C296,158 297,163 292,164 C206,169 118,179 50,195 C42,197 38,185 44,183 Z" fill="#00979C" stroke="#D4AF37" stroke-width="2.2"/>
+                            <text x="288" y="185" text-anchor="end" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="18" letter-spacing="1" fill="#E53E3E">1997 - 2027</text>
+                            <text x="160" y="213" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="13.2" letter-spacing="0.4" fill="#007A7E">AM HIỂU NGHIỆP VỤ, TẬN TÂM ĐỒNG HÀNH</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="font-display font-bold text-white text-base block">Công ty Cổ phần Phần mềm Quản lý Doanh nghiệp (FAST)</span>
+                        <span class="text-xs text-amber-200 block mt-0.5">Đại lễ Kỷ niệm 30 Năm (1997 – 2027) · Sun Spa Resort, Quảng Bình</span>
+                        <span class="text-xs text-teal-100/85 block mt-1">Email BTC: fast30@fast.com.vn</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <button type="button" onclick="openLookupModal()" class="px-5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white text-sm font-semibold border border-white/20 transition-colors">
+                        Tra cứu
+                    </button>
+                    <button type="button" onclick="openRegisterModal()" class="px-5 py-2.5 rounded-2xl btn-fast-orange text-sm font-bold shadow-lg">
+                        Đăng ký tham dự
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-teal-100/80">
+                <p>© 2027 FAST Software Company. Bản quyền được bảo lưu.</p>
+                <div class="flex flex-wrap items-center gap-6">
+                    <a href="#chuong-trinh" onclick="switchPageView('program'); return false;" class="hover:text-white">Chương trình</a>
+                    <a href="#dia-diem" onclick="navigateToHomeSection('dia-diem'); return false;" class="hover:text-white">Địa điểm</a>
+                    <a href="#an-pham" onclick="navigateToHomeSection('an-pham'); return false;" class="hover:text-white">Ấn phẩm</a>
+                    <a href="#btc" onclick="navigateToHomeSection('btc'); return false;" class="hover:text-white">BTC</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== MODAL 1: ĐĂNG KÝ THAM DỰ ==================== -->
+    <div id="register-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-6 pb-20 text-center sm:p-0">
+            <div onclick="closeRegisterModal()" class="fixed inset-0 bg-[#004A4D]/75 backdrop-blur-sm"></div>
+
+            <div class="relative inline-block w-full max-w-2xl p-6 sm:p-8 my-8 overflow-hidden text-left align-middle bg-[#FFFFFF] shadow-2xl rounded-3xl z-10 border border-[#E2E8F0]">
+                <button type="button" onclick="closeRegisterModal()" class="absolute top-5 right-5 p-2 rounded-2xl text-[#64748B] hover:text-[#2D3748] hover:bg-[#FAF9F6] transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Form View -->
+                <div id="register-form-view">
+                    <span class="inline-block px-3.5 py-1 rounded-full bg-[#00979C]/10 text-[#00686B] text-xs font-bold mb-2">FAST 30 NĂM · QUẢNG BÌNH 10–12/07/2027</span>
+                    <h3 class="font-display font-extrabold text-2xl text-[#00686B] mb-1">Đăng Ký Tham Dự Sự Kiện</h3>
+                    <p class="text-sm text-[#64748B] mb-6">Điền thông tin để BTC sắp xếp đón tiếp, lưu trú và cấp mã Thẻ Đại Biểu.</p>
+
+                    <form id="registration-form" onsubmit="handleRegistrationSubmit(event)" class="space-y-4">
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-[#2D3748] uppercase tracking-wider mb-1.5">Họ và tên *</label>
+                                <input type="text" id="reg-name" required placeholder="Nguyễn Văn A" class="w-full px-4 py-3 rounded-2xl border border-[#E2E8F0] focus:border-[#00979C] focus:ring-2 focus:ring-[#00979C]/20 outline-none text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-[#2D3748] uppercase tracking-wider mb-1.5">Đơn vị / Công ty *</label>
+                                <input type="text" id="reg-company" required placeholder="VD: Công ty CP Tập đoàn ABC / FAST" class="w-full px-4 py-3 rounded-2xl border border-[#E2E8F0] focus:border-[#00979C] focus:ring-2 focus:ring-[#00979C]/20 outline-none text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-[#2D3748] uppercase tracking-wider mb-1.5">Nhóm đại biểu *</label>
+                                <select id="reg-group" required class="w-full px-4 py-3 rounded-2xl border border-[#E2E8F0] focus:border-[#00979C] focus:ring-2 focus:ring-[#00979C]/20 outline-none text-sm bg-white">
+                                    <option value="">-- Chọn nhóm đại biểu --</option>
+                                    <option value="Khách hàng doanh nghiệp">Khách hàng doanh nghiệp</option>
+                                    <option value="Đối tác công nghệ / Nhà cung cấp">Đối tác công nghệ / Nhà cung cấp</option>
+                                    <option value="CBNV FAST Hà Nội (FHN)">CBNV FAST Hà Nội (FHN)</option>
+                                    <option value="CBNV FAST Đà Nẵng (FĐN)">CBNV FAST Đà Nẵng (FĐN)</option>
+                                    <option value="CBNV FAST TP.HCM (FSG)">CBNV FAST TP.HCM (FSG)</option>
+                                    <option value="Cựu nhân viên FAST (Alumni)">Cựu nhân viên FAST (Alumni)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-[#2D3748] uppercase tracking-wider mb-1.5">Chức vụ</label>
+                                <input type="text" id="reg-role" placeholder="VD: Giám đốc / Kế toán trưởng / PM" class="w-full px-4 py-3 rounded-2xl border border-[#E2E8F0] focus:border-[#00979C] focus:ring-2 focus:ring-[#00979C]/20 outline-none text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-[#2D3748] uppercase tracking-wider mb-1.5">Số điện thoại (Zalo) *</label>
+                                <input type="tel" id="reg-phone" required placeholder="0912345678" pattern="[0-9]{9,11}" class="w-full px-4 py-3 rounded-2xl border border-[#E2E8F0] focus:border-[#00979C] focus:ring-2 focus:ring-[#00979C]/20 outline-none text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-[#2D3748] uppercase tracking-wider mb-1.5">Email *</label>
+                                <input type="email" id="reg-email" required placeholder="tenban@doanhnghiep.vn" class="w-full px-4 py-3 rounded-2xl border border-[#E2E8F0] focus:border-[#00979C] focus:ring-2 focus:ring-[#00979C]/20 outline-none text-sm">
+                            </div>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-[#2D3748] uppercase tracking-wider mb-1.5">Phương án di chuyển *</label>
+                                <select id="reg-travel" required class="w-full px-4 py-3 rounded-2xl border border-[#E2E8F0] focus:border-[#00979C] focus:ring-2 focus:ring-[#00979C]/20 outline-none text-sm bg-white">
+                                    <option value="Đi cùng đoàn FAST">Đi cùng đoàn FAST</option>
+                                    <option value="Bay đến Đồng Hới (VDH)">Bay đến Đồng Hới (VDH)</option>
+                                    <option value="Tự túc phương tiện">Tự túc phương tiện</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-[#2D3748] uppercase tracking-wider mb-1.5">Đăng ký hoạt động *</label>
+                                <select id="reg-activity" required class="w-full px-4 py-3 rounded-2xl border border-[#E2E8F0] focus:border-[#00979C] focus:ring-2 focus:ring-[#00979C]/20 outline-none text-sm bg-white">
+                                    <option value="Gala Dinner & Pickleball 30 Năm">Gala Dinner & Pickleball 30 Năm</option>
+                                    <option value="Gala Dinner & Team Building Bãi Biển">Gala Dinner & Team Building Bãi Biển</option>
+                                    <option value="Tham dự trọn gói tất cả hoạt động">Tham dự trọn gói tất cả hoạt động</option>
+                                    <option value="Gala Dinner & Diễn đàn Công nghệ">Gala Dinner & Diễn đàn Công nghệ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 flex flex-col sm:flex-row items-center justify-end gap-3">
+                            <button type="button" onclick="closeRegisterModal()" class="w-full sm:w-auto px-5 py-3 rounded-2xl text-sm font-semibold text-[#64748B] hover:bg-[#FAF9F6] transition-colors">
+                                Hủy bỏ
+                            </button>
+                            <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-2xl text-sm font-bold btn-fast-orange shadow-lg">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                <span>Xác nhận đăng ký</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Registration Success View -->
+                <div id="register-success-view" class="hidden text-center py-4">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-[#00979C]/15 text-[#00979C] flex items-center justify-center mb-4">
+                        <i data-lucide="check" class="w-9 h-9"></i>
+                    </div>
+                    <h3 class="font-display font-extrabold text-2xl text-[#00686B] mb-2">Đăng Ký Thành Công!</h3>
+                    <p class="text-sm text-[#64748B] max-w-md mx-auto mb-6">
+                        Chào mừng <strong id="succ-name" class="text-[#2D3748]"></strong> đến với Đại lễ FAST 30 Năm tại Quảng Bình (10–12/07/2027). Mã đại biểu của bạn là:
+                    </p>
+
+                    <div class="max-w-sm mx-auto p-5 rounded-3xl fast-hero-gradient text-white mb-6 shadow-lg border border-[#D4AF37]">
+                        <span class="text-[11px] uppercase tracking-widest text-amber-200 font-bold block mb-1">Mã Đăng Ký Đại Biểu</span>
+                        <div class="flex items-center justify-center gap-3">
+                            <span id="succ-code" class="font-display font-extrabold text-3xl tracking-wider text-white">FAST30-0000</span>
+                            <button type="button" onclick="copyRegCode()" class="p-2 rounded-xl bg-white/15 hover:bg-white/25 text-white transition-colors" title="Sao chép mã">
+                                <i data-lucide="copy" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-white/90 mt-2">Lưu mã này để tra cứu thông tin tham dự</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-center gap-3">
+                        <button type="button" onclick="switchToLookupFromSuccess()" class="px-5 py-2.5 rounded-2xl bg-[#00979C]/10 text-[#00686B] hover:bg-[#00979C]/20 text-sm font-bold transition-colors">
+                            Xem thẻ đại biểu
+                        </button>
+                        <button type="button" onclick="closeRegisterModal()" class="px-6 py-2.5 rounded-2xl btn-fast-primary text-sm font-bold">
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 2: TRA CỨU ĐĂNG KÝ ==================== -->
+    <div id="lookup-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-6 pb-20 text-center sm:p-0">
+            <div onclick="closeLookupModal()" class="fixed inset-0 bg-[#004A4D]/75 backdrop-blur-sm"></div>
+
+            <div class="relative inline-block w-full max-w-lg p-6 sm:p-8 my-8 overflow-hidden text-left align-middle bg-[#FFFFFF] shadow-2xl rounded-3xl z-10 border border-[#E2E8F0]">
+                <button type="button" onclick="closeLookupModal()" class="absolute top-5 right-5 p-2 rounded-2xl text-[#64748B] hover:text-[#2D3748] hover:bg-[#FAF9F6] transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+
+                <div class="flex items-center gap-2 text-[#00979C] text-xs font-bold uppercase tracking-wider mb-1">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                    <span>Cổng Thông Tin Đại Biểu</span>
+                </div>
+                <h3 class="font-display font-extrabold text-2xl text-[#00686B] mb-2">Tra Cứu Đăng Ký Tham Dự</h3>
+                <p class="text-sm text-[#64748B] mb-5">Nhập <strong>Mã đăng ký</strong> (ví dụ: <code class="px-1.5 py-0.5 bg-[#FAF9F6] border border-[#E2E8F0] rounded text-[#00686B] font-bold">FAST30-8829</code>) hoặc <strong>Số điện thoại</strong>.</p>
+
+                <form onsubmit="handleLookupSubmit(event)" class="flex gap-2 mb-4">
+                    <input type="text" id="lookup-query" required placeholder="Nhập mã FAST30-XXXX hoặc SĐT..." class="flex-1 px-4 py-3 rounded-2xl border border-[#E2E8F0] focus:border-[#00979C] focus:ring-2 focus:ring-[#00979C]/20 outline-none text-sm font-medium">
+                    <button type="submit" class="px-5 py-3 rounded-2xl btn-fast-primary font-bold text-sm shrink-0">
+                        Tra cứu
+                    </button>
+                </form>
+
+                <!-- Sample Test Chips -->
+                <div class="flex flex-wrap items-center gap-2 text-xs text-[#64748B] mb-6">
+                    <span>Thử nhanh mã mẫu:</span>
+                    <button type="button" onclick="quickLookup('FAST30-8829')" class="px-2.5 py-1 rounded-xl bg-[#FAF9F6] border border-[#E2E8F0] hover:border-[#00979C] text-[#00686B] font-semibold transition-colors">FAST30-8829 (Khách hàng)</button>
+                    <button type="button" onclick="quickLookup('FAST30-2027')" class="px-2.5 py-1 rounded-xl bg-[#FAF9F6] border border-[#E2E8F0] hover:border-[#00979C] text-[#00686B] font-semibold transition-colors">FAST30-2027 (Đối tác)</button>
+                    <button type="button" onclick="quickLookup('FAST30-1997')" class="px-2.5 py-1 rounded-xl bg-[#FAF9F6] border border-[#E2E8F0] hover:border-[#00979C] text-[#00686B] font-semibold transition-colors">FAST30-1997 (CBNV FAST)</button>
+                </div>
+
+                <!-- Lookup Result Container -->
+                <div id="lookup-result" class="hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 3: CHI TIẾT ẤN PHẨM ==================== -->
+    <div id="mockup-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-6 pb-20 text-center sm:p-0">
+            <div onclick="closeMockupModal()" class="fixed inset-0 bg-[#004A4D]/75 backdrop-blur-sm"></div>
+            <div class="relative inline-block w-full max-w-lg p-6 sm:p-8 my-8 overflow-hidden text-left align-middle bg-[#FFFFFF] shadow-2xl rounded-3xl z-10 border border-[#E2E8F0]">
+                <button type="button" onclick="closeMockupModal()" class="absolute top-5 right-5 p-2 rounded-2xl text-[#64748B] hover:text-[#2D3748] hover:bg-[#FAF9F6]">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <span class="inline-block px-3.5 py-1 rounded-full bg-[#00979C]/10 text-[#00686B] text-xs font-bold mb-2">BỘ NHẬN DIỆN FAST 30 NĂM</span>
+                <h3 id="mockup-modal-title" class="font-display font-extrabold text-2xl text-[#00686B] mb-2">Chi tiết ấn phẩm</h3>
+                <p id="mockup-modal-desc" class="text-sm text-[#64748B] leading-relaxed mb-5"></p>
+                <div id="mockup-modal-specs" class="p-4 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] space-y-2 text-xs text-[#2D3748] mb-6"></div>
+                <div class="flex justify-end">
+                    <button type="button" onclick="closeMockupModal()" class="px-6 py-2.5 rounded-2xl btn-fast-primary text-sm font-bold">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div id="toast-box" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-[#00686B] text-white shadow-2xl border border-[#D4AF37] text-sm font-medium">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-[#FDE047] shrink-0"></i>
+            <span id="toast-message">Thông báo</span>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        lucide.createIcons();
+
+        // 1. LIVE COUNTDOWN TO 2027-07-10T08:00:00+07:00
+        const eventTargetDate = new Date('2027-07-10T08:00:00+07:00');
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = eventTargetDate.getTime() - now;
+            if (distance <= 0) return;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
+            document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('cd-minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('cd-seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // 2. MOBILE MENU
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+        function closeMobileMenu() {
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+
+        // 3. DUAL-VIEW SWITCHER (HOME VIEW <-> FULL-SCREEN DETAILED PROGRAM VIEW)
+        let currentPageView = 'home';
+        let currentDetailedDay = 1;
+
+        function switchPageView(view) {
+            currentPageView = view;
+            const homeView = document.getElementById('home-view');
+            const programView = document.getElementById('program-view');
+            const navProgramLink = document.getElementById('nav-link-program');
+
+            if (view === 'program') {
+                homeView.classList.add('hidden');
+                programView.classList.remove('hidden');
+                if (navProgramLink) navProgramLink.classList.add('nav-link-active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                programView.classList.add('hidden');
+                homeView.classList.remove('hidden');
+                if (navProgramLink) navProgramLink.classList.remove('nav-link-active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            lucide.createIcons();
+        }
+
+        function navigateToHomeSection(sectionId) {
+            if (currentPageView !== 'home') {
+                document.getElementById('program-view').classList.add('hidden');
+                document.getElementById('home-view').classList.remove('hidden');
+                const navProgramLink = document.getElementById('nav-link-program');
+                if (navProgramLink) navProgramLink.classList.remove('nav-link-active');
+                currentPageView = 'home';
+            }
+            setTimeout(() => {
+                const target = document.getElementById(sectionId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 40);
+        }
+
+        function selectDetailedDay(dayNum) {
+            currentDetailedDay = dayNum;
+            const showAllCheckbox = document.getElementById('dp-show-all-days');
+            if (showAllCheckbox && showAllCheckbox.checked) {
+                showAllCheckbox.checked = false;
+            }
+
+            document.querySelectorAll('.dp-day-tab').forEach(tab => {
+                tab.classList.remove('border-[#00686B]');
+                tab.classList.add('border-transparent');
+                const titleSpan = tab.querySelector('span:first-child');
+                if (titleSpan) {
+                    titleSpan.classList.remove('text-[#00686B]');
+                    titleSpan.classList.add('text-[#2D3748]');
+                }
+            });
+
+            const activeTab = document.getElementById(`dp-tab-${dayNum}`);
+            if (activeTab) {
+                activeTab.classList.remove('border-transparent');
+                activeTab.classList.add('border-[#00686B]');
+                const titleSpan = activeTab.querySelector('span:first-child');
+                if (titleSpan) {
+                    titleSpan.classList.remove('text-[#2D3748]');
+                    titleSpan.classList.add('text-[#00686B]');
                 }
             }
-        });
-    });
 
-    let standingsArr = Object.keys(stats).map(k => {
-        const item = stats[k];
-        return {
-            key: k,
-            name: item.name,
-            won: item.won,
-            lost: item.lost,
-            diff: item.ptsFor - item.ptsAgainst,
-            totalPts: item.ptsFor
+            document.querySelectorAll('.dp-day-section').forEach(sec => sec.classList.add('hidden'));
+            const activeSection = document.getElementById(`dp-day-panel-${dayNum}`);
+            if (activeSection) activeSection.classList.remove('hidden');
+        }
+
+        function toggleShowAllDetailedDays(checked) {
+            if (checked) {
+                document.querySelectorAll('.dp-day-section').forEach(sec => sec.classList.remove('hidden'));
+            } else {
+                selectDetailedDay(currentDetailedDay);
+            }
+        }
+
+        function filterDetailedCategory(cat) {
+            document.querySelectorAll('.dp-cat-btn').forEach(btn => {
+                if (btn.getAttribute('data-cat') === cat) {
+                    btn.classList.remove('bg-[#FFFFFF]', 'text-[#2D3748]', 'border', 'border-[#E2E8F0]');
+                    btn.classList.add('bg-[#00686B]', 'text-white');
+                } else {
+                    btn.classList.remove('bg-[#00686B]', 'text-white');
+                    btn.classList.add('bg-[#FFFFFF]', 'text-[#2D3748]', 'border', 'border-[#E2E8F0]');
+                }
+            });
+
+            document.querySelectorAll('.dp-item').forEach(item => {
+                const itemCats = item.getAttribute('data-category') || '';
+                if (cat === 'all' || itemCats.includes(cat)) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+
+        // 4. TOAST & CLIPBOARD
+        let toastTimeout;
+        function showToast(msg) {
+            const box = document.getElementById('toast-box');
+            document.getElementById('toast-message').textContent = msg;
+            box.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                box.classList.add('translate-y-20', 'opacity-0');
+            }, 3400);
+        }
+
+        function copyTextFallback(text) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+        }
+
+        function copyPhone(phone, label) {
+            copyTextFallback(phone);
+            showToast(`Đã sao chép SĐT/Zalo ${label}: ${phone}`);
+        }
+
+        // 5. DOWNLOAD .ICS FILE (JULY 10-12, 2027)
+        function downloadICS() {
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//FAST Software//FAST 30 Nam//VI',
+                'BEGIN:VEVENT',
+                'UID:fast30-quangbinh-2027@fast.com.vn',
+                'DTSTAMP:20261116T080000Z',
+                'DTSTART:20270710T010000Z',
+                'DTEND:20270712T100000Z',
+                'SUMMARY:FAST 30 Năm (1997–2027) — Vững Nền Tảng, Vươn Tầm Cao',
+                'DESCRIPTION:Đại lễ kỷ niệm 30 năm thành lập Công ty Phần mềm FAST tại Sun Spa Resort, Bán đảo Bảo Ninh, Đồng Hới, Quảng Bình (10–12/07/2027).',
+                'LOCATION:Sun Spa Resort, Bán đảo Bảo Ninh, Đồng Hới, Quảng Bình',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'FAST-30-Nam-Quang-Binh-2027.ics');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('Đã tải lịch sự kiện FAST 30 Năm (10–12/07/2027) về thiết bị!');
+        }
+
+        // 6. MOCKUP MODAL
+        const mockupDetails = {
+            polo: {
+                title: 'Áo Polo Đồng Phục FAST 30 Năm',
+                desc: 'Thiết kế riêng cho đại lễ 30 năm với tông xanh Teal chủ đạo của FAST (#00979C), chất liệu vải cá sấu thoáng mát phù hợp khí hậu biển Quảng Bình.',
+                specs: [
+                    '<strong>Vị trí Logo:</strong> Logo FAST 30 (1997–2027) nền trắng viền vàng thêu vi tính tại ngực trái.',
+                    '<strong>Sau lưng:</strong> In slogan "Am hiểu nghiệp vụ, Tận tâm đồng hành".',
+                    '<strong>Kích cỡ:</strong> Đầy đủ từ S, M, L, XL, 2XL đến 3XL.'
+                ]
+            },
+            badge: {
+                title: 'Thẻ Đại Biểu & Dây Đeo QR',
+                desc: 'Mỗi đại biểu được cấp thẻ định danh cá nhân tích hợp mã QR giúp check-in nhanh và kết nối danh thiếp điện tử.',
+                specs: [
+                    '<strong>Chất liệu:</strong> Thẻ nhựa PVC nhám cao cấp kích thước 9cm x 12cm.',
+                    '<strong>Dây đeo:</strong> Dây lụa satin xanh Teal in lặp logo FAST 30 Năm.'
+                ]
+            },
+            stage: {
+                title: 'Backdrop Sân Khấu Chính Gala Dinner',
+                desc: 'Sân khấu chính tại Grand Ballroom Sun Spa Resort tôn vinh hành trình 30 năm vững nền công nghệ.',
+                specs: [
+                    '<strong>Màn hình LED:</strong> Panoramic 14m x 5m độ phân giải cao.',
+                    '<strong>Thời gian:</strong> 18:00 Chủ Nhật, ngày 11/07/2027.'
+                ]
+            },
+            flag: {
+                title: 'Banner & Cờ Phướn Đón Khách',
+                desc: 'Bố trí dọc trục đường dẫn vào Sun Spa Resort, sảnh lễ tân và khu vực bãi biển Bảo Ninh.',
+                specs: [
+                    '<strong>Quy cách:</strong> Cờ phướn dọc 0.8m x 2.2m in 2 mặt chống gió biển.',
+                    '<strong>Nhận diện:</strong> Logo FAST 30 nền trắng viền vàng nổi bật trên nền xanh Teal.'
+                ]
+            }
         };
-    });
 
-    standingsArr.sort((a, b) => b.won - a.won || b.diff - a.diff || b.totalPts - a.totalPts);
+        function openMockupModal(key) {
+            const info = mockupDetails[key];
+            if (!info) return;
+            document.getElementById('mockup-modal-title').textContent = info.title;
+            document.getElementById('mockup-modal-desc').textContent = info.desc;
+            document.getElementById('mockup-modal-specs').innerHTML = info.specs.map(s => `<p>• ${s}</p>`).join('');
+            document.getElementById('mockup-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
 
-    tbody.innerHTML = '';
-    standingsArr.forEach((st, idx) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><b>${idx === 0 ? '🥇 1' : idx === 1 ? '🥈 2' : '🥉 3'}</b></td>
-            <td style="text-align:left;"><b>${st.name}</b></td>
-            <td style="color:#22c55e; font-weight:bold;">${st.won}</td>
-            <td style="color:#ef4444;">${st.lost}</td>
-            <td style="font-weight:bold; color:${st.diff >= 0 ? '#22c55e' : '#ef4444'}">${st.diff > 0 ? '+' + st.diff : st.diff}</td>
-            <td style="font-weight:bold;">${st.totalPts}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
+        function closeMockupModal() {
+            document.getElementById('mockup-modal').classList.add('hidden');
+        }
 
-window.onload = () => {
-    initDefaultPairs();
-    initDefaultMatches();
-    renderTeamPairsUI();
-    renderScheduleAndCourts();
-    updateStandings();
-};
-</script>
+        // 7. LOCALSTORAGE REGISTRATION & LOOKUP
+        const STORAGE_KEY = 'fast30_quangbinh_2027_clean';
 
+        const defaultRegistrations = [
+            {
+                code: 'FAST30-8829',
+                name: 'Nguyễn Hoàng Minh',
+                company: 'Công ty CP Tập đoàn Công nghiệp Việt',
+                group: 'Khách hàng doanh nghiệp',
+                role: 'Giám đốc Tài chính (CFO)',
+                phone: '0912888999',
+                email: 'minh.nh@vietecom.vn',
+                travel: 'Bay đến Đồng Hới (VDH)',
+                activity: 'Gala Dinner & Diễn đàn Công nghệ'
+            },
+            {
+                code: 'FAST30-2027',
+                name: 'Phạm Quang Huy',
+                company: 'Ngân hàng Số & Hạ tầng Cloud Việt',
+                group: 'Đối tác công nghệ / Nhà cung cấp',
+                role: 'Giám đốc Phát triển Đối tác',
+                phone: '0988202730',
+                email: 'huy.pq@cloudbank.vn',
+                travel: 'Bay đến Đồng Hới (VDH)',
+                activity: 'Gala Dinner & Pickleball 30 Năm'
+            },
+            {
+                code: 'FAST30-1997',
+                name: 'Trần Thị Thu Hà',
+                company: 'Công ty Phần mềm FAST',
+                group: 'CBNV FAST TP.HCM (FSG)',
+                role: 'Trưởng phòng Tư vấn Giải pháp',
+                phone: '0909199730',
+                email: 'hattt@fast.com.vn',
+                travel: 'Đi cùng đoàn FAST',
+                activity: 'Tham dự trọn gói tất cả hoạt động'
+            }
+        ];
+
+        function getRegistrations() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultRegistrations));
+                    return defaultRegistrations;
+                }
+                return JSON.parse(raw);
+            } catch (e) {
+                return defaultRegistrations;
+            }
+        }
+
+        function saveRegistration(newRecord) {
+            try {
+                const list = getRegistrations();
+                list.unshift(newRecord);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        let lastCreatedCode = '';
+
+        function openRegisterModal() {
+            document.getElementById('register-form-view').classList.remove('hidden');
+            document.getElementById('register-success-view').classList.add('hidden');
+            document.getElementById('register-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('register-modal').classList.add('hidden');
+        }
+
+        function handleRegistrationSubmit(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('reg-name').value.trim();
+            const company = document.getElementById('reg-company').value.trim();
+            const group = document.getElementById('reg-group').value;
+            const role = document.getElementById('reg-role').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const travel = document.getElementById('reg-travel').value;
+            const activity = document.getElementById('reg-activity').value;
+
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            const regCode = `FAST30-${randomNum}`;
+            lastCreatedCode = regCode;
+
+            const record = { code: regCode, name, company, group, role, phone, email, travel, activity };
+            saveRegistration(record);
+
+            document.getElementById('succ-name').textContent = name;
+            document.getElementById('succ-code').textContent = regCode;
+            document.getElementById('register-form-view').classList.add('hidden');
+            document.getElementById('register-success-view').classList.remove('hidden');
+            document.getElementById('registration-form').reset();
+            lucide.createIcons();
+            showToast(`Đăng ký thành công! Mã đại biểu: ${regCode}`);
+        }
+
+        function copyRegCode() {
+            if (lastCreatedCode) {
+                copyTextFallback(lastCreatedCode);
+                showToast(`Đã sao chép mã: ${lastCreatedCode}`);
+            }
+        }
+
+        function switchToLookupFromSuccess() {
+            closeRegisterModal();
+            openLookupModal();
+            if (lastCreatedCode) {
+                quickLookup(lastCreatedCode);
+            }
+        }
+
+        function openLookupModal() {
+            document.getElementById('lookup-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeLookupModal() {
+            document.getElementById('lookup-modal').classList.add('hidden');
+        }
+
+        function quickLookup(code) {
+            document.getElementById('lookup-query').value = code;
+            performLookup(code);
+        }
+
+        function handleLookupSubmit(event) {
+            event.preventDefault();
+            performLookup(document.getElementById('lookup-query').value.trim());
+        }
+
+        function performLookup(query) {
+            const resultDiv = document.getElementById('lookup-result');
+            const cleanQuery = query.toUpperCase().replace(/\s+/g, '');
+            const list = getRegistrations();
+
+            const found = list.find(item =>
+                item.code.toUpperCase() === cleanQuery ||
+                item.phone.replace(/\s+/g, '') === cleanQuery
+            );
+
+            resultDiv.classList.remove('hidden');
+
+            if (found) {
+                resultDiv.innerHTML = `
+                    <div class="p-5 rounded-3xl fast-hero-gradient text-white shadow-lg border border-[#D4AF37]">
+                        <div class="flex items-start justify-between gap-2 pb-3 mb-3 border-b border-white/20">
+                            <div>
+                                <span class="inline-block px-2.5 py-0.5 rounded-lg bg-white/15 text-amber-200 text-[10px] font-bold uppercase tracking-wider mb-1">${escapeHTML(found.group)}</span>
+                                <h4 class="font-display font-extrabold text-lg text-white">${escapeHTML(found.name)}</h4>
+                                <p class="text-xs text-white/90">${escapeHTML(found.role || '')}${found.company ? ' · ' + escapeHTML(found.company) : ''}</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-xl bg-[#FF6B35] text-white font-mono font-bold text-xs shadow shrink-0">
+                                ${escapeHTML(found.code)}
+                            </span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between">
+                                <span class="text-white/85">Phương án di chuyển:</span>
+                                <span class="font-bold text-amber-200">${escapeHTML(found.travel)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-white/85">Hoạt động đăng ký:</span>
+                                <span class="font-semibold text-white">${escapeHTML(found.activity)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-white/85">Liên hệ:</span>
+                                <span class="font-semibold text-white">${escapeHTML(found.phone)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="p-5 rounded-2xl bg-[#FAF9F6] border border-[#E2E8F0] text-center">
+                        <p class="font-bold text-[#2D3748] text-sm mb-1">Không tìm thấy thông tin đăng ký</p>
+                        <p class="text-xs text-[#64748B] mb-3">Vui lòng kiểm tra lại Mã đăng ký (FAST30-XXXX) hoặc Số điện thoại.</p>
+                        <button type="button" onclick="closeLookupModal(); openRegisterModal();" class="px-4 py-2 rounded-xl btn-fast-orange text-xs font-bold">
+                            Đăng ký ngay
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHTML(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+    </script>
 </body>
 </html>
