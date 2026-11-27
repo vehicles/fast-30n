@@ -20,35 +20,42 @@ if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64'){lucide.createIcons();
         <div class="relative rounded-[32px] overflow-hidden border-2 border-[#E5C158] shadow-[0_24px_65px_rgba(0,0,0,0.6)] text-white"
              style="background: radial-gradient(circle at 90% 12%, rgba(253, 224, 71, 0.24), transparent 42%), radial-gradient(circle at 12% 88%, rgba(255, 107, 53, 0.22), transparent 45%), linear-gradient(145deg, #003E41 0%, #00686B 55%, #00898E 100%);">
 
-            <!-- Dải đầu thẻ / móc đeo -->
-            <div class="px-6 sm:px-8 py-4 bg-[#00282A]/80 border-b border-[#E5C158]/35 flex items-center justify-between gap-3 pr-14">
-                <div class="flex items-center gap-2.5">
-                    <span class="w-3 h-3 rounded-full bg-[#FDE047] shadow-[0_0_10px_#FDE047]"></span>
-                    <span class="text-xs sm:text-sm font-extrabold uppercase tracking-[0.14em] text-[#FDE047]">
-                        FAST 30 NĂM · 1997–2027
+            <!-- Dải đầu thẻ: giữ mã đại biểu luôn trên 1 hàng trên điện thoại -->
+            <div class="px-4 sm:px-8 py-3.5 sm:py-4 bg-[#00282A]/80 border-b border-[#E5C158]/35 flex items-center justify-between gap-2 pr-12 sm:pr-14">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#FDE047] shadow-[0_0_10px_#FDE047] shrink-0"></span>
+                    <span class="text-[11px] sm:text-sm font-extrabold uppercase tracking-wider sm:tracking-[0.14em] text-[#FDE047] truncate">
+                        FAST 30 NĂM<br>1997–2027
                     </span>
                 </div>
-                <span class="px-3.5 py-1 rounded-full bg-[#FF6B35] text-white font-mono text-xs sm:text-sm font-extrabold shadow">
+                <span class="px-3 py-1 rounded-full bg-[#FF6B35] text-white font-mono text-xs sm:text-sm font-extrabold shadow whitespace-nowrap shrink-0">
                     ${escapeHTML(a.code||'\x46\x41\x53\x54\x33\x30\x2d\x58\x58\x58\x58')}
                 </span>
             </div>
 
             <!-- Thân thẻ lớn -->
-            <div class="p-6 sm:p-8 space-y-5">
-                <div class="flex flex-col sm:flex-row items-center sm:items-center gap-5 sm:gap-6">
+            <div class="p-5 sm:p-8 space-y-5">
+                <div class="flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
                     <div class="relative shrink-0">
                         <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl p-1.5 bg-gradient-to-br from-[#FDE047] via-amber-300 to-[#FF6B35] shadow-xl">
                             <img src="${c}" alt="${escapeHTML(a.name||'\x43\x42\x4e\x56')}" class="w-full h-full object-cover rounded-[20px] bg-white">
                         </div>
                     </div>
 
-                    <div class="min-w-0 flex-1 text-center sm:text-left space-y-1.5">
+                    <div class="min-w-0 flex-1 w-full text-center sm:text-left space-y-1.5">
                         <span class="inline-block px-3 py-1 rounded-xl bg-white/15 border border-[#FDE047]/40 text-[11px] font-extrabold uppercase tracking-wider text-[#FDE047]">
                             CHI NHÁNH ${escapeHTML(d)}
                         </span>
-                        <h4 class="font-display font-extrabold text-2xl sm:text-3xl text-white leading-snug break-words">
-                            ${escapeHTML(a.name||'')}
-                        </h4>
+
+                        <!-- Tên đại biểu ngang hàng với nhãn ĐẠI BIỂU -->
+                        <div class="flex items-center justify-center sm:justify-between gap-2.5 flex-wrap">
+
+                            <h4 class="font-display font-extrabold text-2xl sm:text-3xl text-white leading-snug break-words">
+                                ${escapeHTML(a.name||'')}
+                            </h4>
+                            
+                        </div>
+
                         <p class="text-sm text-teal-100 font-semibold">
                             ${escapeHTML(a.role||a.group||'\x43\x42\x4e\x56\x20\x46\x41\x53\x54')}
                         </p>
@@ -73,9 +80,8 @@ if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64'){lucide.createIcons();
                 ${f}
 
                 <!-- Chân thẻ -->
-                <div class="pt-3 border-t border-white/15 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-amber-100/95 italic">
-                    <span>“Am hiểu nghiệp vụ, Tận tâm đồng hành”</span>
-                    <span class="not-italic font-extrabold text-xs uppercase tracking-wider text-[#FDE047]">Đại biểu</span>
+                <div class="pt-3 border-t border-white/15 text-center text-xs sm:text-sm text-amber-100/95 italic">
+                    “Am hiểu nghiệp vụ, Tận tâm đồng hành”
                 </div>
             </div>
         </div>
