@@ -1,1018 +1,158 @@
-if (typeof lucide !== 'undefined') {
-    lucide.createIcons();
-}
-
-// ==================== 1. CẤU HÌNH FIREBASE ====================
-const firebaseConfig = {
-    apiKey: "AIzaSyBpEqXWixeZM0ecwr_yL13t9SGfseRtgEY",
-    authDomain: "pickleball-tct70.firebaseapp.com",
-    databaseURL: "https://pickleball-tct70-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "pickleball-tct70",
-    storageBucket: "pickleball-tct70.firebasestorage.app",
-    messagingSenderId: "1015003889551",
-    appId: "1:1015003889551:web:609af4b91d27eb7a8a55fa",
-    measurementId: "G-CG8E9J8S2W"
-};
-
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const db = firebase.database();
-
-// ==================== 2. BIẾN TRẠNG THÁI TOÀN CỤC ====================
-let allDelegatesData = [];
-let currentFilter = 'all';
-let currentSearchQuery = '';
-let isAdminLoggedIn = false;
-let currentPageView = 'home';
-let currentDetailedDay = 1;
-let lastCreatedCode = '';
-let pendingAvatarData = {
-    'p-reg': '',
-    'edit': ''
-};
-
-// Trạng thái Tab Thể thao
-const SPORTS_LIST = ['Pickleball', 'Bóng đá', 'Cầu lông', 'Bơi lội', 'Chạy bộ'];
-let currentSportTab = 'Pickleball';
-let currentSportBranch = 'ALL';
-let currentSportSearch = '';
-
-// Trạng thái Lucky Draw
-let currentDrawGroup = 'all';
-let isDrawing = false;
-let winningHistory = [];
-const prizeConfig = {
-    'Giải Bảy': { max: 7 },
-    'Giải Sáu': { max: 6 },
-    'Giải Năm': { max: 5 },
-    'Giải Tư': { max: 4 },
-    'Giải Ba': { max: 3 },
-    'Giải Nhì': { max: 2 },
-    'Giải Nhất': { max: 1 }
-};
-let currentPrize = 'Giải Bảy';
-let prizeCounts = {
-    'Giải Bảy': 0,
-    'Giải Sáu': 0,
-    'Giải Năm': 0,
-    'Giải Tư': 0,
-    'Giải Ba': 0,
-    'Giải Nhì': 0,
-    'Giải Nhất': 0
-};
-
-// Trạng thái Clip Chào Mừng
-let reelBranchFilter = 'ALL';
-let reelList = [];
-let reelIndex = 0;
-let reelPlaying = false;
-let reelIntervalId = null;
-let reelProgressRafId = null;
-let reelSlideStartTime = 0;
-let reelDurationMs = 3500;
-
-// ==================== 3. LẮNG NGHE REAL-TIME FIREBASE ====================
-db.ref('delegates').on('value', (snapshot) => {
-    const data = snapshot.val();
-    allDelegatesData = [];
-
-    if (data) {
-        Object.keys(data).forEach(key => {
-            allDelegatesData.push({ id: key, firebaseKey: key, ...data[key] });
-        });
-        allDelegatesData.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-    }
-
-    updateDelegatesUI();
-    if (currentPageView === 'sports') {
-        renderSportsView();
-    }
-    if (reelPlaying) {
-        renderCurrentReelSlide(false);
-    }
-}, (error) => {
-    console.error("Lỗi đọc dữ liệu từ Firebase:", error);
-});
-
-// ==================== 4. ĐIỀU HƯỚNG VIEW & MENU ====================
-function switchPageView(view) {
-    currentPageView = view;
-
-    const views = {
-        home: document.getElementById('home-view'),
-        program: document.getElementById('program-view'),
-        register: document.getElementById('register-view'),
-        sports: document.getElementById('sports-view'),
-        luckydraw: document.getElementById('luckydraw-view')
-    };
-
-    Object.keys(views).forEach(key => {
-        if (!views[key]) return;
-        if (key === view) {
-            views[key].classList.remove('hidden');
-        } else {
-            views[key].classList.add('hidden');
-        }
-    });
-
-    const navMap = {
-        program: document.getElementById('nav-link-program'),
-        sports: document.getElementById('nav-link-sports'),
-        luckydraw: document.getElementById('nav-link-luckydraw')
-    };
-    Object.keys(navMap).forEach(k => {
-        if (navMap[k]) {
-            if (k === view) navMap[k].classList.add('nav-link-active');
-            else navMap[k].classList.remove('nav-link-active');
-        }
-    });
-
-    if (view === 'register') {
-        resetPageRegisterForm();
-    } else if (view === 'sports') {
-        selectSportTab(currentSportTab);
-    }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
-function navigateToHomeSection(sectionId) {
-    if (currentPageView !== 'home') {
-        switchPageView('home');
-    }
-    setTimeout(() => {
-        const targetElement = document.getElementById(sectionId);
-        if (targetElement) {
-            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }, 60);
-}
-
-let isMobileMenuOpen = false;
-function toggleMobileMenu() {
-    isMobileMenuOpen = !isMobileMenuOpen;
-    const mobileMenu = document.getElementById('mobile-menu');
-    const menuIcon = document.getElementById('menu-toggle-icon');
-
-    if (isMobileMenuOpen) {
-        if (mobileMenu) mobileMenu.classList.remove('hidden');
-        if (menuIcon) menuIcon.classList.add('rotate-90');
-    } else {
-        closeMobileMenu();
-    }
-}
-
-function closeMobileMenu() {
-    isMobileMenuOpen = false;
-    const mobileMenu = document.getElementById('mobile-menu');
-    const menuIcon = document.getElementById('menu-toggle-icon');
-    if (mobileMenu) mobileMenu.classList.add('hidden');
-    if (menuIcon) menuIcon.classList.remove('rotate-90');
-}
-
-// ==================== 5. UPLOAD ẢNH CÁ NHÂN & THẺ ĐẠI BIỂU ====================
-function compressAvatarToSquareDataUrl(file, maxSize = 480, quality = 0.82) {
-    return new Promise((resolve, reject) => {
-        if (!file || !file.type.startsWith('image/')) {
-            reject(new Error("File không phải định dạng ảnh hợp lệ."));
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const img = new Image();
-            img.onload = () => {
-                const side = Math.min(img.width, img.height);
-                const sx = Math.floor((img.width - side) / 2);
-                const sy = Math.floor((img.height - side) / 2);
-
-                const canvas = document.createElement('canvas');
-                canvas.width = maxSize;
-                canvas.height = maxSize;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, sx, sy, side, side, 0, 0, maxSize, maxSize);
-
-                resolve(canvas.toDataURL('image/jpeg', quality));
-            };
-            img.onerror = () => reject(new Error("Không thể đọc ảnh đã chọn."));
-            img.src = ev.target.result;
-        };
-        reader.onerror = () => reject(new Error("Lỗi khi tải file ảnh."));
-        reader.readAsDataURL(file);
-    });
-}
-
-function setAvatarPreviewUI(prefix, dataUrl) {
-    pendingAvatarData[prefix] = dataUrl || '';
-    const imgEl = document.getElementById(`${prefix}-avatar-preview`);
-    const phEl = document.getElementById(`${prefix}-avatar-placeholder`);
-    const clearBtn = document.getElementById(`${prefix}-avatar-clear`);
-
-    if (dataUrl) {
-        if (imgEl) {
-            imgEl.src = dataUrl;
-            imgEl.classList.remove('hidden');
-        }
-        if (phEl) phEl.classList.add('hidden');
-        if (clearBtn) clearBtn.classList.remove('hidden');
-    } else {
-        if (imgEl) {
-            imgEl.src = '';
-            imgEl.classList.add('hidden');
-        }
-        if (phEl) phEl.classList.remove('hidden');
-        if (clearBtn) clearBtn.classList.add('hidden');
-    }
-}
-
-function handleAvatarFileChange(event, prefix) {
-    const file = event.target?.files?.[0];
-    if (!file) return;
-
-    compressAvatarToSquareDataUrl(file, 480, 0.82)
-        .then((dataUrl) => {
-            setAvatarPreviewUI(prefix, dataUrl);
-            showToast("Đã gắn ảnh chân dung cho thẻ đại biểu!");
-        })
-        .catch((err) => {
-            alert(err.message || "Không thể xử lý ảnh.");
-            event.target.value = '';
-        });
-}
-
-function clearAvatarSelection(prefix) {
-    const fileInput = document.getElementById(`${prefix}-avatar-file`);
-    if (fileInput) fileInput.value = '';
-    setAvatarPreviewUI(prefix, '');
-}
-
-function getDelegateAvatarSrc(item) {
-    if (item && typeof item.avatar === 'string' && item.avatar.startsWith('data:image/')) {
-        return item.avatar;
-    }
-    const initials = encodeURIComponent((item?.name || 'FAST 30').trim().slice(0, 2).toUpperCase());
-    return `https://ui-avatars.com/api/?name=${initials}&background=00686B&color=FDE047&size=256&bold=true`;
-}
-
-function buildDelegateBadgeCardHtml(item) {
-    const avatarSrc = getDelegateAvatarSrc(item);
-    const branch = getMemberBranch(item);
-    const sportsList = Array.isArray(item.sports) && item.sports.length ? item.sports.join(', ') : 'Chưa chọn';
-    const rels = getRelativesArray(item);
-
-    return `
+/***************************************************************************/
+/*                                                                         */
+/*  This obfuscated code was created by Javascript Obfuscator Free Version.*/
+/*  Paid plans remove this notice and add stronger protection:             */
+/*  https://javascriptobfuscator.com/?src=freebanner-local                 */
+/*                                                                         */
+/***************************************************************************/
+if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64'){lucide.createIcons();}const firebaseConfig={apiKey:"\x41\x49\x7a\x61\x53\x79\x42\x70\x45\x71\x58\x57\x69\x78\x65\x5a\x4d\x30\x65\x63\x77\x72\x5f\x79\x4c\x31\x33\x74\x39\x53\x47\x66\x73\x65\x52\x74\x67\x45\x59",authDomain:"\x70\x69\x63\x6b\x6c\x65\x62\x61\x6c\x6c\x2d\x74\x63\x74\x37\x30\x2e\x66\x69\x72\x65\x62\x61\x73\x65\x61\x70\x70\x2e\x63\x6f\x6d",databaseURL:"\x68\x74\x74\x70\x73\x3a\x2f\x2f\x70\x69\x63\x6b\x6c\x65\x62\x61\x6c\x6c\x2d\x74\x63\x74\x37\x30\x2d\x64\x65\x66\x61\x75\x6c\x74\x2d\x72\x74\x64\x62\x2e\x61\x73\x69\x61\x2d\x73\x6f\x75\x74\x68\x65\x61\x73\x74\x31\x2e\x66\x69\x72\x65\x62\x61\x73\x65\x64\x61\x74\x61\x62\x61\x73\x65\x2e\x61\x70\x70",projectId:"\x70\x69\x63\x6b\x6c\x65\x62\x61\x6c\x6c\x2d\x74\x63\x74\x37\x30",storageBucket:"\x70\x69\x63\x6b\x6c\x65\x62\x61\x6c\x6c\x2d\x74\x63\x74\x37\x30\x2e\x66\x69\x72\x65\x62\x61\x73\x65\x73\x74\x6f\x72\x61\x67\x65\x2e\x61\x70\x70",messagingSenderId:"\x31\x30\x31\x35\x30\x30\x33\x38\x38\x39\x35\x35\x31",appId:"\x31\x3a\x31\x30\x31\x35\x30\x30\x33\x38\x38\x39\x35\x35\x31\x3a\x77\x65\x62\x3a\x36\x30\x39\x61\x66\x34\x62\x39\x31\x64\x32\x37\x65\x62\x37\x61\x38\x61\x35\x35\x66\x61",measurementId:"\x47\x2d\x43\x47\x38\x45\x39\x4a\x38\x53\x32\x57"};if(!firebase.apps.length){firebase.initializeApp(firebaseConfig);}const db=firebase.database();let allDelegatesData=[];let currentFilter='\x61\x6c\x6c';let currentSearchQuery='';let isAdminLoggedIn=false;let currentPageView='\x68\x6f\x6d\x65';let currentDetailedDay=1;let lastCreatedCode='';let pendingAvatarData={'\x70\x2d\x72\x65\x67':'','\x65\x64\x69\x74':''};const SPORTS_LIST=['\x50\x69\x63\x6b\x6c\x65\x62\x61\x6c\x6c','\x42\xf3\x6e\x67\x20\u0111\xe1','\x43\u1ea7\x75\x20\x6c\xf4\x6e\x67','\x42\u01a1\x69\x20\x6c\u1ed9\x69','\x43\x68\u1ea1\x79\x20\x62\u1ed9'];let currentSportTab='\x50\x69\x63\x6b\x6c\x65\x62\x61\x6c\x6c';let currentSportBranch='\x41\x4c\x4c';let currentSportSearch='';let currentDrawGroup='\x61\x6c\x6c';let isDrawing=false;let winningHistory=[];const prizeConfig={'\x47\x69\u1ea3\x69\x20\x42\u1ea3\x79':{max:7},'\x47\x69\u1ea3\x69\x20\x53\xe1\x75':{max:6},'\x47\x69\u1ea3\x69\x20\x4e\u0103\x6d':{max:5},'\x47\x69\u1ea3\x69\x20\x54\u01b0':{max:4},'\x47\x69\u1ea3\x69\x20\x42\x61':{max:3},'\x47\x69\u1ea3\x69\x20\x4e\x68\xec':{max:2},'\x47\x69\u1ea3\x69\x20\x4e\x68\u1ea5\x74':{max:1}};let currentPrize='\x47\x69\u1ea3\x69\x20\x42\u1ea3\x79';let prizeCounts={'\x47\x69\u1ea3\x69\x20\x42\u1ea3\x79':0,'\x47\x69\u1ea3\x69\x20\x53\xe1\x75':0,'\x47\x69\u1ea3\x69\x20\x4e\u0103\x6d':0,'\x47\x69\u1ea3\x69\x20\x54\u01b0':0,'\x47\x69\u1ea3\x69\x20\x42\x61':0,'\x47\x69\u1ea3\x69\x20\x4e\x68\xec':0,'\x47\x69\u1ea3\x69\x20\x4e\x68\u1ea5\x74':0};let reelBranchFilter='\x41\x4c\x4c';let reelList=[];let reelIndex=0;let reelPlaying=false;let reelIntervalId=null;let reelProgressRafId=null;let reelSlideStartTime=0;let reelDurationMs=3500;db.ref('\x64\x65\x6c\x65\x67\x61\x74\x65\x73').on('\x76\x61\x6c\x75\x65',(b)=>{const a=b.val();allDelegatesData=[];if(a){Object.keys(a).forEach(b=>{allDelegatesData.push({id:b,firebaseKey:b,...a[b]});});allDelegatesData.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));}updateDelegatesUI();if(currentPageView==='\x73\x70\x6f\x72\x74\x73'){renderSportsView();}if(reelPlaying){renderCurrentReelSlide(false);}},(a)=>{console.error("\x4c\u1ed7\x69\x20\u0111\u1ecd\x63\x20\x64\u1eef\x20\x6c\x69\u1ec7\x75\x20\x74\u1eeb\x20\x46\x69\x72\x65\x62\x61\x73\x65\x3a",a);});function switchPageView(a){currentPageView=a;const b={home:document.getElementById('\x68\x6f\x6d\x65\x2d\x76\x69\x65\x77'),program:document.getElementById('\x70\x72\x6f\x67\x72\x61\x6d\x2d\x76\x69\x65\x77'),register:document.getElementById('\x72\x65\x67\x69\x73\x74\x65\x72\x2d\x76\x69\x65\x77'),sports:document.getElementById('\x73\x70\x6f\x72\x74\x73\x2d\x76\x69\x65\x77'),luckydraw:document.getElementById('\x6c\x75\x63\x6b\x79\x64\x72\x61\x77\x2d\x76\x69\x65\x77')};Object.keys(b).forEach(c=>{if(!b[c])return;if(c===a){b[c].classList.remove('\x68\x69\x64\x64\x65\x6e');}else{b[c].classList.add('\x68\x69\x64\x64\x65\x6e');}});const c={program:document.getElementById('\x6e\x61\x76\x2d\x6c\x69\x6e\x6b\x2d\x70\x72\x6f\x67\x72\x61\x6d'),sports:document.getElementById('\x6e\x61\x76\x2d\x6c\x69\x6e\x6b\x2d\x73\x70\x6f\x72\x74\x73'),luckydraw:document.getElementById('\x6e\x61\x76\x2d\x6c\x69\x6e\x6b\x2d\x6c\x75\x63\x6b\x79\x64\x72\x61\x77')};Object.keys(c).forEach(b=>{if(c[b]){if(b===a)c[b].classList.add('\x6e\x61\x76\x2d\x6c\x69\x6e\x6b\x2d\x61\x63\x74\x69\x76\x65');else c[b].classList.remove('\x6e\x61\x76\x2d\x6c\x69\x6e\x6b\x2d\x61\x63\x74\x69\x76\x65');}});if(a==='\x72\x65\x67\x69\x73\x74\x65\x72'){resetPageRegisterForm();}else if(a==='\x73\x70\x6f\x72\x74\x73'){selectSportTab(currentSportTab);}window.scrollTo({top:0,behavior:'\x73\x6d\x6f\x6f\x74\x68'});if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64')lucide.createIcons();}function navigateToHomeSection(a){if(currentPageView!=='\x68\x6f\x6d\x65'){switchPageView('\x68\x6f\x6d\x65');}setTimeout(()=>{const b=document.getElementById(a);if(b){b.scrollIntoView({behavior:'\x73\x6d\x6f\x6f\x74\x68',block:'\x73\x74\x61\x72\x74'});}},60);}let isMobileMenuOpen=false;function toggleMobileMenu(){isMobileMenuOpen=!isMobileMenuOpen;const a=document.getElementById('\x6d\x6f\x62\x69\x6c\x65\x2d\x6d\x65\x6e\x75');const b=document.getElementById('\x6d\x65\x6e\x75\x2d\x74\x6f\x67\x67\x6c\x65\x2d\x69\x63\x6f\x6e');if(isMobileMenuOpen){if(a)a.classList.remove('\x68\x69\x64\x64\x65\x6e');if(b)b.classList.add('\x72\x6f\x74\x61\x74\x65\x2d\x39\x30');}else{closeMobileMenu();}}function closeMobileMenu(){isMobileMenuOpen=false;const a=document.getElementById('\x6d\x6f\x62\x69\x6c\x65\x2d\x6d\x65\x6e\x75');const b=document.getElementById('\x6d\x65\x6e\x75\x2d\x74\x6f\x67\x67\x6c\x65\x2d\x69\x63\x6f\x6e');if(a)a.classList.add('\x68\x69\x64\x64\x65\x6e');if(b)b.classList.remove('\x72\x6f\x74\x61\x74\x65\x2d\x39\x30');}function compressAvatarToSquareDataUrl(b,a=480,c=0.82){return new Promise((f,d)=>{if(!b||!b.type.startsWith('\x69\x6d\x61\x67\x65\x2f')){d(new Error("\x46\x69\x6c\x65\x20\x6b\x68\xf4\x6e\x67\x20\x70\x68\u1ea3\x69\x20\u0111\u1ecb\x6e\x68\x20\x64\u1ea1\x6e\x67\x20\u1ea3\x6e\x68\x20\x68\u1ee3\x70\x20\x6c\u1ec7\x2e"));return;}const e=new FileReader();e.onload=(e)=>{const b=new Image();b.onload=()=>{const d=Math.min(b.width,b.height);const g=Math.floor((b.width-d)/2);const h=Math.floor((b.height-d)/2);const e=document.createElement('\x63\x61\x6e\x76\x61\x73');e.width=a;e.height=a;const i=e.getContext('\x32\x64');i.drawImage(b,g,h,d,d,0,0,a,a);f(e.toDataURL('\x69\x6d\x61\x67\x65\x2f\x6a\x70\x65\x67',c));};b.onerror=()=>d(new Error("\x4b\x68\xf4\x6e\x67\x20\x74\x68\u1ec3\x20\u0111\u1ecd\x63\x20\u1ea3\x6e\x68\x20\u0111\xe3\x20\x63\x68\u1ecd\x6e\x2e"));b.src=e.target.result;};e.onerror=()=>d(new Error("\x4c\u1ed7\x69\x20\x6b\x68\x69\x20\x74\u1ea3\x69\x20\x66\x69\x6c\x65\x20\u1ea3\x6e\x68\x2e"));e.readAsDataURL(b);});}function setAvatarPreviewUI(b,e){pendingAvatarData[b]=e||'';const a=document.getElementById(`${b}-avatar-preview`);const c=document.getElementById(`${b}-avatar-placeholder`);const d=document.getElementById(`${b}-avatar-clear`);if(e){if(a){a.src=e;a.classList.remove('\x68\x69\x64\x64\x65\x6e');}if(c)c.classList.add('\x68\x69\x64\x64\x65\x6e');if(d)d.classList.remove('\x68\x69\x64\x64\x65\x6e');}else{if(a){a.src='';a.classList.add('\x68\x69\x64\x64\x65\x6e');}if(c)c.classList.remove('\x68\x69\x64\x64\x65\x6e');if(d)d.classList.add('\x68\x69\x64\x64\x65\x6e');}}function handleAvatarFileChange(a,c){const b=a.target?.files?.[0];if(!b)return;compressAvatarToSquareDataUrl(b,480,0.82).then((a)=>{setAvatarPreviewUI(c,a);showToast("\u0110\xe3\x20\x67\u1eaf\x6e\x20\u1ea3\x6e\x68\x20\x63\x68\xe2\x6e\x20\x64\x75\x6e\x67\x20\x63\x68\x6f\x20\x74\x68\u1ebb\x20\u0111\u1ea1\x69\x20\x62\x69\u1ec3\x75\x21");}).catch((b)=>{alert(b.message||"\x4b\x68\xf4\x6e\x67\x20\x74\x68\u1ec3\x20\x78\u1eed\x20\x6c\xfd\x20\u1ea3\x6e\x68\x2e");a.target.value='';});}function clearAvatarSelection(a){const b=document.getElementById(`${a}-avatar-file`);if(b)b.value='';setAvatarPreviewUI(a,'');}function getDelegateAvatarSrc(a){if(a&&typeof a.avatar==='\x73\x74\x72\x69\x6e\x67'&&a.avatar.startsWith('\x64\x61\x74\x61\x3a\x69\x6d\x61\x67\x65\x2f')){return a.avatar;}const b=encodeURIComponent((a?.name||'\x46\x41\x53\x54\x20\x33\x30').trim().slice(0,2).toUpperCase());return`https://ui-avatars.com/api/?name=${b}&background=00686B&color=FDE047&size=256&bold=true`;}function buildDelegateBadgeCardHtml(a){const c=getDelegateAvatarSrc(a);const d=getMemberBranch(a);const e=Array.isArray(a.sports)&&a.sports.length?a.sports.join('\x2c\x20'):'\x43\x68\u01b0\x61\x20\x63\x68\u1ecd\x6e';const b=getRelativesArray(a);return`
         <div class="rounded-3xl fast-hero-gradient text-white p-5 border-2 border-[#E5C158] shadow-xl space-y-4">
             <div class="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-[#FDE047]">
                 <span>THẺ ĐẠI BIỂU · FAST 30 NĂM</span>
-                <span class="px-2.5 py-0.5 rounded-lg bg-fast-orange text-white font-mono">${escapeHTML(item.code || 'FAST30-XXXX')}</span>
+                <span class="px-2.5 py-0.5 rounded-lg bg-fast-orange text-white font-mono">${escapeHTML(a.code||'\x46\x41\x53\x54\x33\x30\x2d\x58\x58\x58\x58')}</span>
             </div>
 
             <div class="flex items-center gap-4">
-                <img src="${avatarSrc}" alt="${escapeHTML(item.name || 'CBNV')}" class="w-20 h-20 rounded-2xl object-cover border-2 border-[#FDE047] shadow-md shrink-0 bg-white">
+                <img src="${c}" alt="${escapeHTML(a.name||'\x43\x42\x4e\x56')}" class="w-20 h-20 rounded-2xl object-cover border-2 border-[#FDE047] shadow-md shrink-0 bg-white">
                 <div class="min-w-0">
-                    <h4 class="font-display font-extrabold text-lg sm:text-xl text-white truncate">${escapeHTML(item.name || '')}</h4>
-                    <p class="text-xs text-amber-200 font-semibold">${escapeHTML(branch)} · ${escapeHTML(item.role || 'CBNV FAST')}</p>
+                    <h4 class="font-display font-extrabold text-lg sm:text-xl text-white truncate">${escapeHTML(a.name||'')}</h4>
+                    <p class="text-xs text-amber-200 font-semibold">${escapeHTML(d)} · ${escapeHTML(a.role||'\x43\x42\x4e\x56\x20\x46\x41\x53\x54')}</p>
                     <p class="text-[11px] text-white/85 mt-1">FLC Quảng Bình · 10–13/07/2027</p>
                 </div>
             </div>
 
             <div class="pt-3 border-t border-white/20 text-xs space-y-1 text-white/95">
-                <div>Hoạt động: <b>${escapeHTML(item.activity || '—')}</b></div>
-                <div>Môn thể thao: <b>${escapeHTML(sportsList)}</b></div>
-                ${rels.length > 0 ? `<div>Người thân đi kèm (<b>${rels.length}</b>): <b>${rels.map(r => escapeHTML(r.name || '')).join(', ')}</b></div>` : ''}
+                <div>Hoạt động: <b>${escapeHTML(a.activity||'\u2014')}</b></div>
+                <div>Môn thể thao: <b>${escapeHTML(e)}</b></div>
+                ${b.length>0?`<div>Người thân đi kèm (<b>${b.length}</b>): <b>${b.map(a=>escapeHTML(a.name||'')).join('\x2c\x20')}</b></div>`:''}
             </div>
         </div>
-    `;
-}
-
-function openDelegateCardModal(codeOrId) {
-    const found = allDelegatesData.find(d => d.code === codeOrId || d.id === codeOrId || d.firebaseKey === codeOrId);
-    if (!found) return;
-    const bodyEl = document.getElementById('delegate-card-modal-body');
-    if (bodyEl) bodyEl.innerHTML = buildDelegateBadgeCardHtml(found);
-    document.getElementById('delegate-card-modal')?.classList.remove('hidden');
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
-function closeDelegateCardModal() {
-    document.getElementById('delegate-card-modal')?.classList.add('hidden');
-}
-
-// ==================== 6. ĐĂNG KÝ (TRANG RIÊNG & MODAL) ====================
-function extractBranchCode(groupOrCompany) {
-    const text = String(groupOrCompany || '').toUpperCase();
-    if (text.includes('FHN') || text.includes('HÀ NỘI')) return 'FHN';
-    if (text.includes('FDN') || text.includes('FĐN') || text.includes('ĐÀ NẴNG')) return 'FDN';
-    if (text.includes('FSG') || text.includes('TP.HCM') || text.includes('HỒ CHÍ MINH')) return 'FSG';
-    return '';
-}
-
-function addPageRelativeRow(name = '', relation = 'Vợ/Chồng', type = 'Người lớn') {
-    const container = document.getElementById('p-relatives-container');
-    if (!container) return;
-
-    const rowId = 'p-rel-row-' + Date.now() + Math.floor(Math.random() * 1000);
-    container.insertAdjacentHTML('beforeend', `
-        <div id="${rowId}" class="p-3.5 rounded-2xl bg-fast-body border border-fast-border space-y-2.5 text-xs">
+    `;}function openDelegateCardModal(a){const b=allDelegatesData.find(b=>b.code===a||b.id===a||b.firebaseKey===a);if(!b)return;const c=document.getElementById('\x64\x65\x6c\x65\x67\x61\x74\x65\x2d\x63\x61\x72\x64\x2d\x6d\x6f\x64\x61\x6c\x2d\x62\x6f\x64\x79');if(c)c.innerHTML=buildDelegateBadgeCardHtml(b);document.getElementById('\x64\x65\x6c\x65\x67\x61\x74\x65\x2d\x63\x61\x72\x64\x2d\x6d\x6f\x64\x61\x6c')?.classList.remove('\x68\x69\x64\x64\x65\x6e');if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64')lucide.createIcons();}function closeDelegateCardModal(){document.getElementById('\x64\x65\x6c\x65\x67\x61\x74\x65\x2d\x63\x61\x72\x64\x2d\x6d\x6f\x64\x61\x6c')?.classList.add('\x68\x69\x64\x64\x65\x6e');}function extractBranchCode(b){const a=String(b||'').toUpperCase();if(a.includes('\x46\x48\x4e')||a.includes('\x48\xc0\x20\x4e\u1ed8\x49'))return'\x46\x48\x4e';if(a.includes('\x46\x44\x4e')||a.includes('\x46\u0110\x4e')||a.includes('\u0110\xc0\x20\x4e\u1eb4\x4e\x47'))return'\x46\x44\x4e';if(a.includes('\x46\x53\x47')||a.includes('\x54\x50\x2e\x48\x43\x4d')||a.includes('\x48\u1ed2\x20\x43\x48\xcd\x20\x4d\x49\x4e\x48'))return'\x46\x53\x47';return'';}function addPageRelativeRow(e='',a='\x56\u1ee3\x2f\x43\x68\u1ed3\x6e\x67',b='\x4e\x67\u01b0\u1edd\x69\x20\x6c\u1edb\x6e'){const c=document.getElementById('\x70\x2d\x72\x65\x6c\x61\x74\x69\x76\x65\x73\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72');if(!c)return;const d='\x70\x2d\x72\x65\x6c\x2d\x72\x6f\x77\x2d'+Date.now()+Math.floor(Math.random()*1000);c.insertAdjacentHTML('\x62\x65\x66\x6f\x72\x65\x65\x6e\x64',`
+        <div id="${d}" class="p-3.5 rounded-2xl bg-fast-body border border-fast-border space-y-2.5 text-xs">
             <div class="flex items-center justify-between">
                 <span class="font-extrabold text-fast-dark">Người thân đi kèm</span>
-                <button type="button" onclick="document.getElementById('${rowId}').remove()" class="text-red-500 hover:text-red-600 font-bold">Xóa dòng</button>
+                <button type="button" onclick="document.getElementById('${d}').remove()" class="text-red-500 hover:text-red-600 font-bold">Xóa dòng</button>
             </div>
-            <input type="text" value="${escapeHTML(name)}" placeholder="Họ và tên người thân..." class="p-rel-name-input w-full px-3 py-2 rounded-xl border border-fast-border bg-white outline-none">
+            <input type="text" value="${escapeHTML(e)}" placeholder="Họ và tên người thân..." class="p-rel-name-input w-full px-3 py-2 rounded-xl border border-fast-border bg-white outline-none">
             <div class="grid grid-cols-2 gap-2">
                 <select class="p-rel-relation-input px-3 py-2 rounded-xl border border-fast-border bg-white outline-none">
-                    <option value="Vợ/Chồng" ${relation === 'Vợ/Chồng' ? 'selected' : ''}>Vợ / Chồng</option>
-                    <option value="Con cái" ${relation === 'Con cái' ? 'selected' : ''}>Con cái</option>
-                    <option value="Bố/Mẹ" ${relation === 'Bố/Mẹ' ? 'selected' : ''}>Bố / Mẹ</option>
+                    <option value="Vợ/Chồng" ${a==='\x56\u1ee3\x2f\x43\x68\u1ed3\x6e\x67'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Vợ / Chồng</option>
+                    <option value="Con cái" ${a==='\x43\x6f\x6e\x20\x63\xe1\x69'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Con cái</option>
+                    <option value="Bố/Mẹ" ${a==='\x42\u1ed1\x2f\x4d\u1eb9'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Bố / Mẹ</option>
                 </select>
                 <select class="p-rel-type-input px-3 py-2 rounded-xl border border-fast-border bg-white outline-none">
-                    <option value="Người lớn" ${type === 'Người lớn' ? 'selected' : ''}>Người lớn</option>
-                    <option value="Trẻ em (> 6 tuổi)" ${type === 'Trẻ em (> 6 tuổi)' ? 'selected' : ''}>Trẻ em (&gt; 6 tuổi)</option>
-                    <option value="Trẻ em (< 6 tuổi)" ${type === 'Trẻ em (< 6 tuổi)' ? 'selected' : ''}>Trẻ em (&lt; 6 tuổi)</option>
+                    <option value="Người lớn" ${b==='\x4e\x67\u01b0\u1edd\x69\x20\x6c\u1edb\x6e'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Người lớn</option>
+                    <option value="Trẻ em (> 6 tuổi)" ${b==='\x54\x72\u1ebb\x20\x65\x6d\x20\x28\x3e\x20\x36\x20\x74\x75\u1ed5\x69\x29'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Trẻ em (&gt; 6 tuổi)</option>
+                    <option value="Trẻ em (< 6 tuổi)" ${b==='\x54\x72\u1ebb\x20\x65\x6d\x20\x28\x3c\x20\x36\x20\x74\x75\u1ed5\x69\x29'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Trẻ em (&lt; 6 tuổi)</option>
                 </select>
             </div>
         </div>
-    `);
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
-function handlePageRegistrationSubmit(event) {
-    event.preventDefault();
-
-    const name = document.getElementById('p-reg-name').value.trim();
-    const group = document.getElementById('p-reg-group').value;
-    const role = document.getElementById('p-reg-role').value.trim();
-    const phone = document.getElementById('p-reg-phone').value.trim();
-    const email = document.getElementById('p-reg-email').value.trim();
-    const travel = document.getElementById('p-reg-travel').value;
-    const activity = document.getElementById('p-reg-activity').value;
-    const avatar = pendingAvatarData['p-reg'] || null;
-
-    const selectedSports = Array.from(
-        document.querySelectorAll('input[name="p-reg-sports"]:checked')
-    ).map(cb => cb.value);
-
-    const relativesList = [];
-    document.querySelectorAll('#p-relatives-container > div').forEach(row => {
-        const relNameInput = row.querySelector('.p-rel-name-input');
-        if (relNameInput && relNameInput.value.trim()) {
-            relativesList.push({
-                name: relNameInput.value.trim(),
-                relation: row.querySelector('.p-rel-relation-input').value,
-                type: row.querySelector('.p-rel-type-input').value
-            });
-        }
-    });
-
-    const regCode = `FAST30-${Math.floor(1000 + Math.random() * 9000)}`;
-    lastCreatedCode = regCode;
-    const branchCode = extractBranchCode(group);
-
-    const record = {
-        code: regCode,
-        name,
-        company: group,
-        group,
-        branch: branchCode,
-        role: role || 'CBNV FAST',
-        phone,
-        email,
-        travel,
-        activity,
-        avatar,
-        sports: selectedSports,
-        relatives: relativesList.length > 0 ? relativesList : null,
-        createdAt: firebase.database.ServerValue.TIMESTAMP
-    };
-
-    db.ref('delegates').push(record)
-        .then(() => {
-            document.getElementById('p-succ-name').textContent = name;
-            document.getElementById('p-succ-code').textContent = regCode;
-            const badgeEl = document.getElementById('p-succ-badge-card');
-            if (badgeEl) badgeEl.innerHTML = buildDelegateBadgeCardHtml(record);
-            document.getElementById('page-register-form-view').classList.add('hidden');
-            document.getElementById('page-register-success-view').classList.remove('hidden');
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-            showToast(`Đăng ký thành công! Mã: ${regCode}`);
-        })
-        .catch((error) => {
-            console.error("Lỗi lưu đăng ký trang riêng:", error);
-            alert("Có lỗi xảy ra khi lưu thông tin, vui lòng thử lại.");
-        });
-}
-
-function resetPageRegisterForm() {
-    const form = document.getElementById('page-registration-form');
-    if (form) form.reset();
-    clearAvatarSelection('p-reg');
-    const relContainer = document.getElementById('p-relatives-container');
-    if (relContainer) relContainer.innerHTML = '';
-    const succView = document.getElementById('page-register-success-view');
-    const formView = document.getElementById('page-register-form-view');
-    if (succView) succView.classList.add('hidden');
-    if (formView) formView.classList.remove('hidden');
-}
-
-function openRegisterModal() {
-    document.getElementById('register-form-view').classList.remove('hidden');
-    document.getElementById('register-success-view').classList.add('hidden');
-    document.getElementById('register-modal').classList.remove('hidden');
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
-function closeRegisterModal() {
-    document.getElementById('register-modal').classList.add('hidden');
-}
-
-function copyRegCode() {
-    if (lastCreatedCode) {
-        copyTextFallback(lastCreatedCode);
-        showToast(`Đã sao chép mã: ${lastCreatedCode}`);
-    }
-}
-
-function switchToLookupFromSuccess() {
-    closeRegisterModal();
-    openLookupModal();
-    if (lastCreatedCode) {
-        document.getElementById('lookup-query').value = lastCreatedCode;
-        performLookup(lastCreatedCode);
-    }
-}
-
-// ==================== 7. TAB THỂ THAO THEO MÔN & CHI NHÁNH ====================
-function selectSportTab(sportName) {
-    currentSportTab = sportName;
-    SPORTS_LIST.forEach(s => {
-        const btn = document.getElementById(`sport-tab-${s}`);
-        if (!btn) return;
-        if (s === sportName) {
-            btn.className = 'sport-tab-btn px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-fast-dark text-white shadow transition';
-        } else {
-            btn.className = 'sport-tab-btn px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-fast-card text-fast-textMain border border-fast-border hover:border-fast-primary transition';
-        }
-    });
-    renderSportsView();
-}
-
-function setSportBranchFilter(branch) {
-    currentSportBranch = branch;
-    ['ALL', 'FHN', 'FDN', 'FSG'].forEach(b => {
-        const btn = document.getElementById(`sport-branch-${b}`);
-        if (!btn) return;
-        btn.className = (b === branch)
-            ? 'px-3.5 py-2 rounded-xl text-xs font-bold bg-fast-primary text-white'
-            : 'px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200';
-    });
-    renderSportsView();
-}
-
-function handleSportSearchInput(event) {
-    currentSportSearch = event.target.value.toLowerCase().trim();
-    renderSportsView();
-}
-
-function getMemberBranch(item) {
-    const code = extractBranchCode(`${item.branch || ''} ${item.group || ''} ${item.company || ''}`);
-    return code || 'KHÁC';
-}
-
-function renderSportsView() {
-    SPORTS_LIST.forEach(sport => {
-        const countEl = document.getElementById(`sport-count-${sport}`);
-        if (!countEl) return;
-        const count = allDelegatesData.filter(d => Array.isArray(d.sports) && d.sports.includes(sport)).length;
-        countEl.textContent = count;
-    });
-
-    const titleEl = document.getElementById('sport-current-title');
-    if (titleEl) {
-        const branchLabel = currentSportBranch === 'ALL' ? 'Tất cả chi nhánh' : `Chi nhánh ${currentSportBranch}`;
-        titleEl.textContent = `Môn: ${currentSportTab} · ${branchLabel}`;
-    }
-
-    let list = allDelegatesData.filter(d => Array.isArray(d.sports) && d.sports.includes(currentSportTab));
-
-    if (currentSportBranch !== 'ALL') {
-        list = list.filter(d => getMemberBranch(d) === currentSportBranch);
-    }
-
-    if (currentSportSearch) {
-        list = list.filter(d => {
-            const name = (d.name || '').toLowerCase();
-            const code = (d.code || '').toLowerCase();
-            const branch = getMemberBranch(d).toLowerCase();
-            const group = (d.group || '').toLowerCase();
-            const role = (d.role || '').toLowerCase();
-            return (
-                name.includes(currentSportSearch) ||
-                code.includes(currentSportSearch) ||
-                branch.includes(currentSportSearch) ||
-                group.includes(currentSportSearch) ||
-                role.includes(currentSportSearch)
-            );
-        });
-    }
-
-    const totalEl = document.getElementById('sport-filtered-total');
-    if (totalEl) totalEl.textContent = `${list.length} CBNV`;
-
-    const tbody = document.getElementById('sports-table-body');
-    const mobileList = document.getElementById('sports-mobile-list');
-
-    if (list.length === 0) {
-        if (tbody) {
-            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400 italic text-sm">Chưa có CBNV nào phù hợp với bộ lọc ở môn ${escapeHTML(currentSportTab)}.</td></tr>`;
-        }
-        if (mobileList) {
-            mobileList.innerHTML = `<div class="p-6 text-center text-slate-400 italic text-sm">Chưa có CBNV nào phù hợp với bộ lọc ở môn ${escapeHTML(currentSportTab)}.</div>`;
-        }
-        return;
-    }
-
-    if (tbody) {
-        tbody.innerHTML = list.map(item => {
-            const branch = getMemberBranch(item);
-            return `
+    `);if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64')lucide.createIcons();}function handlePageRegistrationSubmit(f){f.preventDefault();const d=document.getElementById('\x70\x2d\x72\x65\x67\x2d\x6e\x61\x6d\x65').value.trim();const b=document.getElementById('\x70\x2d\x72\x65\x67\x2d\x67\x72\x6f\x75\x70').value;const g=document.getElementById('\x70\x2d\x72\x65\x67\x2d\x72\x6f\x6c\x65').value.trim();const h=document.getElementById('\x70\x2d\x72\x65\x67\x2d\x70\x68\x6f\x6e\x65').value.trim();const i=document.getElementById('\x70\x2d\x72\x65\x67\x2d\x65\x6d\x61\x69\x6c').value.trim();const j=document.getElementById('\x70\x2d\x72\x65\x67\x2d\x74\x72\x61\x76\x65\x6c').value;const k=document.getElementById('\x70\x2d\x72\x65\x67\x2d\x61\x63\x74\x69\x76\x69\x74\x79').value;const l=pendingAvatarData['\x70\x2d\x72\x65\x67']||null;const m=Array.from(document.querySelectorAll('\x69\x6e\x70\x75\x74\x5b\x6e\x61\x6d\x65\x3d\x22\x70\x2d\x72\x65\x67\x2d\x73\x70\x6f\x72\x74\x73\x22\x5d\x3a\x63\x68\x65\x63\x6b\x65\x64')).map(a=>a.value);const c=[];document.querySelectorAll('\x23\x70\x2d\x72\x65\x6c\x61\x74\x69\x76\x65\x73\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72\x20\x3e\x20\x64\x69\x76').forEach(a=>{const b=a.querySelector('\x2e\x70\x2d\x72\x65\x6c\x2d\x6e\x61\x6d\x65\x2d\x69\x6e\x70\x75\x74');if(b&&b.value.trim()){c.push({name:b.value.trim(),relation:a.querySelector('\x2e\x70\x2d\x72\x65\x6c\x2d\x72\x65\x6c\x61\x74\x69\x6f\x6e\x2d\x69\x6e\x70\x75\x74').value,type:a.querySelector('\x2e\x70\x2d\x72\x65\x6c\x2d\x74\x79\x70\x65\x2d\x69\x6e\x70\x75\x74').value});}});const a=`FAST30-${Math.floor(1000+Math.random()*9000)}`;lastCreatedCode=a;const n=extractBranchCode(b);const e={code:a,name: d,company:b,group: b,branch:n,role:g||'\x43\x42\x4e\x56\x20\x46\x41\x53\x54',phone: h,email: i,travel: j,activity: k,avatar: l,sports:m,relatives:c.length>0?c:null,createdAt:firebase.database.ServerValue.TIMESTAMP};db.ref('\x64\x65\x6c\x65\x67\x61\x74\x65\x73').push(e).then(()=>{document.getElementById('\x70\x2d\x73\x75\x63\x63\x2d\x6e\x61\x6d\x65').textContent=d;document.getElementById('\x70\x2d\x73\x75\x63\x63\x2d\x63\x6f\x64\x65').textContent=a;const b=document.getElementById('\x70\x2d\x73\x75\x63\x63\x2d\x62\x61\x64\x67\x65\x2d\x63\x61\x72\x64');if(b)b.innerHTML=buildDelegateBadgeCardHtml(e);document.getElementById('\x70\x61\x67\x65\x2d\x72\x65\x67\x69\x73\x74\x65\x72\x2d\x66\x6f\x72\x6d\x2d\x76\x69\x65\x77').classList.add('\x68\x69\x64\x64\x65\x6e');document.getElementById('\x70\x61\x67\x65\x2d\x72\x65\x67\x69\x73\x74\x65\x72\x2d\x73\x75\x63\x63\x65\x73\x73\x2d\x76\x69\x65\x77').classList.remove('\x68\x69\x64\x64\x65\x6e');if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64')lucide.createIcons();showToast(`Đăng ký thành công! Mã: ${a}`);}).catch((a)=>{console.error("\x4c\u1ed7\x69\x20\x6c\u01b0\x75\x20\u0111\u0103\x6e\x67\x20\x6b\xfd\x20\x74\x72\x61\x6e\x67\x20\x72\x69\xea\x6e\x67\x3a",a);alert("\x43\xf3\x20\x6c\u1ed7\x69\x20\x78\u1ea3\x79\x20\x72\x61\x20\x6b\x68\x69\x20\x6c\u01b0\x75\x20\x74\x68\xf4\x6e\x67\x20\x74\x69\x6e\x2c\x20\x76\x75\x69\x20\x6c\xf2\x6e\x67\x20\x74\x68\u1eed\x20\x6c\u1ea1\x69\x2e");});}function resetPageRegisterForm(){const a=document.getElementById('\x70\x61\x67\x65\x2d\x72\x65\x67\x69\x73\x74\x72\x61\x74\x69\x6f\x6e\x2d\x66\x6f\x72\x6d');if(a)a.reset();clearAvatarSelection('\x70\x2d\x72\x65\x67');const b=document.getElementById('\x70\x2d\x72\x65\x6c\x61\x74\x69\x76\x65\x73\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72');if(b)b.innerHTML='';const c=document.getElementById('\x70\x61\x67\x65\x2d\x72\x65\x67\x69\x73\x74\x65\x72\x2d\x73\x75\x63\x63\x65\x73\x73\x2d\x76\x69\x65\x77');const d=document.getElementById('\x70\x61\x67\x65\x2d\x72\x65\x67\x69\x73\x74\x65\x72\x2d\x66\x6f\x72\x6d\x2d\x76\x69\x65\x77');if(c)c.classList.add('\x68\x69\x64\x64\x65\x6e');if(d)d.classList.remove('\x68\x69\x64\x64\x65\x6e');}function openRegisterModal(){document.getElementById('\x72\x65\x67\x69\x73\x74\x65\x72\x2d\x66\x6f\x72\x6d\x2d\x76\x69\x65\x77').classList.remove('\x68\x69\x64\x64\x65\x6e');document.getElementById('\x72\x65\x67\x69\x73\x74\x65\x72\x2d\x73\x75\x63\x63\x65\x73\x73\x2d\x76\x69\x65\x77').classList.add('\x68\x69\x64\x64\x65\x6e');document.getElementById('\x72\x65\x67\x69\x73\x74\x65\x72\x2d\x6d\x6f\x64\x61\x6c').classList.remove('\x68\x69\x64\x64\x65\x6e');if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64')lucide.createIcons();}function closeRegisterModal(){document.getElementById('\x72\x65\x67\x69\x73\x74\x65\x72\x2d\x6d\x6f\x64\x61\x6c').classList.add('\x68\x69\x64\x64\x65\x6e');}function copyRegCode(){if(lastCreatedCode){copyTextFallback(lastCreatedCode);showToast(`Đã sao chép mã: ${lastCreatedCode}`);}}function switchToLookupFromSuccess(){closeRegisterModal();openLookupModal();if(lastCreatedCode){document.getElementById('\x6c\x6f\x6f\x6b\x75\x70\x2d\x71\x75\x65\x72\x79').value=lastCreatedCode;performLookup(lastCreatedCode);}}function selectSportTab(a){currentSportTab=a;SPORTS_LIST.forEach(c=>{const b=document.getElementById(`sport-tab-${c}`);if(!b)return;if(c===a){b.className='\x73\x70\x6f\x72\x74\x2d\x74\x61\x62\x2d\x62\x74\x6e\x20\x70\x78\x2d\x34\x20\x70\x79\x2d\x32\x2e\x35\x20\x72\x6f\x75\x6e\x64\x65\x64\x2d\x32\x78\x6c\x20\x74\x65\x78\x74\x2d\x78\x73\x20\x73\x6d\x3a\x74\x65\x78\x74\x2d\x73\x6d\x20\x66\x6f\x6e\x74\x2d\x62\x6f\x6c\x64\x20\x62\x67\x2d\x66\x61\x73\x74\x2d\x64\x61\x72\x6b\x20\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65\x20\x73\x68\x61\x64\x6f\x77\x20\x74\x72\x61\x6e\x73\x69\x74\x69\x6f\x6e';}else{b.className='\x73\x70\x6f\x72\x74\x2d\x74\x61\x62\x2d\x62\x74\x6e\x20\x70\x78\x2d\x34\x20\x70\x79\x2d\x32\x2e\x35\x20\x72\x6f\x75\x6e\x64\x65\x64\x2d\x32\x78\x6c\x20\x74\x65\x78\x74\x2d\x78\x73\x20\x73\x6d\x3a\x74\x65\x78\x74\x2d\x73\x6d\x20\x66\x6f\x6e\x74\x2d\x62\x6f\x6c\x64\x20\x62\x67\x2d\x66\x61\x73\x74\x2d\x63\x61\x72\x64\x20\x74\x65\x78\x74\x2d\x66\x61\x73\x74\x2d\x74\x65\x78\x74\x4d\x61\x69\x6e\x20\x62\x6f\x72\x64\x65\x72\x20\x62\x6f\x72\x64\x65\x72\x2d\x66\x61\x73\x74\x2d\x62\x6f\x72\x64\x65\x72\x20\x68\x6f\x76\x65\x72\x3a\x62\x6f\x72\x64\x65\x72\x2d\x66\x61\x73\x74\x2d\x70\x72\x69\x6d\x61\x72\x79\x20\x74\x72\x61\x6e\x73\x69\x74\x69\x6f\x6e';}});renderSportsView();}function setSportBranchFilter(a){currentSportBranch=a;['\x41\x4c\x4c','\x46\x48\x4e','\x46\x44\x4e','\x46\x53\x47'].forEach(b=>{const c=document.getElementById(`sport-branch-${b}`);if(!c)return;c.className=(b===a)?'\x70\x78\x2d\x33\x2e\x35\x20\x70\x79\x2d\x32\x20\x72\x6f\x75\x6e\x64\x65\x64\x2d\x78\x6c\x20\x74\x65\x78\x74\x2d\x78\x73\x20\x66\x6f\x6e\x74\x2d\x62\x6f\x6c\x64\x20\x62\x67\x2d\x66\x61\x73\x74\x2d\x70\x72\x69\x6d\x61\x72\x79\x20\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65':'\x70\x78\x2d\x33\x2e\x35\x20\x70\x79\x2d\x32\x20\x72\x6f\x75\x6e\x64\x65\x64\x2d\x78\x6c\x20\x74\x65\x78\x74\x2d\x78\x73\x20\x66\x6f\x6e\x74\x2d\x62\x6f\x6c\x64\x20\x62\x67\x2d\x73\x6c\x61\x74\x65\x2d\x31\x30\x30\x20\x74\x65\x78\x74\x2d\x73\x6c\x61\x74\x65\x2d\x37\x30\x30\x20\x68\x6f\x76\x65\x72\x3a\x62\x67\x2d\x73\x6c\x61\x74\x65\x2d\x32\x30\x30';});renderSportsView();}function handleSportSearchInput(a){currentSportSearch=a.target.value.toLowerCase().trim();renderSportsView();}function getMemberBranch(a){const b=extractBranchCode(`${a.branch||''} ${a.group||''} ${a.company||''}`);return b||'\x4b\x48\xc1\x43';}function renderSportsView(){SPORTS_LIST.forEach(a=>{const b=document.getElementById(`sport-count-${a}`);if(!b)return;const c=allDelegatesData.filter(b=>Array.isArray(b.sports)&&b.sports.includes(a)).length;b.textContent=c;});const d=document.getElementById('\x73\x70\x6f\x72\x74\x2d\x63\x75\x72\x72\x65\x6e\x74\x2d\x74\x69\x74\x6c\x65');if(d){const a=currentSportBranch==='\x41\x4c\x4c'?'\x54\u1ea5\x74\x20\x63\u1ea3\x20\x63\x68\x69\x20\x6e\x68\xe1\x6e\x68':`Chi nhánh ${currentSportBranch}`;d.textContent=`Môn: ${currentSportTab} · ${a}`;}let a=allDelegatesData.filter(a=>Array.isArray(a.sports)&&a.sports.includes(currentSportTab));if(currentSportBranch!=='\x41\x4c\x4c'){a=a.filter(a=>getMemberBranch(a)===currentSportBranch);}if(currentSportSearch){a=a.filter(a=>{const b=(a.name||'').toLowerCase();const c=(a.code||'').toLowerCase();const d=getMemberBranch(a).toLowerCase();const e=(a.group||'').toLowerCase();const f=(a.role||'').toLowerCase();return(b.includes(currentSportSearch)||c.includes(currentSportSearch)||d.includes(currentSportSearch)||e.includes(currentSportSearch)||f.includes(currentSportSearch));});}const e=document.getElementById('\x73\x70\x6f\x72\x74\x2d\x66\x69\x6c\x74\x65\x72\x65\x64\x2d\x74\x6f\x74\x61\x6c');if(e)e.textContent=`${a.length} CBNV`;const b=document.getElementById('\x73\x70\x6f\x72\x74\x73\x2d\x74\x61\x62\x6c\x65\x2d\x62\x6f\x64\x79');const c=document.getElementById('\x73\x70\x6f\x72\x74\x73\x2d\x6d\x6f\x62\x69\x6c\x65\x2d\x6c\x69\x73\x74');if(a.length===0){if(b){b.innerHTML=`<tr><td colspan="5" class="p-8 text-center text-slate-400 italic text-sm">Chưa có CBNV nào phù hợp với bộ lọc ở môn ${escapeHTML(currentSportTab)}.</td></tr>`;}if(c){c.innerHTML=`<div class="p-6 text-center text-slate-400 italic text-sm">Chưa có CBNV nào phù hợp với bộ lọc ở môn ${escapeHTML(currentSportTab)}.</div>`;}return;}if(b){b.innerHTML=a.map(a=>{const b=getMemberBranch(a);return`
                 <tr class="hover:bg-fast-body transition-colors border-b border-slate-100 last:border-none">
-                    <td class="p-4 pl-6 font-mono font-bold text-xs text-fast-primary">${escapeHTML(item.code || '—')}</td>
-                    <td class="p-4 font-bold text-sm text-fast-textMain">${escapeHTML(item.name)}</td>
+                    <td class="p-4 pl-6 font-mono font-bold text-xs text-fast-primary">${escapeHTML(a.code||'\u2014')}</td>
+                    <td class="p-4 font-bold text-sm text-fast-textMain">${escapeHTML(a.name)}</td>
                     <td class="p-4">
                         <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-fast-dark/10 text-fast-dark">
-                            ${escapeHTML(branch)}
+                            ${escapeHTML(b)}
                         </span>
                     </td>
-                    <td class="p-4 text-xs text-slate-600">${escapeHTML(item.role || item.group || '—')}</td>
-                    <td class="p-4 pr-6 text-xs text-slate-600">${escapeHTML(item.phone || '—')}</td>
+                    <td class="p-4 text-xs text-slate-600">${escapeHTML(a.role||a.group||'\u2014')}</td>
+                    <td class="p-4 pr-6 text-xs text-slate-600">${escapeHTML(a.phone||'\u2014')}</td>
                 </tr>
-            `;
-        }).join('');
-    }
-
-    if (mobileList) {
-        mobileList.innerHTML = list.map(item => {
-            const branch = getMemberBranch(item);
-            return `
+            `;}).join('');}if(c){c.innerHTML=a.map(a=>{const b=getMemberBranch(a);return`
                 <div class="bg-fast-card rounded-2xl p-4 border border-fast-border shadow-xs space-y-2">
                     <div class="flex items-center justify-between gap-2">
-                        <span class="font-bold text-sm text-fast-textMain">${escapeHTML(item.name)}</span>
-                        <span class="px-2.5 py-0.5 rounded-lg bg-fast-primary/10 text-fast-primary font-mono font-bold text-xs shrink-0">${escapeHTML(item.code || '—')}</span>
+                        <span class="font-bold text-sm text-fast-textMain">${escapeHTML(a.name)}</span>
+                        <span class="px-2.5 py-0.5 rounded-lg bg-fast-primary/10 text-fast-primary font-mono font-bold text-xs shrink-0">${escapeHTML(a.code||'\u2014')}</span>
                     </div>
                     <div class="flex items-center justify-between gap-2 text-xs">
-                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-fast-dark/10 text-fast-dark">${escapeHTML(branch)}</span>
-                        <span class="text-slate-500 truncate">${escapeHTML(item.role || item.group || '—')}</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-fast-dark/10 text-fast-dark">${escapeHTML(b)}</span>
+                        <span class="text-slate-500 truncate">${escapeHTML(a.role||a.group||'\u2014')}</span>
                     </div>
-                    ${item.phone ? `<div class="text-xs text-slate-600 pt-1 border-t border-slate-100">📞 ${escapeHTML(item.phone)}</div>` : ''}
+                    ${a.phone?`<div class="text-xs text-slate-600 pt-1 border-t border-slate-100">📞 ${escapeHTML(a.phone)}</div>`:''}
                 </div>
-            `;
-        }).join('');
-    }
-}
-
-// ==================== 8. DANH SÁCH ĐẠI BIỂU, NGƯỜI ĐI KÈM & PHÂN TRANG ====================
-const DELEGATES_PAGE_SIZE = 20;
-let currentDelegatePage = 1;
-
-function getRelativesArray(item) {
-    if (Array.isArray(item.relatives)) {
-        return item.relatives.filter(r => r && (r.name || r.relation || r.type));
-    }
-    if (item.relative && typeof item.relative === 'object' && (item.relative.name || item.relative.relation || item.relative.type)) {
-        return [item.relative];
-    }
-    return [];
-}
-
-function renderRelativesDetailHtml(item) {
-    const rels = getRelativesArray(item);
-    if (rels.length === 0) return '';
-
-    const itemsHtml = rels.map(r => {
-        const relName = escapeHTML(r.name || 'Người đi kèm');
-        const metaParts = [r.relation, r.type].filter(Boolean).map(escapeHTML);
-        const metaText = metaParts.length > 0 ? ` (${metaParts.join(' · ')})` : '';
-        return `<li>• <strong class="text-slate-700">${relName}</strong>${metaText}</li>`;
-    }).join('');
-
-    return `
+            `;}).join('');}}const DELEGATES_PAGE_SIZE=20;let currentDelegatePage=1;function getRelativesArray(a){if(Array.isArray(a.relatives)){return a.relatives.filter(a=>a&&(a.name||a.relation||a.type));}if(a.relative&&typeof a.relative==='\x6f\x62\x6a\x65\x63\x74'&&(a.relative.name||a.relative.relation||a.relative.type)){return[a.relative];}return[];}function renderRelativesDetailHtml(b){const a=getRelativesArray(b);if(a.length===0)return'';const c=a.map(a=>{const c=escapeHTML(a.name||'\x4e\x67\u01b0\u1edd\x69\x20\u0111\x69\x20\x6b\xe8\x6d');const b=[a.relation,a.type].filter(Boolean).map(escapeHTML);const d=b.length>0?` (${b.join('\x20\xb7\x20')})`:'';return`<li>• <strong class="text-slate-700">${c}</strong>${d}</li>`;}).join('');return`
         <div class="mt-2 pt-2 border-t border-slate-100 text-[11px]">
             <span class="font-bold text-amber-800 inline-flex items-center gap-1">
-                <span>👨‍👩‍👧 Người thân đi kèm (${rels.length}):</span>
+                <span>👨‍👩‍👧 Người thân đi kèm (${a.length}):</span>
             </span>
-            <ul class="mt-1 space-y-0.5 text-slate-600">${itemsHtml}</ul>
+            <ul class="mt-1 space-y-0.5 text-slate-600">${c}</ul>
         </div>
-    `;
-}
-
-function setFilter(filterType) {
-    currentFilter = filterType;
-    currentDelegatePage = 1;
-    const buttons = ['all', 'khach', 'fhn', 'fdn', 'fsg'];
-    buttons.forEach(btn => {
-        const el = document.getElementById(`btn-${btn}`);
-        if (el) {
-            el.className = (btn === filterType)
-                ? "px-4 py-2 rounded-2xl text-xs font-bold transition bg-fast-dark text-white shadow"
-                : "px-4 py-2 rounded-2xl text-xs font-bold transition bg-fast-card text-slate-600 border border-fast-border hover:bg-slate-100";
-        }
-    });
-    updateDelegatesUI();
-}
-
-function handleSearchInput(event) {
-    currentSearchQuery = event.target.value.toLowerCase().trim();
-    currentDelegatePage = 1;
-    updateDelegatesUI();
-}
-
-function goToDelegatePage(pageNum) {
-    currentDelegatePage = pageNum;
-    updateDelegatesUI();
-    const sec = document.getElementById('danh-sach');
-    if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function renderDelegatesPagination(totalItems) {
-    const paginationBox = document.getElementById('delegates-pagination');
-    const infoEl = document.getElementById('delegates-page-info');
-    const buttonsEl = document.getElementById('delegates-page-buttons');
-    if (!paginationBox || !infoEl || !buttonsEl) return;
-
-    if (totalItems <= DELEGATES_PAGE_SIZE) {
-        paginationBox.classList.add('hidden');
-        buttonsEl.innerHTML = '';
-        infoEl.textContent = '';
-        return;
-    }
-
-    const totalPages = Math.ceil(totalItems / DELEGATES_PAGE_SIZE);
-    if (currentDelegatePage > totalPages) currentDelegatePage = totalPages;
-    if (currentDelegatePage < 1) currentDelegatePage = 1;
-
-    const startIdx = (currentDelegatePage - 1) * DELEGATES_PAGE_SIZE + 1;
-    const endIdx = Math.min(currentDelegatePage * DELEGATES_PAGE_SIZE, totalItems);
-
-    paginationBox.classList.remove('hidden');
-    infoEl.innerHTML = `Hiển thị <b>${startIdx}–${endIdx}</b> / <b>${totalItems}</b> bản ghi (Trang ${currentDelegatePage}/${totalPages})`;
-
-    let btnsHtml = `
-        <button type="button" onclick="goToDelegatePage(${currentDelegatePage - 1})" ${currentDelegatePage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl border border-fast-border font-bold text-xs ${currentDelegatePage === 1 ? 'opacity-40 cursor-not-allowed bg-slate-50 text-slate-400' : 'bg-white hover:bg-slate-50 text-fast-dark cursor-pointer'}">
+    `;}function setFilter(a){currentFilter=a;currentDelegatePage=1;const b=['\x61\x6c\x6c','\x6b\x68\x61\x63\x68','\x66\x68\x6e','\x66\x64\x6e','\x66\x73\x67'];b.forEach(b=>{const c=document.getElementById(`btn-${b}`);if(c){c.className=(b===a)?"\x70\x78\x2d\x34\x20\x70\x79\x2d\x32\x20\x72\x6f\x75\x6e\x64\x65\x64\x2d\x32\x78\x6c\x20\x74\x65\x78\x74\x2d\x78\x73\x20\x66\x6f\x6e\x74\x2d\x62\x6f\x6c\x64\x20\x74\x72\x61\x6e\x73\x69\x74\x69\x6f\x6e\x20\x62\x67\x2d\x66\x61\x73\x74\x2d\x64\x61\x72\x6b\x20\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65\x20\x73\x68\x61\x64\x6f\x77":"\x70\x78\x2d\x34\x20\x70\x79\x2d\x32\x20\x72\x6f\x75\x6e\x64\x65\x64\x2d\x32\x78\x6c\x20\x74\x65\x78\x74\x2d\x78\x73\x20\x66\x6f\x6e\x74\x2d\x62\x6f\x6c\x64\x20\x74\x72\x61\x6e\x73\x69\x74\x69\x6f\x6e\x20\x62\x67\x2d\x66\x61\x73\x74\x2d\x63\x61\x72\x64\x20\x74\x65\x78\x74\x2d\x73\x6c\x61\x74\x65\x2d\x36\x30\x30\x20\x62\x6f\x72\x64\x65\x72\x20\x62\x6f\x72\x64\x65\x72\x2d\x66\x61\x73\x74\x2d\x62\x6f\x72\x64\x65\x72\x20\x68\x6f\x76\x65\x72\x3a\x62\x67\x2d\x73\x6c\x61\x74\x65\x2d\x31\x30\x30";}});updateDelegatesUI();}function handleSearchInput(a){currentSearchQuery=a.target.value.toLowerCase().trim();currentDelegatePage=1;updateDelegatesUI();}function goToDelegatePage(b){currentDelegatePage=b;updateDelegatesUI();const a=document.getElementById('\x64\x61\x6e\x68\x2d\x73\x61\x63\x68');if(a)a.scrollIntoView({behavior:'\x73\x6d\x6f\x6f\x74\x68',block:'\x73\x74\x61\x72\x74'});}function renderDelegatesPagination(b){const c=document.getElementById('\x64\x65\x6c\x65\x67\x61\x74\x65\x73\x2d\x70\x61\x67\x69\x6e\x61\x74\x69\x6f\x6e');const d=document.getElementById('\x64\x65\x6c\x65\x67\x61\x74\x65\x73\x2d\x70\x61\x67\x65\x2d\x69\x6e\x66\x6f');const e=document.getElementById('\x64\x65\x6c\x65\x67\x61\x74\x65\x73\x2d\x70\x61\x67\x65\x2d\x62\x75\x74\x74\x6f\x6e\x73');if(!c||!d||!e)return;if(b<=DELEGATES_PAGE_SIZE){c.classList.add('\x68\x69\x64\x64\x65\x6e');e.innerHTML='';d.textContent='';return;}const a=Math.ceil(b/DELEGATES_PAGE_SIZE);if(currentDelegatePage>a)currentDelegatePage=a;if(currentDelegatePage<1)currentDelegatePage=1;const g=(currentDelegatePage-1)*DELEGATES_PAGE_SIZE+1;const h=Math.min(currentDelegatePage*DELEGATES_PAGE_SIZE,b);c.classList.remove('\x68\x69\x64\x64\x65\x6e');d.innerHTML=`Hiển thị <b>${g}–${h}</b> / <b>${b}</b> bản ghi (Trang ${currentDelegatePage}/${a})`;let f=`
+        <button type="button" onclick="goToDelegatePage(${currentDelegatePage-1})" ${currentDelegatePage===1?'\x64\x69\x73\x61\x62\x6c\x65\x64':''} class="px-3 py-1.5 rounded-xl border border-fast-border font-bold text-xs ${currentDelegatePage===1?'\x6f\x70\x61\x63\x69\x74\x79\x2d\x34\x30\x20\x63\x75\x72\x73\x6f\x72\x2d\x6e\x6f\x74\x2d\x61\x6c\x6c\x6f\x77\x65\x64\x20\x62\x67\x2d\x73\x6c\x61\x74\x65\x2d\x35\x30\x20\x74\x65\x78\x74\x2d\x73\x6c\x61\x74\x65\x2d\x34\x30\x30':'\x62\x67\x2d\x77\x68\x69\x74\x65\x20\x68\x6f\x76\x65\x72\x3a\x62\x67\x2d\x73\x6c\x61\x74\x65\x2d\x35\x30\x20\x74\x65\x78\x74\x2d\x66\x61\x73\x74\x2d\x64\x61\x72\x6b\x20\x63\x75\x72\x73\x6f\x72\x2d\x70\x6f\x69\x6e\x74\x65\x72'}">
             ← Trước
         </button>
-    `;
-
-    for (let p = 1; p <= totalPages; p++) {
-        const isActive = p === currentDelegatePage;
-        btnsHtml += `
-            <button type="button" onclick="goToDelegatePage(${p})" class="w-8 h-8 rounded-xl font-bold text-xs transition cursor-pointer ${isActive ? 'bg-fast-dark text-white shadow-xs' : 'bg-white border border-fast-border text-slate-600 hover:bg-slate-50'}">
-                ${p}
+    `;for(let b=1;b<=a;b++){const a=b===currentDelegatePage;f+=`
+            <button type="button" onclick="goToDelegatePage(${b})" class="w-8 h-8 rounded-xl font-bold text-xs transition cursor-pointer ${a?'\x62\x67\x2d\x66\x61\x73\x74\x2d\x64\x61\x72\x6b\x20\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65\x20\x73\x68\x61\x64\x6f\x77\x2d\x78\x73':'\x62\x67\x2d\x77\x68\x69\x74\x65\x20\x62\x6f\x72\x64\x65\x72\x20\x62\x6f\x72\x64\x65\x72\x2d\x66\x61\x73\x74\x2d\x62\x6f\x72\x64\x65\x72\x20\x74\x65\x78\x74\x2d\x73\x6c\x61\x74\x65\x2d\x36\x30\x30\x20\x68\x6f\x76\x65\x72\x3a\x62\x67\x2d\x73\x6c\x61\x74\x65\x2d\x35\x30'}">
+                ${b}
             </button>
-        `;
-    }
-
-    btnsHtml += `
-        <button type="button" onclick="goToDelegatePage(${currentDelegatePage + 1})" ${currentDelegatePage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl border border-fast-border font-bold text-xs ${currentDelegatePage === totalPages ? 'opacity-40 cursor-not-allowed bg-slate-50 text-slate-400' : 'bg-white hover:bg-slate-50 text-fast-dark cursor-pointer'}">
+        `;}f+=`
+        <button type="button" onclick="goToDelegatePage(${currentDelegatePage+1})" ${currentDelegatePage===a?'\x64\x69\x73\x61\x62\x6c\x65\x64':''} class="px-3 py-1.5 rounded-xl border border-fast-border font-bold text-xs ${currentDelegatePage===a?'\x6f\x70\x61\x63\x69\x74\x79\x2d\x34\x30\x20\x63\x75\x72\x73\x6f\x72\x2d\x6e\x6f\x74\x2d\x61\x6c\x6c\x6f\x77\x65\x64\x20\x62\x67\x2d\x73\x6c\x61\x74\x65\x2d\x35\x30\x20\x74\x65\x78\x74\x2d\x73\x6c\x61\x74\x65\x2d\x34\x30\x30':'\x62\x67\x2d\x77\x68\x69\x74\x65\x20\x68\x6f\x76\x65\x72\x3a\x62\x67\x2d\x73\x6c\x61\x74\x65\x2d\x35\x30\x20\x74\x65\x78\x74\x2d\x66\x61\x73\x74\x2d\x64\x61\x72\x6b\x20\x63\x75\x72\x73\x6f\x72\x2d\x70\x6f\x69\x6e\x74\x65\x72'}">
             Sau →
         </button>
-    `;
-
-    buttonsEl.innerHTML = btnsHtml;
-}
-
-function updateDelegatesUI() {
-    const khachList = allDelegatesData.filter(item => item.group && (item.group.toLowerCase().includes('khách') || item.group.toLowerCase().includes('đối tác')));
-    const fhnList = allDelegatesData.filter(item => getMemberBranch(item) === 'FHN');
-    const fdnList = allDelegatesData.filter(item => getMemberBranch(item) === 'FDN');
-    const fsgList = allDelegatesData.filter(item => getMemberBranch(item) === 'FSG');
-
-    const countAll = document.getElementById('count-all');
-    const countKhach = document.getElementById('count-khach');
-    const countFhn = document.getElementById('count-fhn');
-    const countFdn = document.getElementById('count-fdn');
-    const countFsg = document.getElementById('count-fsg');
-
-    if (countAll) countAll.textContent = allDelegatesData.length;
-    if (countKhach) countKhach.textContent = khachList.length;
-    if (countFhn) countFhn.textContent = fhnList.length;
-    if (countFdn) countFdn.textContent = fdnList.length;
-    if (countFsg) countFsg.textContent = fsgList.length;
-
-    let displayList = allDelegatesData;
-    if (currentFilter === 'khach') displayList = khachList;
-    if (currentFilter === 'fhn') displayList = fhnList;
-    if (currentFilter === 'fdn') displayList = fdnList;
-    if (currentFilter === 'fsg') displayList = fsgList;
-
-    if (currentSearchQuery) {
-        displayList = displayList.filter(item => {
-            const name = (item.name || '').toLowerCase();
-            const code = (item.code || '').toLowerCase();
-            const phone = (item.phone || '').toLowerCase();
-            const company = (item.company || '').toLowerCase();
-            const relNames = getRelativesArray(item).map(r => (r.name || '').toLowerCase()).join(' ');
-            return (
-                name.includes(currentSearchQuery) ||
-                code.includes(currentSearchQuery) ||
-                phone.includes(currentSearchQuery) ||
-                company.includes(currentSearchQuery) ||
-                relNames.includes(currentSearchQuery)
-            );
-        });
-    }
-
-    let totalRelativesCount = 0;
-    allDelegatesData.forEach(item => {
-        totalRelativesCount += getRelativesArray(item).length;
-    });
-
-    const statsTextEl = document.getElementById('stats-text');
-    const statsDetailEl = document.getElementById('stats-detail');
-    if (statsTextEl) statsTextEl.innerHTML = `Tổng số lượng tham dự thực tế: <b>${allDelegatesData.length + totalRelativesCount} người</b>`;
-    if (statsDetailEl) statsDetailEl.innerHTML = `(Gồm <b>${allDelegatesData.length}</b> đại biểu chính thức và <b>${totalRelativesCount}</b> người thân đi kèm)`;
-
-    const tbody = document.getElementById('delegates-table-body');
-    const mobileContainer = document.getElementById('delegates-mobile-list');
-
-    if (displayList.length === 0) {
-        if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 italic">Không tìm thấy kết quả phù hợp.</td></tr>`;
-        if (mobileContainer) mobileContainer.innerHTML = `<div class="p-8 text-center text-slate-400 italic text-sm">Không tìm thấy kết quả phù hợp.</div>`;
-        renderDelegatesPagination(0);
-        return;
-    }
-
-    const totalFiltered = displayList.length;
-    const totalPages = Math.max(1, Math.ceil(totalFiltered / DELEGATES_PAGE_SIZE));
-    if (currentDelegatePage > totalPages) currentDelegatePage = totalPages;
-    const startOffset = (currentDelegatePage - 1) * DELEGATES_PAGE_SIZE;
-    const pagedList = displayList.slice(startOffset, startOffset + DELEGATES_PAGE_SIZE);
-
-    if (tbody) {
-        tbody.innerHTML = pagedList.map(item => {
-            const sportsBadge = Array.isArray(item.sports) && item.sports.length > 0
-                ? `<div class="text-[11px] text-fast-primary font-semibold mt-0.5">🏅 ${escapeHTML(item.sports.join(', '))}</div>`
-                : '';
-            const relDetailHtml = renderRelativesDetailHtml(item);
-            const cardBtn = `<button type="button" onclick="openDelegateCardModal('${escapeHTML(item.code || item.id)}')" class="px-2.5 py-1.5 rounded-xl bg-amber-50 text-amber-700 hover:bg-amber-100 font-bold text-xs mr-1">Thẻ</button>`;
-            const adminActions = isAdminLoggedIn ? `
-                <button type="button" onclick="openEditModal('${item.firebaseKey || item.id}')" class="px-2.5 py-1.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold text-xs mr-1">Sửa</button>
-                <button type="button" onclick="deleteDelegateRecord('${item.firebaseKey || item.id}')" class="px-2.5 py-1.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 font-bold text-xs">Xóa</button>
-            ` : '';
-
-            return `
+    `;e.innerHTML=f;}function updateDelegatesUI(){const e=allDelegatesData.filter(a=>a.group&&(a.group.toLowerCase().includes('\x6b\x68\xe1\x63\x68')||a.group.toLowerCase().includes('\u0111\u1ed1\x69\x20\x74\xe1\x63')));const f=allDelegatesData.filter(a=>getMemberBranch(a)==='\x46\x48\x4e');const g=allDelegatesData.filter(a=>getMemberBranch(a)==='\x46\x44\x4e');const h=allDelegatesData.filter(a=>getMemberBranch(a)==='\x46\x53\x47');const i=document.getElementById('\x63\x6f\x75\x6e\x74\x2d\x61\x6c\x6c');const j=document.getElementById('\x63\x6f\x75\x6e\x74\x2d\x6b\x68\x61\x63\x68');const k=document.getElementById('\x63\x6f\x75\x6e\x74\x2d\x66\x68\x6e');const l=document.getElementById('\x63\x6f\x75\x6e\x74\x2d\x66\x64\x6e');const m=document.getElementById('\x63\x6f\x75\x6e\x74\x2d\x66\x73\x67');if(i)i.textContent=allDelegatesData.length;if(j)j.textContent=e.length;if(k)k.textContent=f.length;if(l)l.textContent=g.length;if(m)m.textContent=h.length;let a=allDelegatesData;if(currentFilter==='\x6b\x68\x61\x63\x68')a=e;if(currentFilter==='\x66\x68\x6e')a=f;if(currentFilter==='\x66\x64\x6e')a=g;if(currentFilter==='\x66\x73\x67')a=h;if(currentSearchQuery){a=a.filter(a=>{const b=(a.name||'').toLowerCase();const c=(a.code||'').toLowerCase();const d=(a.phone||'').toLowerCase();const e=(a.company||'').toLowerCase();const f=getRelativesArray(a).map(a=>(a.name||'').toLowerCase()).join('\x20');return(b.includes(currentSearchQuery)||c.includes(currentSearchQuery)||d.includes(currentSearchQuery)||e.includes(currentSearchQuery)||f.includes(currentSearchQuery));});}let d=0;allDelegatesData.forEach(a=>{d+=getRelativesArray(a).length;});const n=document.getElementById('\x73\x74\x61\x74\x73\x2d\x74\x65\x78\x74');const o=document.getElementById('\x73\x74\x61\x74\x73\x2d\x64\x65\x74\x61\x69\x6c');if(n)n.innerHTML=`Tổng số lượng tham dự thực tế: <b>${allDelegatesData.length+d} người</b>`;if(o)o.innerHTML=`(Gồm <b>${allDelegatesData.length}</b> đại biểu chính thức và <b>${d}</b> người thân đi kèm)`;const b=document.getElementById('\x64\x65\x6c\x65\x67\x61\x74\x65\x73\x2d\x74\x61\x62\x6c\x65\x2d\x62\x6f\x64\x79');const c=document.getElementById('\x64\x65\x6c\x65\x67\x61\x74\x65\x73\x2d\x6d\x6f\x62\x69\x6c\x65\x2d\x6c\x69\x73\x74');if(a.length===0){if(b)b.innerHTML=`<tr><td colspan="6" class="p-8 text-center text-slate-400 italic">Không tìm thấy kết quả phù hợp.</td></tr>`;if(c)c.innerHTML=`<div class="p-8 text-center text-slate-400 italic text-sm">Không tìm thấy kết quả phù hợp.</div>`;renderDelegatesPagination(0);return;}const p=a.length;const q=Math.max(1,Math.ceil(p/DELEGATES_PAGE_SIZE));if(currentDelegatePage>q)currentDelegatePage=q;const r=(currentDelegatePage-1)*DELEGATES_PAGE_SIZE;const s=a.slice(r,r+DELEGATES_PAGE_SIZE);if(b){b.innerHTML=s.map(a=>{const b=Array.isArray(a.sports)&&a.sports.length>0?`<div class="text-[11px] text-fast-primary font-semibold mt-0.5">🏅 ${escapeHTML(a.sports.join('\x2c\x20'))}</div>`:'';const c=renderRelativesDetailHtml(a);const d=`<button type="button" onclick="openDelegateCardModal('${escapeHTML(a.code||a.id)}')" class="px-2.5 py-1.5 rounded-xl bg-amber-50 text-amber-700 hover:bg-amber-100 font-bold text-xs mr-1">Thẻ</button>`;const e=isAdminLoggedIn?`
+                <button type="button" onclick="openEditModal('${a.firebaseKey||a.id}')" class="px-2.5 py-1.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold text-xs mr-1">Sửa</button>
+                <button type="button" onclick="deleteDelegateRecord('${a.firebaseKey||a.id}')" class="px-2.5 py-1.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 font-bold text-xs">Xóa</button>
+            `:'';return`
                 <tr class="hover:bg-fast-body transition-colors border-b border-slate-100 last:border-none align-top">
-                    <td class="p-4 pl-6 font-mono font-extrabold text-fast-primary whitespace-nowrap">${escapeHTML(item.code)}</td>
+                    <td class="p-4 pl-6 font-mono font-extrabold text-fast-primary whitespace-nowrap">${escapeHTML(a.code)}</td>
                     <td class="p-4">
                         <div class="flex items-center gap-2.5">
-                            <img src="${getDelegateAvatarSrc(item)}" alt="${escapeHTML(item.name)}" class="w-9 h-9 rounded-xl object-cover border border-fast-border shrink-0">
+                            <img src="${getDelegateAvatarSrc(a)}" alt="${escapeHTML(a.name)}" class="w-9 h-9 rounded-xl object-cover border border-fast-border shrink-0">
                             <div>
-                                <div class="font-bold text-fast-textMain">${escapeHTML(item.name)}</div>
-                                <div class="text-[11px] text-slate-400">${escapeHTML(item.role || '')}</div>
+                                <div class="font-bold text-fast-textMain">${escapeHTML(a.name)}</div>
+                                <div class="text-[11px] text-slate-400">${escapeHTML(a.role||'')}</div>
                             </div>
                         </div>
-                        ${relDetailHtml}
+                        ${c}
                     </td>
-                    <td class="p-4 text-xs text-slate-600">${escapeHTML(item.company || '—')}</td>
-                    <td class="p-4"><span class="px-3 py-1 rounded-full text-[11px] font-extrabold bg-fast-dark/10 text-fast-dark">${escapeHTML(item.group)}</span></td>
+                    <td class="p-4 text-xs text-slate-600">${escapeHTML(a.company||'\u2014')}</td>
+                    <td class="p-4"><span class="px-3 py-1 rounded-full text-[11px] font-extrabold bg-fast-dark/10 text-fast-dark">${escapeHTML(a.group)}</span></td>
                     <td class="p-4 text-xs">
-                        <div class="font-semibold text-fast-textMain">${escapeHTML(item.activity || '—')}</div>
-                        ${sportsBadge}
+                        <div class="font-semibold text-fast-textMain">${escapeHTML(a.activity||'\u2014')}</div>
+                        ${b}
                     </td>
-                    <td class="p-4 pr-6 text-right whitespace-nowrap">${cardBtn}${adminActions}</td>
+                    <td class="p-4 pr-6 text-right whitespace-nowrap">${d}${e}</td>
                 </tr>
-            `;
-        }).join('');
-    }
-
-    if (mobileContainer) {
-        mobileContainer.innerHTML = pagedList.map(item => {
-            const sportsBadge = Array.isArray(item.sports) && item.sports.length > 0
-                ? `<div class="text-[11px] text-fast-primary font-semibold">🏅 ${escapeHTML(item.sports.join(', '))}</div>`
-                : '';
-            const relDetailHtml = renderRelativesDetailHtml(item);
-
-            return `
+            `;}).join('');}if(c){c.innerHTML=s.map(a=>{const b=Array.isArray(a.sports)&&a.sports.length>0?`<div class="text-[11px] text-fast-primary font-semibold">🏅 ${escapeHTML(a.sports.join('\x2c\x20'))}</div>`:'';const c=renderRelativesDetailHtml(a);return`
                 <div class="bg-fast-card rounded-2xl p-4 border border-fast-border shadow-xs space-y-2">
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <img src="${getDelegateAvatarSrc(item)}" alt="${escapeHTML(item.name)}" class="w-9 h-9 rounded-xl object-cover border border-fast-border shrink-0">
-                            <span class="font-bold text-sm text-fast-textMain truncate">${escapeHTML(item.name)}</span>
+                            <img src="${getDelegateAvatarSrc(a)}" alt="${escapeHTML(a.name)}" class="w-9 h-9 rounded-xl object-cover border border-fast-border shrink-0">
+                            <span class="font-bold text-sm text-fast-textMain truncate">${escapeHTML(a.name)}</span>
                         </div>
-                        <button type="button" onclick="openDelegateCardModal('${escapeHTML(item.code || item.id)}')" class="px-2.5 py-0.5 rounded-lg bg-fast-primary/10 text-fast-primary font-mono font-bold text-xs shrink-0">${escapeHTML(item.code)}</button>
+                        <button type="button" onclick="openDelegateCardModal('${escapeHTML(a.code||a.id)}')" class="px-2.5 py-0.5 rounded-lg bg-fast-primary/10 text-fast-primary font-mono font-bold text-xs shrink-0">${escapeHTML(a.code)}</button>
                     </div>
-                    <div class="text-xs text-slate-600">${escapeHTML(item.group)}</div>
-                    <div class="text-xs text-slate-500">${escapeHTML(item.activity || '')}</div>
-                    ${sportsBadge}
-                    ${relDetailHtml}
+                    <div class="text-xs text-slate-600">${escapeHTML(a.group)}</div>
+                    <div class="text-xs text-slate-500">${escapeHTML(a.activity||'')}</div>
+                    ${b}
+                    ${c}
                 </div>
-            `;
-        }).join('');
-    }
-
-    renderDelegatesPagination(totalFiltered);
-}
-
-// ==================== 9. TRA CỨU, ADMIN & CHỈNH SỬA ====================
-function openLookupModal() {
-    document.getElementById('lookup-modal').classList.remove('hidden');
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
-function closeLookupModal() {
-    document.getElementById('lookup-modal').classList.add('hidden');
-}
-
-function handleLookupSubmit(event) {
-    event.preventDefault();
-    performLookup(document.getElementById('lookup-query').value.trim());
-}
-
-function performLookup(query) {
-    const resultDiv = document.getElementById('lookup-result');
-    const cleanQuery = query.trim().toUpperCase();
-    resultDiv.classList.remove('hidden');
-
-    const found = allDelegatesData.find(item => {
-        const code = (item.code || '').trim().toUpperCase();
-        const phone = (item.phone || '').trim().replace(/\s+/g, '');
-        return code === cleanQuery || (cleanQuery.length >= 4 && phone.includes(cleanQuery));
-    });
-
-    if (found) {
-        resultDiv.innerHTML = buildDelegateBadgeCardHtml(found);
-    } else {
-        resultDiv.innerHTML = `<div class="p-4 rounded-2xl bg-fast-body border border-fast-border text-center text-xs text-slate-600">Không tìm thấy thông tin đăng ký.</div>`;
-    }
-}
-
-function openAdminModal() {
-    const modal = document.getElementById('admin-login-modal');
-    if (modal) {
-        modal.classList.remove('hidden');
-        const input = document.getElementById('admin-password-input');
-        if (input) {
-            input.value = '';
-            input.focus();
-        }
-    }
-}
-
-function closeAdminModal() {
-    const modal = document.getElementById('admin-login-modal');
-    if (modal) modal.classList.add('hidden');
-}
-
-function verifyAdminPassword() {
-    const pass = document.getElementById('admin-password-input')?.value;
-    if (pass === "fast2027") {
-        isAdminLoggedIn = true;
-        closeAdminModal();
-        showToast("Đã kích hoạt quyền Quản trị viên thành công!");
-        updateDelegatesUI();
-    } else {
-        alert("Mật khẩu không chính xác!");
-    }
-}
-
-function deleteDelegateRecord(firebaseKey) {
-    if (confirm("Bạn có chắc chắn muốn xóa đại biểu này không?")) {
-        db.ref('delegates/' + firebaseKey).remove()
-            .then(() => showToast("Đã xóa đại biểu thành công!"))
-            .catch(err => {
-                console.error(err);
-                alert("Không thể xóa bản ghi.");
-            });
-    }
-}
-
-function openEditModal(firebaseKey) {
-    const delegate = allDelegatesData.find(item => (item.firebaseKey === firebaseKey || item.id === firebaseKey));
-    if (!delegate) return;
-
-    document.getElementById('edit-firebase-key').value = firebaseKey;
-    document.getElementById('edit-name').value = delegate.name || '';
-    document.getElementById('edit-company').value = delegate.company || '';
-    document.getElementById('edit-group').value = delegate.group || 'CBNV FAST Hà Nội (FHN)';
-    document.getElementById('edit-role').value = delegate.role || '';
-    document.getElementById('edit-phone').value = delegate.phone || '';
-    document.getElementById('edit-email').value = delegate.email || '';
-    document.getElementById('edit-travel').value = delegate.travel || '';
-    document.getElementById('edit-activity').value = delegate.activity || '';
-
-    setAvatarPreviewUI('edit', delegate.avatar || '');
-
-    const currentSports = Array.isArray(delegate.sports) ? delegate.sports : [];
-    document.querySelectorAll('input[name="edit-sports"]').forEach(cb => {
-        cb.checked = currentSports.includes(cb.value);
-    });
-
-    const container = document.getElementById('edit-relatives-container');
-    container.innerHTML = '';
-    const rels = getRelativesArray(delegate);
-    rels.forEach(r => addEditRelativeRow(r.name, r.relation, r.type));
-
-    const modal = document.getElementById('edit-modal');
-    const content = document.getElementById('edit-modal-content');
-    modal.classList.remove('hidden');
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-    setTimeout(() => {
-        modal.classList.add('opacity-100');
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-    }, 10);
-}
-
-function addEditRelativeRow(name = '', relation = 'Vợ/Chồng', type = 'Người lớn') {
-    const container = document.getElementById('edit-relatives-container');
-    const rowId = 'edit-rel-' + Date.now() + Math.floor(Math.random() * 1000);
-    container.insertAdjacentHTML('beforeend', `
-        <div id="${rowId}" class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+            `;}).join('');}renderDelegatesPagination(p);}function openLookupModal(){document.getElementById('\x6c\x6f\x6f\x6b\x75\x70\x2d\x6d\x6f\x64\x61\x6c').classList.remove('\x68\x69\x64\x64\x65\x6e');if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64')lucide.createIcons();}function closeLookupModal(){document.getElementById('\x6c\x6f\x6f\x6b\x75\x70\x2d\x6d\x6f\x64\x61\x6c').classList.add('\x68\x69\x64\x64\x65\x6e');}function handleLookupSubmit(a){a.preventDefault();performLookup(document.getElementById('\x6c\x6f\x6f\x6b\x75\x70\x2d\x71\x75\x65\x72\x79').value.trim());}function performLookup(d){const a=document.getElementById('\x6c\x6f\x6f\x6b\x75\x70\x2d\x72\x65\x73\x75\x6c\x74');const b=d.trim().toUpperCase();a.classList.remove('\x68\x69\x64\x64\x65\x6e');const c=allDelegatesData.find(a=>{const c=(a.code||'').trim().toUpperCase();const d=(a.phone||'').trim().replace(/\s+/g,'');return c===b||(b.length>=4&&d.includes(b));});if(c){a.innerHTML=buildDelegateBadgeCardHtml(c);}else{a.innerHTML=`<div class="p-4 rounded-2xl bg-fast-body border border-fast-border text-center text-xs text-slate-600">Không tìm thấy thông tin đăng ký.</div>`;}}function openAdminModal(){const a=document.getElementById('\x61\x64\x6d\x69\x6e\x2d\x6c\x6f\x67\x69\x6e\x2d\x6d\x6f\x64\x61\x6c');if(a){a.classList.remove('\x68\x69\x64\x64\x65\x6e');const b=document.getElementById('\x61\x64\x6d\x69\x6e\x2d\x70\x61\x73\x73\x77\x6f\x72\x64\x2d\x69\x6e\x70\x75\x74');if(b){b.value='';b.focus();}}}function closeAdminModal(){const a=document.getElementById('\x61\x64\x6d\x69\x6e\x2d\x6c\x6f\x67\x69\x6e\x2d\x6d\x6f\x64\x61\x6c');if(a)a.classList.add('\x68\x69\x64\x64\x65\x6e');}function verifyAdminPassword(){const a=document.getElementById('\x61\x64\x6d\x69\x6e\x2d\x70\x61\x73\x73\x77\x6f\x72\x64\x2d\x69\x6e\x70\x75\x74')?.value;if(a==="\x66\x61\x73\x74\x32\x30\x32\x37"){isAdminLoggedIn=true;closeAdminModal();showToast("\u0110\xe3\x20\x6b\xed\x63\x68\x20\x68\x6f\u1ea1\x74\x20\x71\x75\x79\u1ec1\x6e\x20\x51\x75\u1ea3\x6e\x20\x74\x72\u1ecb\x20\x76\x69\xea\x6e\x20\x74\x68\xe0\x6e\x68\x20\x63\xf4\x6e\x67\x21");updateDelegatesUI();}else{alert("\x4d\u1ead\x74\x20\x6b\x68\u1ea9\x75\x20\x6b\x68\xf4\x6e\x67\x20\x63\x68\xed\x6e\x68\x20\x78\xe1\x63\x21");}}function deleteDelegateRecord(a){if(confirm("\x42\u1ea1\x6e\x20\x63\xf3\x20\x63\x68\u1eaf\x63\x20\x63\x68\u1eaf\x6e\x20\x6d\x75\u1ed1\x6e\x20\x78\xf3\x61\x20\u0111\u1ea1\x69\x20\x62\x69\u1ec3\x75\x20\x6e\xe0\x79\x20\x6b\x68\xf4\x6e\x67\x3f")){db.ref('\x64\x65\x6c\x65\x67\x61\x74\x65\x73\x2f'+a).remove().then(()=>showToast("\u0110\xe3\x20\x78\xf3\x61\x20\u0111\u1ea1\x69\x20\x62\x69\u1ec3\x75\x20\x74\x68\xe0\x6e\x68\x20\x63\xf4\x6e\x67\x21")).catch(a=>{console.error(a);alert("\x4b\x68\xf4\x6e\x67\x20\x74\x68\u1ec3\x20\x78\xf3\x61\x20\x62\u1ea3\x6e\x20\x67\x68\x69\x2e");});}}function openEditModal(b){const a=allDelegatesData.find(a=>(a.firebaseKey===b||a.id===b));if(!a)return;document.getElementById('\x65\x64\x69\x74\x2d\x66\x69\x72\x65\x62\x61\x73\x65\x2d\x6b\x65\x79').value=b;document.getElementById('\x65\x64\x69\x74\x2d\x6e\x61\x6d\x65').value=a.name||'';document.getElementById('\x65\x64\x69\x74\x2d\x63\x6f\x6d\x70\x61\x6e\x79').value=a.company||'';document.getElementById('\x65\x64\x69\x74\x2d\x67\x72\x6f\x75\x70').value=a.group||'\x43\x42\x4e\x56\x20\x46\x41\x53\x54\x20\x48\xe0\x20\x4e\u1ed9\x69\x20\x28\x46\x48\x4e\x29';document.getElementById('\x65\x64\x69\x74\x2d\x72\x6f\x6c\x65').value=a.role||'';document.getElementById('\x65\x64\x69\x74\x2d\x70\x68\x6f\x6e\x65').value=a.phone||'';document.getElementById('\x65\x64\x69\x74\x2d\x65\x6d\x61\x69\x6c').value=a.email||'';document.getElementById('\x65\x64\x69\x74\x2d\x74\x72\x61\x76\x65\x6c').value=a.travel||'';document.getElementById('\x65\x64\x69\x74\x2d\x61\x63\x74\x69\x76\x69\x74\x79').value=a.activity||'';setAvatarPreviewUI('\x65\x64\x69\x74',a.avatar||'');const e=Array.isArray(a.sports)?a.sports:[];document.querySelectorAll('\x69\x6e\x70\x75\x74\x5b\x6e\x61\x6d\x65\x3d\x22\x65\x64\x69\x74\x2d\x73\x70\x6f\x72\x74\x73\x22\x5d').forEach(a=>{a.checked=e.includes(a.value);});const f=document.getElementById('\x65\x64\x69\x74\x2d\x72\x65\x6c\x61\x74\x69\x76\x65\x73\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72');f.innerHTML='';const g=getRelativesArray(a);g.forEach(a=>addEditRelativeRow(a.name,a.relation,a.type));const c=document.getElementById('\x65\x64\x69\x74\x2d\x6d\x6f\x64\x61\x6c');const d=document.getElementById('\x65\x64\x69\x74\x2d\x6d\x6f\x64\x61\x6c\x2d\x63\x6f\x6e\x74\x65\x6e\x74');c.classList.remove('\x68\x69\x64\x64\x65\x6e');if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64')lucide.createIcons();setTimeout(()=>{c.classList.add('\x6f\x70\x61\x63\x69\x74\x79\x2d\x31\x30\x30');d.classList.remove('\x73\x63\x61\x6c\x65\x2d\x39\x35');d.classList.add('\x73\x63\x61\x6c\x65\x2d\x31\x30\x30');},10);}function addEditRelativeRow(d='',a='\x56\u1ee3\x2f\x43\x68\u1ed3\x6e\x67',b='\x4e\x67\u01b0\u1edd\x69\x20\x6c\u1edb\x6e'){const e=document.getElementById('\x65\x64\x69\x74\x2d\x72\x65\x6c\x61\x74\x69\x76\x65\x73\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72');const c='\x65\x64\x69\x74\x2d\x72\x65\x6c\x2d'+Date.now()+Math.floor(Math.random()*1000);e.insertAdjacentHTML('\x62\x65\x66\x6f\x72\x65\x65\x6e\x64',`
+        <div id="${c}" class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
             <div class="flex justify-between items-center">
                 <span class="font-bold text-fast-dark">Người thân đi kèm</span>
-                <button type="button" onclick="document.getElementById('${rowId}').remove()" class="text-red-500 font-bold">Xóa</button>
+                <button type="button" onclick="document.getElementById('${c}').remove()" class="text-red-500 font-bold">Xóa</button>
             </div>
-            <input type="text" value="${escapeHTML(name)}" placeholder="Họ và tên..." class="edit-rel-name w-full px-3 py-1.5 rounded-xl border border-slate-200 bg-white">
+            <input type="text" value="${escapeHTML(d)}" placeholder="Họ và tên..." class="edit-rel-name w-full px-3 py-1.5 rounded-xl border border-slate-200 bg-white">
             <div class="grid grid-cols-2 gap-2">
                 <select class="edit-rel-relation px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white">
-                    <option value="Vợ/Chồng" ${relation === 'Vợ/Chồng' ? 'selected' : ''}>Vợ / Chồng</option>
-                    <option value="Con cái" ${relation === 'Con cái' ? 'selected' : ''}>Con cái</option>
-                    <option value="Bố/Mẹ" ${relation === 'Bố/Mẹ' ? 'selected' : ''}>Bố / Mẹ</option>
+                    <option value="Vợ/Chồng" ${a==='\x56\u1ee3\x2f\x43\x68\u1ed3\x6e\x67'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Vợ / Chồng</option>
+                    <option value="Con cái" ${a==='\x43\x6f\x6e\x20\x63\xe1\x69'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Con cái</option>
+                    <option value="Bố/Mẹ" ${a==='\x42\u1ed1\x2f\x4d\u1eb9'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Bố / Mẹ</option>
                 </select>
                 <select class="edit-rel-type px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white">
-                    <option value="Người lớn" ${type === 'Người lớn' ? 'selected' : ''}>Người lớn</option>
-                    <option value="Trẻ em (> 6 tuổi)" ${type === 'Trẻ em (> 6 tuổi)' ? 'selected' : ''}>Trẻ em (&gt; 6 tuổi)</option>
-                    <option value="Trẻ em (< 6 tuổi)" ${type === 'Trẻ em (< 6 tuổi)' ? 'selected' : ''}>Trẻ em (&lt; 6 tuổi)</option>
+                    <option value="Người lớn" ${b==='\x4e\x67\u01b0\u1edd\x69\x20\x6c\u1edb\x6e'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Người lớn</option>
+                    <option value="Trẻ em (> 6 tuổi)" ${b==='\x54\x72\u1ebb\x20\x65\x6d\x20\x28\x3e\x20\x36\x20\x74\x75\u1ed5\x69\x29'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Trẻ em (&gt; 6 tuổi)</option>
+                    <option value="Trẻ em (< 6 tuổi)" ${b==='\x54\x72\u1ebb\x20\x65\x6d\x20\x28\x3c\x20\x36\x20\x74\x75\u1ed5\x69\x29'?'\x73\x65\x6c\x65\x63\x74\x65\x64':''}>Trẻ em (&lt; 6 tuổi)</option>
                 </select>
             </div>
         </div>
-    `);
-}
-
-function closeEditModal() {
-    const modal = document.getElementById('edit-modal');
-    const content = document.getElementById('edit-modal-content');
-    if (!modal || !content) return;
-    modal.classList.remove('opacity-100');
-    content.classList.remove('scale-100');
-    content.classList.add('scale-95');
-    setTimeout(() => modal.classList.add('hidden'), 250);
-}
-
-function handleEditSubmit(event) {
-    event.preventDefault();
-    const firebaseKey = document.getElementById('edit-firebase-key').value;
-    if (!firebaseKey) return;
-
-    const selectedSports = Array.from(
-        document.querySelectorAll('input[name="edit-sports"]:checked')
-    ).map(cb => cb.value);
-
-    const relRows = document.querySelectorAll('#edit-relatives-container > div');
-    const relativesList = [];
-    relRows.forEach(row => {
-        const n = row.querySelector('.edit-rel-name').value.trim();
-        if (n) {
-            relativesList.push({
-                name: n,
-                relation: row.querySelector('.edit-rel-relation').value,
-                type: row.querySelector('.edit-rel-type').value
-            });
-        }
-    });
-
-    const groupVal = document.getElementById('edit-group').value;
-    const companyVal = document.getElementById('edit-company').value.trim();
-
-    const updatedFields = {
-        name: document.getElementById('edit-name').value.trim(),
-        company: companyVal,
-        group: groupVal,
-        branch: extractBranchCode(`${groupVal} ${companyVal}`),
-        role: document.getElementById('edit-role').value.trim(),
-        phone: document.getElementById('edit-phone').value.trim(),
-        email: document.getElementById('edit-email').value.trim(),
-        travel: document.getElementById('edit-travel').value.trim(),
-        activity: document.getElementById('edit-activity').value.trim(),
-        avatar: pendingAvatarData['edit'] || null,
-        sports: selectedSports.length > 0 ? selectedSports : null,
-        relatives: relativesList.length > 0 ? relativesList : null
-    };
-
-    db.ref('delegates/' + firebaseKey).update(updatedFields).then(() => {
-        closeEditModal();
-        showToast("Cập nhật thông tin thành công!");
-    });
-}
-
-function addRelativeRow() {
-    const container = document.getElementById('relatives-container');
-    const rowId = 'rel-row-' + Date.now() + Math.floor(Math.random() * 1000);
-    container.insertAdjacentHTML('beforeend', `
-        <div id="${rowId}" class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5 text-xs">
+    `);}function closeEditModal(){const a=document.getElementById('\x65\x64\x69\x74\x2d\x6d\x6f\x64\x61\x6c');const b=document.getElementById('\x65\x64\x69\x74\x2d\x6d\x6f\x64\x61\x6c\x2d\x63\x6f\x6e\x74\x65\x6e\x74');if(!a||!b)return;a.classList.remove('\x6f\x70\x61\x63\x69\x74\x79\x2d\x31\x30\x30');b.classList.remove('\x73\x63\x61\x6c\x65\x2d\x31\x30\x30');b.classList.add('\x73\x63\x61\x6c\x65\x2d\x39\x35');setTimeout(()=>a.classList.add('\x68\x69\x64\x64\x65\x6e'),250);}function handleEditSubmit(f){f.preventDefault();const b=document.getElementById('\x65\x64\x69\x74\x2d\x66\x69\x72\x65\x62\x61\x73\x65\x2d\x6b\x65\x79').value;if(!b)return;const c=Array.from(document.querySelectorAll('\x69\x6e\x70\x75\x74\x5b\x6e\x61\x6d\x65\x3d\x22\x65\x64\x69\x74\x2d\x73\x70\x6f\x72\x74\x73\x22\x5d\x3a\x63\x68\x65\x63\x6b\x65\x64')).map(a=>a.value);const g=document.querySelectorAll('\x23\x65\x64\x69\x74\x2d\x72\x65\x6c\x61\x74\x69\x76\x65\x73\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72\x20\x3e\x20\x64\x69\x76');const a=[];g.forEach(b=>{const c=b.querySelector('\x2e\x65\x64\x69\x74\x2d\x72\x65\x6c\x2d\x6e\x61\x6d\x65').value.trim();if(c){a.push({name:c,relation:b.querySelector('\x2e\x65\x64\x69\x74\x2d\x72\x65\x6c\x2d\x72\x65\x6c\x61\x74\x69\x6f\x6e').value,type:b.querySelector('\x2e\x65\x64\x69\x74\x2d\x72\x65\x6c\x2d\x74\x79\x70\x65').value});}});const d=document.getElementById('\x65\x64\x69\x74\x2d\x67\x72\x6f\x75\x70').value;const e=document.getElementById('\x65\x64\x69\x74\x2d\x63\x6f\x6d\x70\x61\x6e\x79').value.trim();const h={name:document.getElementById('\x65\x64\x69\x74\x2d\x6e\x61\x6d\x65').value.trim(),company:e,group:d,branch:extractBranchCode(`${d} ${e}`),role:document.getElementById('\x65\x64\x69\x74\x2d\x72\x6f\x6c\x65').value.trim(),phone:document.getElementById('\x65\x64\x69\x74\x2d\x70\x68\x6f\x6e\x65').value.trim(),email:document.getElementById('\x65\x64\x69\x74\x2d\x65\x6d\x61\x69\x6c').value.trim(),travel:document.getElementById('\x65\x64\x69\x74\x2d\x74\x72\x61\x76\x65\x6c').value.trim(),activity:document.getElementById('\x65\x64\x69\x74\x2d\x61\x63\x74\x69\x76\x69\x74\x79').value.trim(),avatar:pendingAvatarData['\x65\x64\x69\x74']||null,sports:c.length>0?c:null,relatives:a.length>0?a:null};db.ref('\x64\x65\x6c\x65\x67\x61\x74\x65\x73\x2f'+b).update(h).then(()=>{closeEditModal();showToast("\x43\u1ead\x70\x20\x6e\x68\u1ead\x74\x20\x74\x68\xf4\x6e\x67\x20\x74\x69\x6e\x20\x74\x68\xe0\x6e\x68\x20\x63\xf4\x6e\x67\x21");});}function addRelativeRow(){const b=document.getElementById('\x72\x65\x6c\x61\x74\x69\x76\x65\x73\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72');const a='\x72\x65\x6c\x2d\x72\x6f\x77\x2d'+Date.now()+Math.floor(Math.random()*1000);b.insertAdjacentHTML('\x62\x65\x66\x6f\x72\x65\x65\x6e\x64',`
+        <div id="${a}" class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5 text-xs">
             <div class="flex items-center justify-between">
                 <span class="font-extrabold text-fast-dark">Người thân đi kèm</span>
-                <button type="button" onclick="document.getElementById('${rowId}').remove()" class="text-red-500 font-bold">Xóa dòng</button>
+                <button type="button" onclick="document.getElementById('${a}').remove()" class="text-red-500 font-bold">Xóa dòng</button>
             </div>
             <input type="text" placeholder="Họ và tên người thân..." class="rel-name-input w-full px-3 py-2 rounded-xl border border-slate-200 bg-white outline-none">
             <div class="grid grid-cols-2 gap-2">
@@ -1028,206 +168,12 @@ function addRelativeRow() {
                 </select>
             </div>
         </div>
-    `);
-}
-
-// ==================== 10. CLIP CHÀO MỪNG CHẠY LẦN LƯỢT TỪNG CBNV ====================
-// ==================== 10. CLIP CHÀO MỪNG FULLSCREEN & NHẠC NỀN ====================
-let reelMusicEnabled = true;
-let reelAudioCtx = null;
-let reelSynthTimer = null;
-let reelCustomAudio = null;
-let reelCustomObjectUrl = '';
-
-function updateReelMusicUI() {
-    const labelEl = document.getElementById('reel-music-label');
-    if (labelEl) {
-        labelEl.textContent = reelMusicEnabled ? 'Nhạc nền: Bật' : 'Nhạc nền: Tắt';
-    }
-}
-
-function playCelebrationChord() {
-    if (!reelMusicEnabled || !reelPlaying) return;
-    try {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContextClass) return;
-        if (!reelAudioCtx) {
-            reelAudioCtx = new AudioContextClass();
-        }
-        if (reelAudioCtx.state === 'suspended') {
-            reelAudioCtx.resume();
-        }
-
-        // Giai điệu nhẹ nhàng ấm áp (C5 - E5 - G5 - B5)
-        const notes = [523.25, 659.25, 783.99, 987.77];
-        const freq = notes[reelIndex % notes.length];
-        const now = reelAudioCtx.currentTime;
-
-        const osc = reelAudioCtx.createOscillator();
-        const gain = reelAudioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now);
-
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.exponentialRampToValueAtTime(0.045, now + 0.18);
-        gain.gain.exponentialRampToValueAtTime(0.0008, now + 1.8);
-
-        osc.connect(gain);
-        gain.connect(reelAudioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 1.85);
-    } catch (_) {}
-}
-
-function startReelMusic() {
-    stopReelMusic();
-    if (!reelMusicEnabled) return;
-
-    if (reelCustomAudio) {
-        reelCustomAudio.play().catch(() => {});
-        return;
-    }
-
-    playCelebrationChord();
-    reelSynthTimer = setInterval(() => {
-        if (reelMusicEnabled && reelPlaying && !reelCustomAudio) {
-            playCelebrationChord();
-        }
-    }, 1600);
-}
-
-function stopReelMusic() {
-    if (reelSynthTimer) {
-        clearInterval(reelSynthTimer);
-        reelSynthTimer = null;
-    }
-    if (reelCustomAudio) {
-        try {
-            reelCustomAudio.pause();
-        } catch (_) {}
-    }
-}
-
-function toggleReelMusic() {
-    reelMusicEnabled = !reelMusicEnabled;
-    updateReelMusicUI();
-    if (reelMusicEnabled) {
-        startReelMusic();
-        showToast("Đã bật nhạc nền clip chào mừng");
-    } else {
-        stopReelMusic();
-        showToast("Đã tắt nhạc nền");
-    }
-}
-
-function handleReelMusicUpload(event) {
-    const file = event.target?.files?.[0];
-    if (!file) return;
-
-    if (reelCustomAudio) {
-        reelCustomAudio.pause();
-        reelCustomAudio = null;
-    }
-    if (reelCustomObjectUrl) {
-        URL.revokeObjectURL(reelCustomObjectUrl);
-        reelCustomObjectUrl = '';
-    }
-
-    reelCustomObjectUrl = URL.createObjectURL(file);
-    reelCustomAudio = new Audio(reelCustomObjectUrl);
-    reelCustomAudio.loop = true;
-    reelCustomAudio.volume = 0.65;
-    reelMusicEnabled = true;
-    updateReelMusicUI();
-
-    if (reelPlaying) {
-        reelCustomAudio.play().catch(() => {});
-    }
-    showToast(`Đã tải nhạc nền: ${file.name}`);
-}
-
-function syncReelFullscreenLabel() {
-    const labelEl = document.getElementById('reel-fs-label');
-    const isFs = Boolean(document.fullscreenElement);
-    if (labelEl) {
-        labelEl.textContent = isFs ? 'Thoát Full' : 'Full màn hình';
-    }
-}
-
-function enterReelFullscreen() {
-    const target = document.getElementById('welcome-reel-wrapper') || document.getElementById('welcome-reel-modal');
-    if (target && target.requestFullscreen && !document.fullscreenElement) {
-        target.requestFullscreen().catch(() => {}).finally(syncReelFullscreenLabel);
-    }
-}
-
-function toggleReelFullscreen() {
-    const target = document.getElementById('welcome-reel-wrapper') || document.getElementById('welcome-reel-modal');
-    if (!document.fullscreenElement) {
-        if (target && target.requestFullscreen) {
-            target.requestFullscreen().catch(() => {}).finally(syncReelFullscreenLabel);
-        }
-    } else if (document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {}).finally(syncReelFullscreenLabel);
-    }
-}
-
-document.addEventListener('fullscreenchange', syncReelFullscreenLabel);
-
-function getReelEligibleDelegates() {
-    return allDelegatesData.filter(d => {
-        if (reelBranchFilter !== 'ALL' && getMemberBranch(d) !== reelBranchFilter) {
-            return false;
-        }
-        return true;
-    });
-}
-
-function setReelBranch(branch) {
-    reelBranchFilter = branch;
-    ['ALL', 'FHN', 'FDN', 'FSG'].forEach(b => {
-        const btn = document.getElementById(`reel-branch-${b}`);
-        if (!btn) return;
-        btn.className = (b === branch)
-            ? 'px-3 py-1.5 rounded-xl text-xs font-bold bg-[#FDE047] text-fast-dark'
-            : 'px-3 py-1.5 rounded-xl text-xs font-bold bg-white/15 text-white hover:bg-white/25';
-    });
-    reelList = getReelEligibleDelegates();
-    reelIndex = 0;
-    renderCurrentReelSlide(true);
-}
-
-function renderCurrentReelSlide(restartTimer = true) {
-    reelList = getReelEligibleDelegates();
-    const slideEl = document.getElementById('welcome-reel-slide');
-    const counterEl = document.getElementById('welcome-reel-counter');
-    if (!slideEl) return;
-
-    if (reelList.length === 0) {
-        if (counterEl) counterEl.textContent = '0 / 0';
-        slideEl.innerHTML = `
+    `);}let reelMusicEnabled=true;let reelAudioCtx=null;let reelSynthTimer=null;let reelCustomAudio=null;let reelCustomObjectUrl='';function updateReelMusicUI(){const a=document.getElementById('\x72\x65\x65\x6c\x2d\x6d\x75\x73\x69\x63\x2d\x6c\x61\x62\x65\x6c');if(a){a.textContent=reelMusicEnabled?'\x4e\x68\u1ea1\x63\x20\x6e\u1ec1\x6e\x3a\x20\x42\u1ead\x74':'\x4e\x68\u1ea1\x63\x20\x6e\u1ec1\x6e\x3a\x20\x54\u1eaf\x74';}}function playCelebrationChord(){if(!reelMusicEnabled||!reelPlaying)return;try{const d=window.AudioContext||window.webkitAudioContext;if(!d)return;if(!reelAudioCtx){reelAudioCtx=new d();}if(reelAudioCtx.state==='\x73\x75\x73\x70\x65\x6e\x64\x65\x64'){reelAudioCtx.resume();}const e=[523.25,659.25,783.99,987.77];const f=e[reelIndex%e.length];const a=reelAudioCtx.currentTime;const b=reelAudioCtx.createOscillator();const c=reelAudioCtx.createGain();b.type='\x73\x69\x6e\x65';b.frequency.setValueAtTime(f,a);c.gain.setValueAtTime(0.001,a);c.gain.exponentialRampToValueAtTime(0.045,a+0.18);c.gain.exponentialRampToValueAtTime(0.0008,a+1.8);b.connect(c);c.connect(reelAudioCtx.destination);b.start(a);b.stop(a+1.85);}catch(a){}}function startReelMusic(){stopReelMusic();if(!reelMusicEnabled)return;if(reelCustomAudio){reelCustomAudio.play().catch(()=>{});return;}playCelebrationChord();reelSynthTimer=setInterval(()=>{if(reelMusicEnabled&&reelPlaying&&!reelCustomAudio){playCelebrationChord();}},1600);}function stopReelMusic(){if(reelSynthTimer){clearInterval(reelSynthTimer);reelSynthTimer=null;}if(reelCustomAudio){try{reelCustomAudio.pause();}catch(a){}}}function toggleReelMusic(){reelMusicEnabled=!reelMusicEnabled;updateReelMusicUI();if(reelMusicEnabled){startReelMusic();showToast("\u0110\xe3\x20\x62\u1ead\x74\x20\x6e\x68\u1ea1\x63\x20\x6e\u1ec1\x6e\x20\x63\x6c\x69\x70\x20\x63\x68\xe0\x6f\x20\x6d\u1eeb\x6e\x67");}else{stopReelMusic();showToast("\u0110\xe3\x20\x74\u1eaf\x74\x20\x6e\x68\u1ea1\x63\x20\x6e\u1ec1\x6e");}}function handleReelMusicUpload(b){const a=b.target?.files?.[0];if(!a)return;if(reelCustomAudio){reelCustomAudio.pause();reelCustomAudio=null;}if(reelCustomObjectUrl){URL.revokeObjectURL(reelCustomObjectUrl);reelCustomObjectUrl='';}reelCustomObjectUrl=URL.createObjectURL(a);reelCustomAudio=new Audio(reelCustomObjectUrl);reelCustomAudio.loop=true;reelCustomAudio.volume=0.65;reelMusicEnabled=true;updateReelMusicUI();if(reelPlaying){reelCustomAudio.play().catch(()=>{});}showToast(`Đã tải nhạc nền: ${a.name}`);}function syncReelFullscreenLabel(){const a=document.getElementById('\x72\x65\x65\x6c\x2d\x66\x73\x2d\x6c\x61\x62\x65\x6c');const b=Boolean(document.fullscreenElement);if(a){a.textContent=b?'\x54\x68\x6f\xe1\x74\x20\x46\x75\x6c\x6c':'\x46\x75\x6c\x6c\x20\x6d\xe0\x6e\x20\x68\xec\x6e\x68';}}function enterReelFullscreen(){const a=document.getElementById('\x77\x65\x6c\x63\x6f\x6d\x65\x2d\x72\x65\x65\x6c\x2d\x77\x72\x61\x70\x70\x65\x72')||document.getElementById('\x77\x65\x6c\x63\x6f\x6d\x65\x2d\x72\x65\x65\x6c\x2d\x6d\x6f\x64\x61\x6c');if(a&&a.requestFullscreen&&!document.fullscreenElement){a.requestFullscreen().catch(()=>{}).finally(syncReelFullscreenLabel);}}function toggleReelFullscreen(){const a=document.getElementById('\x77\x65\x6c\x63\x6f\x6d\x65\x2d\x72\x65\x65\x6c\x2d\x77\x72\x61\x70\x70\x65\x72')||document.getElementById('\x77\x65\x6c\x63\x6f\x6d\x65\x2d\x72\x65\x65\x6c\x2d\x6d\x6f\x64\x61\x6c');if(!document.fullscreenElement){if(a&&a.requestFullscreen){a.requestFullscreen().catch(()=>{}).finally(syncReelFullscreenLabel);}}else if(document.exitFullscreen){document.exitFullscreen().catch(()=>{}).finally(syncReelFullscreenLabel);}}document.addEventListener('\x66\x75\x6c\x6c\x73\x63\x72\x65\x65\x6e\x63\x68\x61\x6e\x67\x65',syncReelFullscreenLabel);function getReelEligibleDelegates(){return allDelegatesData.filter(a=>{if(reelBranchFilter!=='\x41\x4c\x4c'&&getMemberBranch(a)!==reelBranchFilter){return false;}return true;});}function setReelBranch(a){reelBranchFilter=a;['\x41\x4c\x4c','\x46\x48\x4e','\x46\x44\x4e','\x46\x53\x47'].forEach(b=>{const c=document.getElementById(`reel-branch-${b}`);if(!c)return;c.className=(b===a)?'\x70\x78\x2d\x33\x20\x70\x79\x2d\x31\x2e\x35\x20\x72\x6f\x75\x6e\x64\x65\x64\x2d\x78\x6c\x20\x74\x65\x78\x74\x2d\x78\x73\x20\x66\x6f\x6e\x74\x2d\x62\x6f\x6c\x64\x20\x62\x67\x2d\x5b\x23\x46\x44\x45\x30\x34\x37\x5d\x20\x74\x65\x78\x74\x2d\x66\x61\x73\x74\x2d\x64\x61\x72\x6b':'\x70\x78\x2d\x33\x20\x70\x79\x2d\x31\x2e\x35\x20\x72\x6f\x75\x6e\x64\x65\x64\x2d\x78\x6c\x20\x74\x65\x78\x74\x2d\x78\x73\x20\x66\x6f\x6e\x74\x2d\x62\x6f\x6c\x64\x20\x62\x67\x2d\x77\x68\x69\x74\x65\x2f\x31\x35\x20\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65\x20\x68\x6f\x76\x65\x72\x3a\x62\x67\x2d\x77\x68\x69\x74\x65\x2f\x32\x35';});reelList=getReelEligibleDelegates();reelIndex=0;renderCurrentReelSlide(true);}function renderCurrentReelSlide(e=true){reelList=getReelEligibleDelegates();const c=document.getElementById('\x77\x65\x6c\x63\x6f\x6d\x65\x2d\x72\x65\x65\x6c\x2d\x73\x6c\x69\x64\x65');const b=document.getElementById('\x77\x65\x6c\x63\x6f\x6d\x65\x2d\x72\x65\x65\x6c\x2d\x63\x6f\x75\x6e\x74\x65\x72');if(!c)return;if(reelList.length===0){if(b)b.textContent='\x30\x20\x2f\x20\x30';c.innerHTML=`
             <div class="text-center py-12 space-y-2">
                 <div class="text-2xl font-extrabold text-[#FDE047]">Chưa có CBNV nào trong danh sách chào mừng</div>
                 <p class="text-sm text-white/80">Hãy đăng ký hoặc chọn chi nhánh khác để chạy clip chào mừng.</p>
             </div>
-        `;
-        stopReelTimers();
-        return;
-    }
-
-    if (reelIndex >= reelList.length) reelIndex = 0;
-    if (reelIndex < 0) reelIndex = reelList.length - 1;
-
-    const person = reelList[reelIndex];
-    const avatarSrc = getDelegateAvatarSrc(person);
-    const branch = getMemberBranch(person);
-    const sportsText = Array.isArray(person.sports) && person.sports.length ? person.sports.join(' · ') : '';
-
-    if (counterEl) {
-        counterEl.textContent = `${reelIndex + 1} / ${reelList.length}`;
-    }
-
-    slideEl.innerHTML = `
+        `;stopReelTimers();return;}if(reelIndex>=reelList.length)reelIndex=0;if(reelIndex<0)reelIndex=reelList.length-1;const a=reelList[reelIndex];const f=getDelegateAvatarSrc(a);const g=getMemberBranch(a);const d=Array.isArray(a.sports)&&a.sports.length?a.sports.join('\x20\xb7\x20'):'';if(b){b.textContent=`${reelIndex+1} / ${reelList.length}`;}c.innerHTML=`
         <div class="flex flex-col md:flex-row items-center justify-center gap-8 sm:gap-12 transition-all duration-500">
             <!-- Cụm ảnh CBNV + Vầng hào quang tỏa phía sau -->
             <div class="relative shrink-0 flex items-center justify-center">
@@ -1240,530 +186,74 @@ function renderCurrentReelSlide(restartTimer = true) {
 
                 <!-- Khung ảnh chính -->
                 <div class="relative z-10 w-48 h-48 sm:w-64 sm:h-64 rounded-3xl p-1.5 bg-gradient-to-br from-[#FDE047] via-amber-300 to-[#FF6B35] shadow-[0_14px_40px_rgba(0,0,0,0.55)]">
-                    <img src="${avatarSrc}" alt="${escapeHTML(person.name || '')}" class="w-full h-full object-cover rounded-[20px] bg-white">
+                    <img src="${f}" alt="${escapeHTML(a.name||'')}" class="w-full h-full object-cover rounded-[20px] bg-white">
                 </div>
 
                 <!-- Badge mã đại biểu -->
                 <span class="z-20 absolute -bottom-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#00282A] border border-[#FDE047] text-[#FDE047] font-mono text-xs sm:text-sm font-extrabold shadow-lg whitespace-nowrap">
-                    ${escapeHTML(person.code || 'FAST30-XXXX')}
+                    ${escapeHTML(a.code||'\x46\x41\x53\x54\x33\x30\x2d\x58\x58\x58\x58')}
                 </span>
             </div>
 
             <!-- Thông tin & lời chào mừng CBNV -->
             <div class="relative z-10 text-center md:text-left max-w-2xl space-y-3">
                 <span class="inline-block px-4 py-1 rounded-full bg-white/15 border border-[#FDE047]/50 text-[#FDE047] text-xs font-extrabold uppercase tracking-wider">
-                    CHÀO MỪNG ĐẠI BIỂU · CHI NHÁNH ${escapeHTML(branch)}
+                    CHÀO MỪNG ĐẠI BIỂU · CHI NHÁNH ${escapeHTML(g)}
                 </span>
                 <h2 class="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-white leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]">
-                    ${escapeHTML(person.name || '')}
+                    ${escapeHTML(a.name||'')}
                 </h2>
                 <p class="text-sm sm:text-lg text-teal-100 font-medium">
-                    ${escapeHTML(person.role || person.group || 'CBNV FAST')} · FLC Quảng Bình (10–13/07/2027)
+                    ${escapeHTML(a.role||a.group||'\x43\x42\x4e\x56\x20\x46\x41\x53\x54')} · FLC Quảng Bình (10–13/07/2027)
                 </p>
-                ${sportsText ? `<div class="inline-block px-4 py-1.5 rounded-xl bg-black/30 border border-white/15 text-xs sm:text-sm font-bold text-[#FDE047]">🏅 Tham gia: ${escapeHTML(sportsText)}</div>` : ''}
+                ${d?`<div class="inline-block px-4 py-1.5 rounded-xl bg-black/30 border border-white/15 text-xs sm:text-sm font-bold text-[#FDE047]">🏅 Tham gia: ${escapeHTML(d)}</div>`:''}
                 <p class="text-sm sm:text-base text-amber-100/95 italic pt-1">
                     "Am hiểu nghiệp vụ, Tận tâm đồng hành — Chào mừng đến với dấu ấn FAST 30 Năm!"
                 </p>
             </div>
         </div>
-    `;
-
-    if (restartTimer && reelPlaying) {
-        startReelCycle();
-    }
-}
-
-function stopReelTimers() {
-    if (reelIntervalId) {
-        clearTimeout(reelIntervalId);
-        reelIntervalId = null;
-    }
-    if (reelProgressRafId) {
-        cancelAnimationFrame(reelProgressRafId);
-        reelProgressRafId = null;
-    }
-}
-
-function startReelCycle() {
-    stopReelTimers();
-    if (!reelPlaying || reelList.length === 0) return;
-
-    reelSlideStartTime = performance.now();
-    const progEl = document.getElementById('welcome-reel-progress');
-
-    const stepProgress = (now) => {
-        if (!reelPlaying) return;
-        const elapsed = now - reelSlideStartTime;
-        const pct = Math.min(100, (elapsed / reelDurationMs) * 100);
-        if (progEl) progEl.style.width = `${pct}%`;
-        if (elapsed < reelDurationMs) {
-            reelProgressRafId = requestAnimationFrame(stepProgress);
-        }
-    };
-
-    if (progEl) progEl.style.width = '0%';
-    reelProgressRafId = requestAnimationFrame(stepProgress);
-
-    reelIntervalId = setTimeout(() => {
-        if (!reelPlaying) return;
-        reelIndex = (reelIndex + 1) % reelList.length;
-        renderCurrentReelSlide(true);
-    }, reelDurationMs);
-}
-
-function toggleReelPlayPause() {
-    reelPlaying = !reelPlaying;
-    const btn = document.getElementById('btn-reel-toggle');
-    if (btn) {
-        btn.textContent = reelPlaying ? '⏸ Tạm dừng' : '▶ Tiếp tục chạy';
-    }
-    if (reelPlaying) {
-        startReelCycle();
-        startReelMusic();
-    } else {
-        stopReelTimers();
-        stopReelMusic();
-    }
-}
-
-function nextReelSlide() {
-    if (reelList.length === 0) return;
-    reelIndex = (reelIndex + 1) % reelList.length;
-    renderCurrentReelSlide(true);
-}
-
-function prevReelSlide() {
-    if (reelList.length === 0) return;
-    reelIndex = (reelIndex - 1 + reelList.length) % reelList.length;
-    renderCurrentReelSlide(true);
-}
-
-function changeReelSpeed(msVal) {
-    reelDurationMs = Number(msVal) || 3500;
-    if (reelPlaying) startReelCycle();
-}
-
-function openWelcomeReelModal() {
-    reelBranchFilter = 'ALL';
-    reelIndex = 0;
-    reelPlaying = true;
-    const toggleBtn = document.getElementById('btn-reel-toggle');
-    if (toggleBtn) toggleBtn.textContent = '⏸ Tạm dừng';
-
-    document.getElementById('welcome-reel-modal')?.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    setReelBranch('ALL');
-    updateReelMusicUI();
-    startReelMusic();
-    enterReelFullscreen();
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
-function closeWelcomeReelModal() {
-    reelPlaying = false;
-    stopReelTimers();
-    stopReelMusic();
-    if (document.fullscreenElement && document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {});
-    }
-    document.getElementById('welcome-reel-modal')?.classList.add('hidden');
-    document.body.style.overflow = '';
-    syncReelFullscreenLabel();
-}
-
-// ==================== 11. COUNTDOWN, LỊCH TRÌNH, ẤN PHẨM & LIGHTBOX ====================
-const eventTargetDate = new Date('2027-07-10T08:00:00+07:00');
-function updateCountdown() {
-    const distance = eventTargetDate.getTime() - Date.now();
-    if (distance <= 0) return;
-    document.getElementById('cd-days').textContent = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
-    document.getElementById('cd-hours').textContent = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-    document.getElementById('cd-minutes').textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-    document.getElementById('cd-seconds').textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
-}
-updateCountdown();
-setInterval(updateCountdown, 1000);
-
-function selectDetailedDay(dayNum) {
-    currentDetailedDay = dayNum;
-    document.querySelectorAll('.dp-day-tab').forEach(tab => {
-        tab.classList.remove('bg-[#00979C]', 'text-white', 'shadow-sm');
-        tab.classList.add('bg-transparent', 'hover:bg-[#FAF9F6]', 'text-[#2D3748]');
-        const titleSpan = tab.querySelector('span:first-child');
-        const subSpan = tab.querySelector('span:last-child');
-        if (titleSpan) { titleSpan.classList.remove('text-white'); titleSpan.classList.add('text-[#2D3748]'); }
-        if (subSpan) { subSpan.classList.remove('text-white/90'); subSpan.classList.add('text-[#64748B]'); }
-    });
-
-    const activeTab = document.getElementById(`dp-tab-${dayNum}`);
-    if (activeTab) {
-        activeTab.classList.remove('bg-transparent', 'hover:bg-[#FAF9F6]', 'text-[#2D3748]');
-        activeTab.classList.add('bg-[#00979C]', 'text-white', 'shadow-sm');
-        const titleSpan = activeTab.querySelector('span:first-child');
-        const subSpan = activeTab.querySelector('span:last-child');
-        if (titleSpan) { titleSpan.classList.remove('text-[#2D3748]'); titleSpan.classList.add('text-white'); }
-        if (subSpan) { subSpan.classList.remove('text-[#64748B]'); subSpan.classList.add('text-white/90'); }
-    }
-
-    document.querySelectorAll('.dp-day-section').forEach(sec => sec.classList.add('hidden'));
-    const activeSec = document.getElementById(`dp-day-panel-${dayNum}`);
-    if (activeSec) activeSec.classList.remove('hidden');
-}
-
-function downloadICS() {
-    const icsContent = [
-        'BEGIN:VCALENDAR',
-        'VERSION:2.0',
-        'PRODID:-//FAST Software//FAST 30 Nam//VI',
-        'BEGIN:VEVENT',
-        'UID:fast30-flc-quangbinh-4n3d-2027@fast.com.vn',
-        'DTSTAMP:20261126T080000Z',
-        'DTSTART:20270710T010000Z',
-        'DTEND:20270713T100000Z',
-        'SUMMARY:FAST 30 Năm (1997–2027) — FLC Quang Binh Beach & Golf Resort (4N3Đ)',
-        'LOCATION:FLC Quang Binh Beach & Golf Resort, Hải Ninh, Quảng Ninh, Quảng Bình',
-        'END:VEVENT',
-        'END:VCALENDAR'
-    ].join('\r\n');
-    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'FAST-30-Nam-FLC-Quang-Binh-4N3D-2027.ics';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('Đã tải lịch sự kiện về thiết bị!');
-}
-
-const mockupDetails = {
-    polo: { title: 'Áo Polo Đồng Phục FAST 30 Năm', desc: 'Áo polo xanh Teal thêu logo FAST 30 nền trắng viền vàng tại ngực trái.', specs: ['<strong>Chất liệu:</strong> Cá sấu thoáng mát', '<strong>Kích cỡ:</strong> S – 3XL'] },
-    badge: { title: 'Thẻ Đại Biểu & Dây Đeo QR', desc: 'Thẻ định danh cá nhân tích hợp mã QR hỗ trợ check-in và kết nối.', specs: ['<strong>Kích thước:</strong> 9cm x 12cm'] },
-    stage: { title: 'Backdrop Sân Khấu Chính Gala Dinner', desc: 'Màn hình LED trung tâm tại đêm Gala kỷ niệm 30 năm.', specs: ['<strong>Thời gian:</strong> 18:00 ngày 12/07/2027'] },
-    flag: { title: 'Banner & Cờ Phướn Đón Khách', desc: 'Hệ thống cờ phướn và standee chào đón các đoàn 3 miền.', specs: ['<strong>Kích thước cờ:</strong> 0.8m x 2.2m'] }
-};
-
-function openMockupModal(key) {
-    const info = mockupDetails[key];
-    if (!info) return;
-    document.getElementById('mockup-modal-title').textContent = info.title;
-    document.getElementById('mockup-modal-desc').textContent = info.desc;
-    document.getElementById('mockup-modal-specs').innerHTML = info.specs.map(s => `<p>• ${s}</p>`).join('');
-    document.getElementById('mockup-modal').classList.remove('hidden');
-}
-
-function closeMockupModal() {
-    document.getElementById('mockup-modal').classList.add('hidden');
-}
-
-const resortGallery = [
-    { src: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1600&q=85', title: 'Hồ bơi ngoài trời & Vườn nhiệt đới', desc: 'Không gian nghỉ dưỡng và thư giãn tại FLC Quảng Bình.' },
-    { src: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85', title: 'Bãi biển cát trắng mịn', desc: 'Địa điểm Team Building & giao lưu.' },
-    { src: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=85', title: 'Hệ thống Villa & Phòng nghỉ', desc: 'Lưu trú tiện nghi cho toàn thể CBNV.' },
-    { src: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1600&q=85', title: 'Trung tâm Hội nghị & Gala Dinner', desc: 'Sảnh tổ chức sự kiện chính.' }
-];
-
-let currentLightboxIndex = 0;
-let isLightboxZoomed = false;
-
-function resetLightboxZoom() {
-    isLightboxZoomed = false;
-    const img = document.getElementById('lightbox-img');
-    const label = document.getElementById('lightbox-zoom-label');
-    if (img) img.style.transform = 'scale(1)';
-    if (label) label.textContent = 'Phóng to 1.8x';
-}
-
-function toggleLightboxZoom() {
-    const img = document.getElementById('lightbox-img');
-    const label = document.getElementById('lightbox-zoom-label');
-    if (!img) return;
-    isLightboxZoomed = !isLightboxZoomed;
-    img.style.transform = isLightboxZoomed ? 'scale(1.8)' : 'scale(1)';
-    if (label) label.textContent = isLightboxZoomed ? 'Thu nhỏ 1.0x' : 'Phóng to 1.8x';
-}
-
-function renderLightboxSlide() {
-    const item = resortGallery[currentLightboxIndex];
-    if (!item) return;
-    resetLightboxZoom();
-    document.getElementById('lightbox-img').src = item.src;
-    document.getElementById('lightbox-title').textContent = item.title;
-    document.getElementById('lightbox-desc').textContent = item.desc;
-    document.getElementById('lightbox-counter').textContent = `${currentLightboxIndex + 1} / ${resortGallery.length}`;
-}
-
-function openResortLightbox(index) {
-    currentLightboxIndex = index || 0;
-    renderLightboxSlide();
-    document.getElementById('resort-lightbox').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-function changeLightboxSlide(step) {
-    currentLightboxIndex = (currentLightboxIndex + step + resortGallery.length) % resortGallery.length;
-    renderLightboxSlide();
-}
-
-function closeResortLightbox() {
-    resetLightboxZoom();
-    document.getElementById('resort-lightbox').classList.add('hidden');
-    document.body.style.overflow = '';
-}
-
-// ==================== 12. BAN CHỈ ĐẠO F30N ====================
-function formatPhone(rawPhone) {
-    const clean = String(rawPhone || '').replace(/\D/g, '');
-    const formatted = clean.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
-    return { raw: clean, formatted };
-}
-
-const bcdData = {
-    leader: { badge: "TRƯỞNG BAN CHỈ ĐẠO F30N", name: "Anh Phan Quốc Khánh", desc: "Trưởng ban · Chỉ đạo chung toàn bộ chuỗi hoạt động Kỷ niệm 30 năm FAST", phone: formatPhone("0903406696") },
-    deputies: [
-        { role: "PHÓ BAN", name: "Anh Phạm Ngọc Hùng", sub: "Phó Ban Chỉ Đạo F30N", phone: formatPhone("0913057969") },
-        { role: "PHÓ BAN", name: "Anh Lê Khắc Bình", sub: "Phó Ban Chỉ Đạo F30N", phone: formatPhone("0903432001") },
-        { role: "PHÓ BAN", name: "Chị Ninh Thị Tố Uyên", sub: "Phó Ban Chỉ Đạo F30N", phone: formatPhone("0989006042") }
-    ],
-    members: [
-        { name: "Chị Nguyễn Thị Mỹ Hồng", tag: "Mảng Marketing, PR", tagColor: "bg-[#00979C] text-white", badgeColor: "bg-[#E0F2F1] text-[#00686B]", desc: "Phụ trách truyền thông, nhận diện thương hiệu và quan hệ báo chí F30N.", shortTag: "Mktg, PR", phone: formatPhone("0332714417") },
-        { name: "Anh Nguyễn Duy Hiển", tag: "Mảng Marketing, PR", tagColor: "bg-[#00979C] text-white", badgeColor: "bg-[#E0F2F1] text-[#00686B]", desc: "Phụ trách truyền thông số và ấn phẩm sự kiện F30N.", shortTag: "Mktg, PR", phone: formatPhone("0972973999") },
-        { name: "Chị Nguyễn Thị Minh Nguyệt", tag: "Kỷ yếu, PR nội bộ", tagColor: "bg-[#9A6B16] text-white", badgeColor: "bg-[#FEF3C7] text-[#92400E]", desc: "Phụ trách biên tập Kỷ yếu 30 năm FAST và truyền thông nội bộ 3 miền.", shortTag: "Kỷ yếu, PR nội bộ", phone: formatPhone("0912000114") },
-        { name: "Anh Nguyễn Thành Đồng", tag: "Kỷ yếu, Nghỉ mát, Văn thể", tagColor: "bg-[#FF6B35] text-white", badgeColor: "bg-[#FFEDD5] text-[#C2410C]", desc: "Phụ trách nội dung kỷ yếu, điều phối hậu cần nghỉ mát và các giải văn thể.", shortTag: "Kỷ yếu, Nghỉ mát, Văn thể", phone: formatPhone("0903400131") },
-        { name: "Anh Hoàng Minh Quang", tag: "Kỷ yếu, Nghỉ mát, Văn thể", tagColor: "bg-[#FF6B35] text-white", badgeColor: "bg-[#FFEDD5] text-[#C2410C]", desc: "Phụ trách tư liệu kỷ yếu, hành trình nghỉ mát 3 miền và hội thao – văn nghệ.", shortTag: "Kỷ yếu, Nghỉ mát, Văn thể", phone: formatPhone("0903664886") },
-        { name: "Anh Bùi Quang Thành", tag: "Kỷ yếu, Nghỉ mát, Văn thể", tagColor: "bg-[#FF6B35] text-white", badgeColor: "bg-[#FFEDD5] text-[#C2410C]", desc: "Phụ trách nội dung kỷ yếu, tổ chức nghỉ mát và phong trào văn thể.", shortTag: "Kỷ yếu, Nghỉ mát, Văn thể", phone: formatPhone("0913391403") }
-    ]
-};
-
-function renderBCD() {
-    const leaderEl = document.getElementById("bcd-leader-card");
-    if (leaderEl) {
-        const l = bcdData.leader;
-        leaderEl.innerHTML = `
+    `;if(e&&reelPlaying){startReelCycle();}}function stopReelTimers(){if(reelIntervalId){clearTimeout(reelIntervalId);reelIntervalId=null;}if(reelProgressRafId){cancelAnimationFrame(reelProgressRafId);reelProgressRafId=null;}}function startReelCycle(){stopReelTimers();if(!reelPlaying||reelList.length===0)return;reelSlideStartTime=performance.now();const a=document.getElementById('\x77\x65\x6c\x63\x6f\x6d\x65\x2d\x72\x65\x65\x6c\x2d\x70\x72\x6f\x67\x72\x65\x73\x73');const b=(d)=>{if(!reelPlaying)return;const c=d-reelSlideStartTime;const e=Math.min(100,(c/reelDurationMs)*100);if(a)a.style.width=`${e}%`;if(c<reelDurationMs){reelProgressRafId=requestAnimationFrame(b);}};if(a)a.style.width='\x30\x25';reelProgressRafId=requestAnimationFrame(b);reelIntervalId=setTimeout(()=>{if(!reelPlaying)return;reelIndex=(reelIndex+1)%reelList.length;renderCurrentReelSlide(true);},reelDurationMs);}function toggleReelPlayPause(){reelPlaying=!reelPlaying;const a=document.getElementById('\x62\x74\x6e\x2d\x72\x65\x65\x6c\x2d\x74\x6f\x67\x67\x6c\x65');if(a){a.textContent=reelPlaying?'\u23f8\x20\x54\u1ea1\x6d\x20\x64\u1eeb\x6e\x67':'\u25b6\x20\x54\x69\u1ebf\x70\x20\x74\u1ee5\x63\x20\x63\x68\u1ea1\x79';}if(reelPlaying){startReelCycle();startReelMusic();}else{stopReelTimers();stopReelMusic();}}function nextReelSlide(){if(reelList.length===0)return;reelIndex=(reelIndex+1)%reelList.length;renderCurrentReelSlide(true);}function prevReelSlide(){if(reelList.length===0)return;reelIndex=(reelIndex-1+reelList.length)%reelList.length;renderCurrentReelSlide(true);}function changeReelSpeed(a){reelDurationMs=Number(a)||3500;if(reelPlaying)startReelCycle();}function openWelcomeReelModal(){reelBranchFilter='\x41\x4c\x4c';reelIndex=0;reelPlaying=true;const a=document.getElementById('\x62\x74\x6e\x2d\x72\x65\x65\x6c\x2d\x74\x6f\x67\x67\x6c\x65');if(a)a.textContent='\u23f8\x20\x54\u1ea1\x6d\x20\x64\u1eeb\x6e\x67';document.getElementById('\x77\x65\x6c\x63\x6f\x6d\x65\x2d\x72\x65\x65\x6c\x2d\x6d\x6f\x64\x61\x6c')?.classList.remove('\x68\x69\x64\x64\x65\x6e');document.body.style.overflow='\x68\x69\x64\x64\x65\x6e';setReelBranch('\x41\x4c\x4c');updateReelMusicUI();startReelMusic();enterReelFullscreen();if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64')lucide.createIcons();}function closeWelcomeReelModal(){reelPlaying=false;stopReelTimers();stopReelMusic();if(document.fullscreenElement&&document.exitFullscreen){document.exitFullscreen().catch(()=>{});}document.getElementById('\x77\x65\x6c\x63\x6f\x6d\x65\x2d\x72\x65\x65\x6c\x2d\x6d\x6f\x64\x61\x6c')?.classList.add('\x68\x69\x64\x64\x65\x6e');document.body.style.overflow='';syncReelFullscreenLabel();}const eventTargetDate=new Date('\x32\x30\x32\x37\x2d\x30\x37\x2d\x31\x30\x54\x30\x38\x3a\x30\x30\x3a\x30\x30\x2b\x30\x37\x3a\x30\x30');function updateCountdown(){const a=eventTargetDate.getTime()-Date.now();if(a<=0)return;document.getElementById('\x63\x64\x2d\x64\x61\x79\x73').textContent=String(Math.floor(a/(1000*60*60*24))).padStart(2,'\x30');document.getElementById('\x63\x64\x2d\x68\x6f\x75\x72\x73').textContent=String(Math.floor((a%(1000*60*60*24))/(1000*60*60))).padStart(2,'\x30');document.getElementById('\x63\x64\x2d\x6d\x69\x6e\x75\x74\x65\x73').textContent=String(Math.floor((a%(1000*60*60))/(1000*60))).padStart(2,'\x30');document.getElementById('\x63\x64\x2d\x73\x65\x63\x6f\x6e\x64\x73').textContent=String(Math.floor((a%(1000*60))/1000)).padStart(2,'\x30');}updateCountdown();setInterval(updateCountdown,1000);function selectDetailedDay(b){currentDetailedDay=b;document.querySelectorAll('\x2e\x64\x70\x2d\x64\x61\x79\x2d\x74\x61\x62').forEach(a=>{a.classList.remove('\x62\x67\x2d\x5b\x23\x30\x30\x39\x37\x39\x43\x5d','\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65','\x73\x68\x61\x64\x6f\x77\x2d\x73\x6d');a.classList.add('\x62\x67\x2d\x74\x72\x61\x6e\x73\x70\x61\x72\x65\x6e\x74','\x68\x6f\x76\x65\x72\x3a\x62\x67\x2d\x5b\x23\x46\x41\x46\x39\x46\x36\x5d','\x74\x65\x78\x74\x2d\x5b\x23\x32\x44\x33\x37\x34\x38\x5d');const b=a.querySelector('\x73\x70\x61\x6e\x3a\x66\x69\x72\x73\x74\x2d\x63\x68\x69\x6c\x64');const c=a.querySelector('\x73\x70\x61\x6e\x3a\x6c\x61\x73\x74\x2d\x63\x68\x69\x6c\x64');if(b){b.classList.remove('\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65');b.classList.add('\x74\x65\x78\x74\x2d\x5b\x23\x32\x44\x33\x37\x34\x38\x5d');}if(c){c.classList.remove('\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65\x2f\x39\x30');c.classList.add('\x74\x65\x78\x74\x2d\x5b\x23\x36\x34\x37\x34\x38\x42\x5d');}});const a=document.getElementById(`dp-tab-${b}`);if(a){a.classList.remove('\x62\x67\x2d\x74\x72\x61\x6e\x73\x70\x61\x72\x65\x6e\x74','\x68\x6f\x76\x65\x72\x3a\x62\x67\x2d\x5b\x23\x46\x41\x46\x39\x46\x36\x5d','\x74\x65\x78\x74\x2d\x5b\x23\x32\x44\x33\x37\x34\x38\x5d');a.classList.add('\x62\x67\x2d\x5b\x23\x30\x30\x39\x37\x39\x43\x5d','\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65','\x73\x68\x61\x64\x6f\x77\x2d\x73\x6d');const b=a.querySelector('\x73\x70\x61\x6e\x3a\x66\x69\x72\x73\x74\x2d\x63\x68\x69\x6c\x64');const c=a.querySelector('\x73\x70\x61\x6e\x3a\x6c\x61\x73\x74\x2d\x63\x68\x69\x6c\x64');if(b){b.classList.remove('\x74\x65\x78\x74\x2d\x5b\x23\x32\x44\x33\x37\x34\x38\x5d');b.classList.add('\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65');}if(c){c.classList.remove('\x74\x65\x78\x74\x2d\x5b\x23\x36\x34\x37\x34\x38\x42\x5d');c.classList.add('\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65\x2f\x39\x30');}}document.querySelectorAll('\x2e\x64\x70\x2d\x64\x61\x79\x2d\x73\x65\x63\x74\x69\x6f\x6e').forEach(a=>a.classList.add('\x68\x69\x64\x64\x65\x6e'));const c=document.getElementById(`dp-day-panel-${b}`);if(c)c.classList.remove('\x68\x69\x64\x64\x65\x6e');}function downloadICS(){const c=['\x42\x45\x47\x49\x4e\x3a\x56\x43\x41\x4c\x45\x4e\x44\x41\x52','\x56\x45\x52\x53\x49\x4f\x4e\x3a\x32\x2e\x30','\x50\x52\x4f\x44\x49\x44\x3a\x2d\x2f\x2f\x46\x41\x53\x54\x20\x53\x6f\x66\x74\x77\x61\x72\x65\x2f\x2f\x46\x41\x53\x54\x20\x33\x30\x20\x4e\x61\x6d\x2f\x2f\x56\x49','\x42\x45\x47\x49\x4e\x3a\x56\x45\x56\x45\x4e\x54','\x55\x49\x44\x3a\x66\x61\x73\x74\x33\x30\x2d\x66\x6c\x63\x2d\x71\x75\x61\x6e\x67\x62\x69\x6e\x68\x2d\x34\x6e\x33\x64\x2d\x32\x30\x32\x37\x40\x66\x61\x73\x74\x2e\x63\x6f\x6d\x2e\x76\x6e','\x44\x54\x53\x54\x41\x4d\x50\x3a\x32\x30\x32\x36\x31\x31\x32\x36\x54\x30\x38\x30\x30\x30\x30\x5a','\x44\x54\x53\x54\x41\x52\x54\x3a\x32\x30\x32\x37\x30\x37\x31\x30\x54\x30\x31\x30\x30\x30\x30\x5a','\x44\x54\x45\x4e\x44\x3a\x32\x30\x32\x37\x30\x37\x31\x33\x54\x31\x30\x30\x30\x30\x30\x5a','\x53\x55\x4d\x4d\x41\x52\x59\x3a\x46\x41\x53\x54\x20\x33\x30\x20\x4e\u0103\x6d\x20\x28\x31\x39\x39\x37\u2013\x32\x30\x32\x37\x29\x20\u2014\x20\x46\x4c\x43\x20\x51\x75\x61\x6e\x67\x20\x42\x69\x6e\x68\x20\x42\x65\x61\x63\x68\x20\x26\x20\x47\x6f\x6c\x66\x20\x52\x65\x73\x6f\x72\x74\x20\x28\x34\x4e\x33\u0110\x29','\x4c\x4f\x43\x41\x54\x49\x4f\x4e\x3a\x46\x4c\x43\x20\x51\x75\x61\x6e\x67\x20\x42\x69\x6e\x68\x20\x42\x65\x61\x63\x68\x20\x26\x20\x47\x6f\x6c\x66\x20\x52\x65\x73\x6f\x72\x74\x2c\x20\x48\u1ea3\x69\x20\x4e\x69\x6e\x68\x2c\x20\x51\x75\u1ea3\x6e\x67\x20\x4e\x69\x6e\x68\x2c\x20\x51\x75\u1ea3\x6e\x67\x20\x42\xec\x6e\x68','\x45\x4e\x44\x3a\x56\x45\x56\x45\x4e\x54','\x45\x4e\x44\x3a\x56\x43\x41\x4c\x45\x4e\x44\x41\x52'].join('\x0d\x0a');const d=new Blob([c],{type:'\x74\x65\x78\x74\x2f\x63\x61\x6c\x65\x6e\x64\x61\x72\x3b\x63\x68\x61\x72\x73\x65\x74\x3d\x75\x74\x66\x2d\x38'});const b=URL.createObjectURL(d);const a=document.createElement('\x61');a.href=b;a.download='\x46\x41\x53\x54\x2d\x33\x30\x2d\x4e\x61\x6d\x2d\x46\x4c\x43\x2d\x51\x75\x61\x6e\x67\x2d\x42\x69\x6e\x68\x2d\x34\x4e\x33\x44\x2d\x32\x30\x32\x37\x2e\x69\x63\x73';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(b);showToast('\u0110\xe3\x20\x74\u1ea3\x69\x20\x6c\u1ecb\x63\x68\x20\x73\u1ef1\x20\x6b\x69\u1ec7\x6e\x20\x76\u1ec1\x20\x74\x68\x69\u1ebf\x74\x20\x62\u1ecb\x21');}const mockupDetails={polo:{title:'\xc1\x6f\x20\x50\x6f\x6c\x6f\x20\u0110\u1ed3\x6e\x67\x20\x50\x68\u1ee5\x63\x20\x46\x41\x53\x54\x20\x33\x30\x20\x4e\u0103\x6d',desc:'\xc1\x6f\x20\x70\x6f\x6c\x6f\x20\x78\x61\x6e\x68\x20\x54\x65\x61\x6c\x20\x74\x68\xea\x75\x20\x6c\x6f\x67\x6f\x20\x46\x41\x53\x54\x20\x33\x30\x20\x6e\u1ec1\x6e\x20\x74\x72\u1eaf\x6e\x67\x20\x76\x69\u1ec1\x6e\x20\x76\xe0\x6e\x67\x20\x74\u1ea1\x69\x20\x6e\x67\u1ef1\x63\x20\x74\x72\xe1\x69\x2e',specs:['\x3c\x73\x74\x72\x6f\x6e\x67\x3e\x43\x68\u1ea5\x74\x20\x6c\x69\u1ec7\x75\x3a\x3c\x2f\x73\x74\x72\x6f\x6e\x67\x3e\x20\x43\xe1\x20\x73\u1ea5\x75\x20\x74\x68\x6f\xe1\x6e\x67\x20\x6d\xe1\x74','\x3c\x73\x74\x72\x6f\x6e\x67\x3e\x4b\xed\x63\x68\x20\x63\u1ee1\x3a\x3c\x2f\x73\x74\x72\x6f\x6e\x67\x3e\x20\x53\x20\u2013\x20\x33\x58\x4c']},badge:{title:'\x54\x68\u1ebb\x20\u0110\u1ea1\x69\x20\x42\x69\u1ec3\x75\x20\x26\x20\x44\xe2\x79\x20\u0110\x65\x6f\x20\x51\x52',desc:'\x54\x68\u1ebb\x20\u0111\u1ecb\x6e\x68\x20\x64\x61\x6e\x68\x20\x63\xe1\x20\x6e\x68\xe2\x6e\x20\x74\xed\x63\x68\x20\x68\u1ee3\x70\x20\x6d\xe3\x20\x51\x52\x20\x68\u1ed7\x20\x74\x72\u1ee3\x20\x63\x68\x65\x63\x6b\x2d\x69\x6e\x20\x76\xe0\x20\x6b\u1ebf\x74\x20\x6e\u1ed1\x69\x2e',specs:['\x3c\x73\x74\x72\x6f\x6e\x67\x3e\x4b\xed\x63\x68\x20\x74\x68\u01b0\u1edb\x63\x3a\x3c\x2f\x73\x74\x72\x6f\x6e\x67\x3e\x20\x39\x63\x6d\x20\x78\x20\x31\x32\x63\x6d']},stage:{title:'\x42\x61\x63\x6b\x64\x72\x6f\x70\x20\x53\xe2\x6e\x20\x4b\x68\u1ea5\x75\x20\x43\x68\xed\x6e\x68\x20\x47\x61\x6c\x61\x20\x44\x69\x6e\x6e\x65\x72',desc:'\x4d\xe0\x6e\x20\x68\xec\x6e\x68\x20\x4c\x45\x44\x20\x74\x72\x75\x6e\x67\x20\x74\xe2\x6d\x20\x74\u1ea1\x69\x20\u0111\xea\x6d\x20\x47\x61\x6c\x61\x20\x6b\u1ef7\x20\x6e\x69\u1ec7\x6d\x20\x33\x30\x20\x6e\u0103\x6d\x2e',specs:['\x3c\x73\x74\x72\x6f\x6e\x67\x3e\x54\x68\u1edd\x69\x20\x67\x69\x61\x6e\x3a\x3c\x2f\x73\x74\x72\x6f\x6e\x67\x3e\x20\x31\x38\x3a\x30\x30\x20\x6e\x67\xe0\x79\x20\x31\x32\x2f\x30\x37\x2f\x32\x30\x32\x37']},flag:{title:'\x42\x61\x6e\x6e\x65\x72\x20\x26\x20\x43\u1edd\x20\x50\x68\u01b0\u1edb\x6e\x20\u0110\xf3\x6e\x20\x4b\x68\xe1\x63\x68',desc:'\x48\u1ec7\x20\x74\x68\u1ed1\x6e\x67\x20\x63\u1edd\x20\x70\x68\u01b0\u1edb\x6e\x20\x76\xe0\x20\x73\x74\x61\x6e\x64\x65\x65\x20\x63\x68\xe0\x6f\x20\u0111\xf3\x6e\x20\x63\xe1\x63\x20\u0111\x6f\xe0\x6e\x20\x33\x20\x6d\x69\u1ec1\x6e\x2e',specs:['\x3c\x73\x74\x72\x6f\x6e\x67\x3e\x4b\xed\x63\x68\x20\x74\x68\u01b0\u1edb\x63\x20\x63\u1edd\x3a\x3c\x2f\x73\x74\x72\x6f\x6e\x67\x3e\x20\x30\x2e\x38\x6d\x20\x78\x20\x32\x2e\x32\x6d']}};function openMockupModal(b){const a=mockupDetails[b];if(!a)return;document.getElementById('\x6d\x6f\x63\x6b\x75\x70\x2d\x6d\x6f\x64\x61\x6c\x2d\x74\x69\x74\x6c\x65').textContent=a.title;document.getElementById('\x6d\x6f\x63\x6b\x75\x70\x2d\x6d\x6f\x64\x61\x6c\x2d\x64\x65\x73\x63').textContent=a.desc;document.getElementById('\x6d\x6f\x63\x6b\x75\x70\x2d\x6d\x6f\x64\x61\x6c\x2d\x73\x70\x65\x63\x73').innerHTML=a.specs.map(a=>`<p>• ${a}</p>`).join('');document.getElementById('\x6d\x6f\x63\x6b\x75\x70\x2d\x6d\x6f\x64\x61\x6c').classList.remove('\x68\x69\x64\x64\x65\x6e');}function closeMockupModal(){document.getElementById('\x6d\x6f\x63\x6b\x75\x70\x2d\x6d\x6f\x64\x61\x6c').classList.add('\x68\x69\x64\x64\x65\x6e');}const resortGallery=[{src:'\x68\x74\x74\x70\x73\x3a\x2f\x2f\x69\x6d\x61\x67\x65\x73\x2e\x75\x6e\x73\x70\x6c\x61\x73\x68\x2e\x63\x6f\x6d\x2f\x70\x68\x6f\x74\x6f\x2d\x31\x35\x38\x32\x37\x31\x39\x35\x30\x38\x34\x36\x31\x2d\x39\x30\x35\x63\x36\x37\x33\x37\x37\x31\x66\x64\x3f\x61\x75\x74\x6f\x3d\x66\x6f\x72\x6d\x61\x74\x26\x66\x69\x74\x3d\x63\x72\x6f\x70\x26\x77\x3d\x31\x36\x30\x30\x26\x71\x3d\x38\x35',title:'\x48\u1ed3\x20\x62\u01a1\x69\x20\x6e\x67\x6f\xe0\x69\x20\x74\x72\u1edd\x69\x20\x26\x20\x56\u01b0\u1edd\x6e\x20\x6e\x68\x69\u1ec7\x74\x20\u0111\u1edb\x69',desc:'\x4b\x68\xf4\x6e\x67\x20\x67\x69\x61\x6e\x20\x6e\x67\x68\u1ec9\x20\x64\u01b0\u1ee1\x6e\x67\x20\x76\xe0\x20\x74\x68\u01b0\x20\x67\x69\xe3\x6e\x20\x74\u1ea1\x69\x20\x46\x4c\x43\x20\x51\x75\u1ea3\x6e\x67\x20\x42\xec\x6e\x68\x2e'},{src:'\x68\x74\x74\x70\x73\x3a\x2f\x2f\x69\x6d\x61\x67\x65\x73\x2e\x75\x6e\x73\x70\x6c\x61\x73\x68\x2e\x63\x6f\x6d\x2f\x70\x68\x6f\x74\x6f\x2d\x31\x35\x30\x37\x35\x32\x35\x34\x32\x38\x30\x33\x34\x2d\x62\x37\x32\x33\x63\x66\x39\x36\x31\x64\x33\x65\x3f\x61\x75\x74\x6f\x3d\x66\x6f\x72\x6d\x61\x74\x26\x66\x69\x74\x3d\x63\x72\x6f\x70\x26\x77\x3d\x31\x36\x30\x30\x26\x71\x3d\x38\x35',title:'\x42\xe3\x69\x20\x62\x69\u1ec3\x6e\x20\x63\xe1\x74\x20\x74\x72\u1eaf\x6e\x67\x20\x6d\u1ecb\x6e',desc:'\u0110\u1ecb\x61\x20\u0111\x69\u1ec3\x6d\x20\x54\x65\x61\x6d\x20\x42\x75\x69\x6c\x64\x69\x6e\x67\x20\x26\x20\x67\x69\x61\x6f\x20\x6c\u01b0\x75\x2e'},{src:'\x68\x74\x74\x70\x73\x3a\x2f\x2f\x69\x6d\x61\x67\x65\x73\x2e\x75\x6e\x73\x70\x6c\x61\x73\x68\x2e\x63\x6f\x6d\x2f\x70\x68\x6f\x74\x6f\x2d\x31\x35\x36\x36\x30\x37\x33\x37\x37\x31\x32\x35\x39\x2d\x36\x61\x38\x35\x30\x36\x30\x39\x39\x39\x34\x35\x3f\x61\x75\x74\x6f\x3d\x66\x6f\x72\x6d\x61\x74\x26\x66\x69\x74\x3d\x63\x72\x6f\x70\x26\x77\x3d\x31\x36\x30\x30\x26\x71\x3d\x38\x35',title:'\x48\u1ec7\x20\x74\x68\u1ed1\x6e\x67\x20\x56\x69\x6c\x6c\x61\x20\x26\x20\x50\x68\xf2\x6e\x67\x20\x6e\x67\x68\u1ec9',desc:'\x4c\u01b0\x75\x20\x74\x72\xfa\x20\x74\x69\u1ec7\x6e\x20\x6e\x67\x68\x69\x20\x63\x68\x6f\x20\x74\x6f\xe0\x6e\x20\x74\x68\u1ec3\x20\x43\x42\x4e\x56\x2e'},{src:'\x68\x74\x74\x70\x73\x3a\x2f\x2f\x69\x6d\x61\x67\x65\x73\x2e\x75\x6e\x73\x70\x6c\x61\x73\x68\x2e\x63\x6f\x6d\x2f\x70\x68\x6f\x74\x6f\x2d\x31\x35\x31\x39\x31\x36\x37\x37\x35\x38\x34\x38\x31\x2d\x38\x33\x66\x35\x35\x30\x62\x62\x34\x39\x62\x33\x3f\x61\x75\x74\x6f\x3d\x66\x6f\x72\x6d\x61\x74\x26\x66\x69\x74\x3d\x63\x72\x6f\x70\x26\x77\x3d\x31\x36\x30\x30\x26\x71\x3d\x38\x35',title:'\x54\x72\x75\x6e\x67\x20\x74\xe2\x6d\x20\x48\u1ed9\x69\x20\x6e\x67\x68\u1ecb\x20\x26\x20\x47\x61\x6c\x61\x20\x44\x69\x6e\x6e\x65\x72',desc:'\x53\u1ea3\x6e\x68\x20\x74\u1ed5\x20\x63\x68\u1ee9\x63\x20\x73\u1ef1\x20\x6b\x69\u1ec7\x6e\x20\x63\x68\xed\x6e\x68\x2e'}];let currentLightboxIndex=0;let isLightboxZoomed=false;function resetLightboxZoom(){isLightboxZoomed=false;const a=document.getElementById('\x6c\x69\x67\x68\x74\x62\x6f\x78\x2d\x69\x6d\x67');const b=document.getElementById('\x6c\x69\x67\x68\x74\x62\x6f\x78\x2d\x7a\x6f\x6f\x6d\x2d\x6c\x61\x62\x65\x6c');if(a)a.style.transform='\x73\x63\x61\x6c\x65\x28\x31\x29';if(b)b.textContent='\x50\x68\xf3\x6e\x67\x20\x74\x6f\x20\x31\x2e\x38\x78';}function toggleLightboxZoom(){const a=document.getElementById('\x6c\x69\x67\x68\x74\x62\x6f\x78\x2d\x69\x6d\x67');const b=document.getElementById('\x6c\x69\x67\x68\x74\x62\x6f\x78\x2d\x7a\x6f\x6f\x6d\x2d\x6c\x61\x62\x65\x6c');if(!a)return;isLightboxZoomed=!isLightboxZoomed;a.style.transform=isLightboxZoomed?'\x73\x63\x61\x6c\x65\x28\x31\x2e\x38\x29':'\x73\x63\x61\x6c\x65\x28\x31\x29';if(b)b.textContent=isLightboxZoomed?'\x54\x68\x75\x20\x6e\x68\u1ecf\x20\x31\x2e\x30\x78':'\x50\x68\xf3\x6e\x67\x20\x74\x6f\x20\x31\x2e\x38\x78';}function renderLightboxSlide(){const a=resortGallery[currentLightboxIndex];if(!a)return;resetLightboxZoom();document.getElementById('\x6c\x69\x67\x68\x74\x62\x6f\x78\x2d\x69\x6d\x67').src=a.src;document.getElementById('\x6c\x69\x67\x68\x74\x62\x6f\x78\x2d\x74\x69\x74\x6c\x65').textContent=a.title;document.getElementById('\x6c\x69\x67\x68\x74\x62\x6f\x78\x2d\x64\x65\x73\x63').textContent=a.desc;document.getElementById('\x6c\x69\x67\x68\x74\x62\x6f\x78\x2d\x63\x6f\x75\x6e\x74\x65\x72').textContent=`${currentLightboxIndex+1} / ${resortGallery.length}`;}function openResortLightbox(a){currentLightboxIndex=a||0;renderLightboxSlide();document.getElementById('\x72\x65\x73\x6f\x72\x74\x2d\x6c\x69\x67\x68\x74\x62\x6f\x78').classList.remove('\x68\x69\x64\x64\x65\x6e');document.body.style.overflow='\x68\x69\x64\x64\x65\x6e';}function changeLightboxSlide(a){currentLightboxIndex=(currentLightboxIndex+a+resortGallery.length)%resortGallery.length;renderLightboxSlide();}function closeResortLightbox(){resetLightboxZoom();document.getElementById('\x72\x65\x73\x6f\x72\x74\x2d\x6c\x69\x67\x68\x74\x62\x6f\x78').classList.add('\x68\x69\x64\x64\x65\x6e');document.body.style.overflow='';}function formatPhone(b){const a=String(b||'').replace(/\D/g,'');const c=a.replace(/(\d{4})(\d{3})(\d{3})/,'\x24\x31\x20\x24\x32\x20\x24\x33');return{raw:a,formatted: c};}const bcdData={leader:{badge:"\x54\x52\u01af\u1ede\x4e\x47\x20\x42\x41\x4e\x20\x43\x48\u1ec8\x20\u0110\u1ea0\x4f\x20\x46\x33\x30\x4e",name:"\x41\x6e\x68\x20\x50\x68\x61\x6e\x20\x51\x75\u1ed1\x63\x20\x4b\x68\xe1\x6e\x68",desc:"\x54\x72\u01b0\u1edf\x6e\x67\x20\x62\x61\x6e\x20\xb7\x20\x43\x68\u1ec9\x20\u0111\u1ea1\x6f\x20\x63\x68\x75\x6e\x67\x20\x74\x6f\xe0\x6e\x20\x62\u1ed9\x20\x63\x68\x75\u1ed7\x69\x20\x68\x6f\u1ea1\x74\x20\u0111\u1ed9\x6e\x67\x20\x4b\u1ef7\x20\x6e\x69\u1ec7\x6d\x20\x33\x30\x20\x6e\u0103\x6d\x20\x46\x41\x53\x54",phone:formatPhone("\x30\x39\x30\x33\x34\x30\x36\x36\x39\x36")},deputies:[{role:"\x50\x48\xd3\x20\x42\x41\x4e",name:"\x41\x6e\x68\x20\x50\x68\u1ea1\x6d\x20\x4e\x67\u1ecd\x63\x20\x48\xf9\x6e\x67",sub:"\x50\x68\xf3\x20\x42\x61\x6e\x20\x43\x68\u1ec9\x20\u0110\u1ea1\x6f\x20\x46\x33\x30\x4e",phone:formatPhone("\x30\x39\x31\x33\x30\x35\x37\x39\x36\x39")},{role:"\x50\x48\xd3\x20\x42\x41\x4e",name:"\x41\x6e\x68\x20\x4c\xea\x20\x4b\x68\u1eaf\x63\x20\x42\xec\x6e\x68",sub:"\x50\x68\xf3\x20\x42\x61\x6e\x20\x43\x68\u1ec9\x20\u0110\u1ea1\x6f\x20\x46\x33\x30\x4e",phone:formatPhone("\x30\x39\x30\x33\x34\x33\x32\x30\x30\x31")},{role:"\x50\x48\xd3\x20\x42\x41\x4e",name:"\x43\x68\u1ecb\x20\x4e\x69\x6e\x68\x20\x54\x68\u1ecb\x20\x54\u1ed1\x20\x55\x79\xea\x6e",sub:"\x50\x68\xf3\x20\x42\x61\x6e\x20\x43\x68\u1ec9\x20\u0110\u1ea1\x6f\x20\x46\x33\x30\x4e",phone:formatPhone("\x30\x39\x38\x39\x30\x30\x36\x30\x34\x32")}],members:[{name:"\x43\x68\u1ecb\x20\x4e\x67\x75\x79\u1ec5\x6e\x20\x54\x68\u1ecb\x20\x4d\u1ef9\x20\x48\u1ed3\x6e\x67",tag:"\x4d\u1ea3\x6e\x67\x20\x4d\x61\x72\x6b\x65\x74\x69\x6e\x67\x2c\x20\x50\x52",tagColor:"\x62\x67\x2d\x5b\x23\x30\x30\x39\x37\x39\x43\x5d\x20\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65",badgeColor:"\x62\x67\x2d\x5b\x23\x45\x30\x46\x32\x46\x31\x5d\x20\x74\x65\x78\x74\x2d\x5b\x23\x30\x30\x36\x38\x36\x42\x5d",desc:"\x50\x68\u1ee5\x20\x74\x72\xe1\x63\x68\x20\x74\x72\x75\x79\u1ec1\x6e\x20\x74\x68\xf4\x6e\x67\x2c\x20\x6e\x68\u1ead\x6e\x20\x64\x69\u1ec7\x6e\x20\x74\x68\u01b0\u01a1\x6e\x67\x20\x68\x69\u1ec7\x75\x20\x76\xe0\x20\x71\x75\x61\x6e\x20\x68\u1ec7\x20\x62\xe1\x6f\x20\x63\x68\xed\x20\x46\x33\x30\x4e\x2e",shortTag:"\x4d\x6b\x74\x67\x2c\x20\x50\x52",phone:formatPhone("\x30\x33\x33\x32\x37\x31\x34\x34\x31\x37")},{name:"\x41\x6e\x68\x20\x4e\x67\x75\x79\u1ec5\x6e\x20\x44\x75\x79\x20\x48\x69\u1ec3\x6e",tag:"\x4d\u1ea3\x6e\x67\x20\x4d\x61\x72\x6b\x65\x74\x69\x6e\x67\x2c\x20\x50\x52",tagColor:"\x62\x67\x2d\x5b\x23\x30\x30\x39\x37\x39\x43\x5d\x20\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65",badgeColor:"\x62\x67\x2d\x5b\x23\x45\x30\x46\x32\x46\x31\x5d\x20\x74\x65\x78\x74\x2d\x5b\x23\x30\x30\x36\x38\x36\x42\x5d",desc:"\x50\x68\u1ee5\x20\x74\x72\xe1\x63\x68\x20\x74\x72\x75\x79\u1ec1\x6e\x20\x74\x68\xf4\x6e\x67\x20\x73\u1ed1\x20\x76\xe0\x20\u1ea5\x6e\x20\x70\x68\u1ea9\x6d\x20\x73\u1ef1\x20\x6b\x69\u1ec7\x6e\x20\x46\x33\x30\x4e\x2e",shortTag:"\x4d\x6b\x74\x67\x2c\x20\x50\x52",phone:formatPhone("\x30\x39\x37\x32\x39\x37\x33\x39\x39\x39")},{name:"\x43\x68\u1ecb\x20\x4e\x67\x75\x79\u1ec5\x6e\x20\x54\x68\u1ecb\x20\x4d\x69\x6e\x68\x20\x4e\x67\x75\x79\u1ec7\x74",tag:"\x4b\u1ef7\x20\x79\u1ebf\x75\x2c\x20\x50\x52\x20\x6e\u1ed9\x69\x20\x62\u1ed9",tagColor:"\x62\x67\x2d\x5b\x23\x39\x41\x36\x42\x31\x36\x5d\x20\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65",badgeColor:"\x62\x67\x2d\x5b\x23\x46\x45\x46\x33\x43\x37\x5d\x20\x74\x65\x78\x74\x2d\x5b\x23\x39\x32\x34\x30\x30\x45\x5d",desc:"\x50\x68\u1ee5\x20\x74\x72\xe1\x63\x68\x20\x62\x69\xea\x6e\x20\x74\u1ead\x70\x20\x4b\u1ef7\x20\x79\u1ebf\x75\x20\x33\x30\x20\x6e\u0103\x6d\x20\x46\x41\x53\x54\x20\x76\xe0\x20\x74\x72\x75\x79\u1ec1\x6e\x20\x74\x68\xf4\x6e\x67\x20\x6e\u1ed9\x69\x20\x62\u1ed9\x20\x33\x20\x6d\x69\u1ec1\x6e\x2e",shortTag:"\x4b\u1ef7\x20\x79\u1ebf\x75\x2c\x20\x50\x52\x20\x6e\u1ed9\x69\x20\x62\u1ed9",phone:formatPhone("\x30\x39\x31\x32\x30\x30\x30\x31\x31\x34")},{name:"\x41\x6e\x68\x20\x4e\x67\x75\x79\u1ec5\x6e\x20\x54\x68\xe0\x6e\x68\x20\u0110\u1ed3\x6e\x67",tag:"\x4b\u1ef7\x20\x79\u1ebf\x75\x2c\x20\x4e\x67\x68\u1ec9\x20\x6d\xe1\x74\x2c\x20\x56\u0103\x6e\x20\x74\x68\u1ec3",tagColor:"\x62\x67\x2d\x5b\x23\x46\x46\x36\x42\x33\x35\x5d\x20\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65",badgeColor:"\x62\x67\x2d\x5b\x23\x46\x46\x45\x44\x44\x35\x5d\x20\x74\x65\x78\x74\x2d\x5b\x23\x43\x32\x34\x31\x30\x43\x5d",desc:"\x50\x68\u1ee5\x20\x74\x72\xe1\x63\x68\x20\x6e\u1ed9\x69\x20\x64\x75\x6e\x67\x20\x6b\u1ef7\x20\x79\u1ebf\x75\x2c\x20\u0111\x69\u1ec1\x75\x20\x70\x68\u1ed1\x69\x20\x68\u1ead\x75\x20\x63\u1ea7\x6e\x20\x6e\x67\x68\u1ec9\x20\x6d\xe1\x74\x20\x76\xe0\x20\x63\xe1\x63\x20\x67\x69\u1ea3\x69\x20\x76\u0103\x6e\x20\x74\x68\u1ec3\x2e",shortTag:"\x4b\u1ef7\x20\x79\u1ebf\x75\x2c\x20\x4e\x67\x68\u1ec9\x20\x6d\xe1\x74\x2c\x20\x56\u0103\x6e\x20\x74\x68\u1ec3",phone:formatPhone("\x30\x39\x30\x33\x34\x30\x30\x31\x33\x31")},{name:"\x41\x6e\x68\x20\x48\x6f\xe0\x6e\x67\x20\x4d\x69\x6e\x68\x20\x51\x75\x61\x6e\x67",tag:"\x4b\u1ef7\x20\x79\u1ebf\x75\x2c\x20\x4e\x67\x68\u1ec9\x20\x6d\xe1\x74\x2c\x20\x56\u0103\x6e\x20\x74\x68\u1ec3",tagColor:"\x62\x67\x2d\x5b\x23\x46\x46\x36\x42\x33\x35\x5d\x20\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65",badgeColor:"\x62\x67\x2d\x5b\x23\x46\x46\x45\x44\x44\x35\x5d\x20\x74\x65\x78\x74\x2d\x5b\x23\x43\x32\x34\x31\x30\x43\x5d",desc:"\x50\x68\u1ee5\x20\x74\x72\xe1\x63\x68\x20\x74\u01b0\x20\x6c\x69\u1ec7\x75\x20\x6b\u1ef7\x20\x79\u1ebf\x75\x2c\x20\x68\xe0\x6e\x68\x20\x74\x72\xec\x6e\x68\x20\x6e\x67\x68\u1ec9\x20\x6d\xe1\x74\x20\x33\x20\x6d\x69\u1ec1\x6e\x20\x76\xe0\x20\x68\u1ed9\x69\x20\x74\x68\x61\x6f\x20\u2013\x20\x76\u0103\x6e\x20\x6e\x67\x68\u1ec7\x2e",shortTag:"\x4b\u1ef7\x20\x79\u1ebf\x75\x2c\x20\x4e\x67\x68\u1ec9\x20\x6d\xe1\x74\x2c\x20\x56\u0103\x6e\x20\x74\x68\u1ec3",phone:formatPhone("\x30\x39\x30\x33\x36\x36\x34\x38\x38\x36")},{name:"\x41\x6e\x68\x20\x42\xf9\x69\x20\x51\x75\x61\x6e\x67\x20\x54\x68\xe0\x6e\x68",tag:"\x4b\u1ef7\x20\x79\u1ebf\x75\x2c\x20\x4e\x67\x68\u1ec9\x20\x6d\xe1\x74\x2c\x20\x56\u0103\x6e\x20\x74\x68\u1ec3",tagColor:"\x62\x67\x2d\x5b\x23\x46\x46\x36\x42\x33\x35\x5d\x20\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65",badgeColor:"\x62\x67\x2d\x5b\x23\x46\x46\x45\x44\x44\x35\x5d\x20\x74\x65\x78\x74\x2d\x5b\x23\x43\x32\x34\x31\x30\x43\x5d",desc:"\x50\x68\u1ee5\x20\x74\x72\xe1\x63\x68\x20\x6e\u1ed9\x69\x20\x64\x75\x6e\x67\x20\x6b\u1ef7\x20\x79\u1ebf\x75\x2c\x20\x74\u1ed5\x20\x63\x68\u1ee9\x63\x20\x6e\x67\x68\u1ec9\x20\x6d\xe1\x74\x20\x76\xe0\x20\x70\x68\x6f\x6e\x67\x20\x74\x72\xe0\x6f\x20\x76\u0103\x6e\x20\x74\x68\u1ec3\x2e",shortTag:"\x4b\u1ef7\x20\x79\u1ebf\x75\x2c\x20\x4e\x67\x68\u1ec9\x20\x6d\xe1\x74\x2c\x20\x56\u0103\x6e\x20\x74\x68\u1ec3",phone:formatPhone("\x30\x39\x31\x33\x33\x39\x31\x34\x30\x33")}]};function renderBCD(){const a=document.getElementById("\x62\x63\x64\x2d\x6c\x65\x61\x64\x65\x72\x2d\x63\x61\x72\x64");if(a){const b=bcdData.leader;a.innerHTML=`
             <div class="bg-gradient-to-br from-[#00686B] via-[#00898E] to-[#00979C] text-white rounded-2xl p-6 shadow-md border border-[#E5C158]/50 space-y-4">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 border border-[#E5C158]/60 text-[#FDE047] text-[11px] font-bold tracking-wider uppercase">${l.badge}</span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 border border-[#E5C158]/60 text-[#FDE047] text-[11px] font-bold tracking-wider uppercase">${b.badge}</span>
                 <div>
-                    <h3 class="text-2xl md:text-3xl font-extrabold tracking-tight">${l.name}</h3>
-                    <p class="text-teal-50 text-sm mt-1.5 leading-relaxed">${l.desc}</p>
+                    <h3 class="text-2xl md:text-3xl font-extrabold tracking-tight">${b.name}</h3>
+                    <p class="text-teal-50 text-sm mt-1.5 leading-relaxed">${b.desc}</p>
                 </div>
                 <div class="pt-3 border-t border-white/15 flex flex-wrap items-center justify-between gap-2">
-                    <a href="tel:${l.phone.raw}" class="text-sm font-bold text-[#FDE047] hover:underline">${l.phone.formatted}</a>
-                    <a href="https://zalo.me/${l.phone.raw}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-full bg-[#0068FF] text-white text-xs font-bold">Zalo</a>
+                    <a href="tel:${b.phone.raw}" class="text-sm font-bold text-[#FDE047] hover:underline">${b.phone.formatted}</a>
+                    <a href="https://zalo.me/${b.phone.raw}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-full bg-[#0068FF] text-white text-xs font-bold">Zalo</a>
                 </div>
             </div>
-        `;
-    }
-
-    const depEl = document.getElementById("bcd-deputies-grid");
-    if (depEl) {
-        depEl.innerHTML = bcdData.deputies.map(d => `
+        `;}const b=document.getElementById("\x62\x63\x64\x2d\x64\x65\x70\x75\x74\x69\x65\x73\x2d\x67\x72\x69\x64");if(b){b.innerHTML=bcdData.deputies.map(a=>`
             <div class="bg-white rounded-2xl p-4 border border-[#E2E8F0] shadow-xs flex flex-col justify-between space-y-3">
                 <div>
-                    <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#E0F2F1] text-[#00686B] text-[10px] font-extrabold uppercase">${d.role}</span>
-                    <h4 class="font-extrabold text-[#1E293B] text-base mt-1">${d.name}</h4>
-                    <p class="text-xs text-[#64748B]">${d.sub}</p>
+                    <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#E0F2F1] text-[#00686B] text-[10px] font-extrabold uppercase">${a.role}</span>
+                    <h4 class="font-extrabold text-[#1E293B] text-base mt-1">${a.name}</h4>
+                    <p class="text-xs text-[#64748B]">${a.sub}</p>
                 </div>
                 <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
-                    <a href="tel:${d.phone.raw}" class="text-xs font-bold text-[#00686B]">${d.phone.formatted}</a>
-                    <a href="https://zalo.me/${d.phone.raw}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-full bg-[#0068FF] text-white text-[11px] font-bold">Zalo</a>
+                    <a href="tel:${a.phone.raw}" class="text-xs font-bold text-[#00686B]">${a.phone.formatted}</a>
+                    <a href="https://zalo.me/${a.phone.raw}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-full bg-[#0068FF] text-white text-[11px] font-bold">Zalo</a>
                 </div>
             </div>
-        `).join("");
-    }
-
-    const memEl = document.getElementById("bcd-members-grid");
-    if (memEl) {
-        memEl.innerHTML = bcdData.members.map(m => `
+        `).join("");}const c=document.getElementById("\x62\x63\x64\x2d\x6d\x65\x6d\x62\x65\x72\x73\x2d\x67\x72\x69\x64");if(c){c.innerHTML=bcdData.members.map(a=>`
             <div class="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-xs flex flex-col justify-between space-y-4">
                 <div class="space-y-3">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${m.badgeColor}">THÀNH VIÊN BCĐ</span>
-                        <span class="px-3 py-1 rounded-full text-[11px] font-bold ${m.tagColor}">${m.tag}</span>
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${a.badgeColor}">THÀNH VIÊN BCĐ</span>
+                        <span class="px-3 py-1 rounded-full text-[11px] font-bold ${a.tagColor}">${a.tag}</span>
                     </div>
-                    <h4 class="text-lg font-extrabold text-[#00686B]">${m.name}</h4>
-                    <p class="text-sm text-[#475569] leading-relaxed">${m.desc}</p>
+                    <h4 class="text-lg font-extrabold text-[#00686B]">${a.name}</h4>
+                    <p class="text-sm text-[#475569] leading-relaxed">${a.desc}</p>
                 </div>
                 <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between bg-[#F8FAFC] px-3 py-2 rounded-xl">
-                    <span class="text-xs font-extrabold text-[#00686B]">${m.phone.formatted}</span>
-                    <a href="https://zalo.me/${m.phone.raw}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1 rounded-full bg-[#0068FF] text-white text-xs font-bold">Zalo</a>
+                    <span class="text-xs font-extrabold text-[#00686B]">${a.phone.formatted}</span>
+                    <a href="https://zalo.me/${a.phone.raw}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1 rounded-full bg-[#0068FF] text-white text-xs font-bold">Zalo</a>
                 </div>
             </div>
-        `).join("");
-    }
-}
-
-// ==================== 13. LUCKY DRAW ====================
-function setDrawGroup(groupKey, btnEl) {
-    currentDrawGroup = groupKey;
-    document.querySelectorAll('.draw-filter-btn').forEach(btn => {
-        btn.classList.remove('bg-white', 'text-[#00686B]', 'shadow-sm');
-        btn.classList.add('bg-white/20', 'text-white');
-    });
-    if (btnEl) {
-        btnEl.classList.remove('bg-white/20', 'text-white');
-        btnEl.classList.add('bg-white', 'text-[#00686B]', 'shadow-sm');
-    }
-}
-
-function selectPrizeCard(prizeName) {
-    if (isDrawing) return;
-    currentPrize = prizeName;
-    document.querySelectorAll('.prize-card').forEach(card => {
-        card.classList.remove('ring-4', 'ring-amber-300', 'scale-105', 'shadow-2xl', 'border-white');
-        card.classList.add('border-white/15');
-    });
-    const activeCard = document.getElementById(`prize-card-${prizeName}`);
-    if (activeCard) {
-        activeCard.classList.remove('border-white/15');
-        activeCard.classList.add('ring-4', 'ring-amber-300', 'scale-105', 'shadow-2xl', 'border-white');
-    }
-}
-
-function startLuckyDraw() {
-    if (isDrawing) return;
-    const currentDrawn = prizeCounts[currentPrize] || 0;
-    const maxAllowed = prizeConfig[currentPrize].max;
-
-    if (currentDrawn >= maxAllowed) {
-        alert(`${currentPrize} đã quay đủ số lượng (${maxAllowed}/${maxAllowed} suất)!`);
-        return;
-    }
-
-    const eligibleList = allDelegatesData.filter(item => {
-        if (winningHistory.some(w => w.code === item.code)) return false;
-        const branch = getMemberBranch(item);
-        if (currentDrawGroup === 'all') return true;
-        if (currentDrawGroup === 'fhn') return branch === 'FHN';
-        if (currentDrawGroup === 'fdn') return branch === 'FDN';
-        if (currentDrawGroup === 'fsg') return branch === 'FSG';
-        if (currentDrawGroup === 'khach') return (item.group || '').toLowerCase().includes('khách') || (item.group || '').toLowerCase().includes('đối tác');
-        return true;
-    });
-
-    if (eligibleList.length === 0) {
-        alert("Không còn đại biểu hợp lệ chưa trúng giải trong nhóm này!");
-        return;
-    }
-
-    isDrawing = true;
-    const btnStart = document.getElementById('btn-start-draw');
-    btnStart.disabled = true;
-
-    let counter = 0;
-    const codeEl = document.getElementById('draw-display-code');
-    const nameEl = document.getElementById('draw-winner-name');
-    const compEl = document.getElementById('draw-winner-company');
-
-    nameEl.textContent = `Đang quay ${currentPrize}...`;
-    compEl.textContent = "";
-
-    const interval = setInterval(() => {
-        const rand = eligibleList[Math.floor(Math.random() * eligibleList.length)];
-        codeEl.textContent = rand.code;
-        counter++;
-        if (counter > 25) {
-            clearInterval(interval);
-            const winner = eligibleList[Math.floor(Math.random() * eligibleList.length)];
-            codeEl.textContent = winner.code;
-            nameEl.textContent = `🎉 Chúc mừng: ${winner.name} trúng ${currentPrize}!`;
-            compEl.textContent = `${winner.group || ''} · ${winner.company || ''}`;
-
-            prizeCounts[currentPrize]++;
-            winningHistory.unshift({ ...winner, prizeWon: currentPrize });
-            updatePrizeCardsUI();
-            updateWinnerHistoryUI();
-
-            isDrawing = false;
-            btnStart.disabled = false;
-        }
-    }, 90);
-}
-
-function updatePrizeCardsUI() {
-    let total = 0;
-    Object.keys(prizeConfig).forEach(prize => {
-        const count = prizeCounts[prize] || 0;
-        total += count;
-        const card = document.getElementById(`prize-card-${prize}`);
-        if (card) {
-            const span = card.querySelector('.drawn-count');
-            if (span) span.textContent = count;
-        }
-    });
-    const totalEl = document.getElementById('total-drawn-counter');
-    if (totalEl) totalEl.textContent = `Đã trao: ${total} / 28 giải`;
-}
-
-function updateWinnerHistoryUI() {
-    let total = 0;
-    Object.keys(prizeConfig).forEach(prizeName => {
-        const winners = winningHistory.filter(w => w.prizeWon === prizeName);
-        total += winners.length;
-        const card = document.getElementById(`history-card-${prizeName}`);
-        if (!card) return;
-        const badge = card.querySelector('.slot-badge');
-        const listEl = card.querySelector('.winners-list-container');
-        if (badge) badge.textContent = `${winners.length}/${prizeConfig[prizeName].max} suất`;
-        if (listEl) {
-            listEl.innerHTML = winners.length === 0
-                ? `<div class="text-xs text-slate-400 italic text-center py-4">Chưa có người trúng</div>`
-                : winners.map(w => `
+        `).join("");}}function setDrawGroup(b,a){currentDrawGroup=b;document.querySelectorAll('\x2e\x64\x72\x61\x77\x2d\x66\x69\x6c\x74\x65\x72\x2d\x62\x74\x6e').forEach(a=>{a.classList.remove('\x62\x67\x2d\x77\x68\x69\x74\x65','\x74\x65\x78\x74\x2d\x5b\x23\x30\x30\x36\x38\x36\x42\x5d','\x73\x68\x61\x64\x6f\x77\x2d\x73\x6d');a.classList.add('\x62\x67\x2d\x77\x68\x69\x74\x65\x2f\x32\x30','\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65');});if(a){a.classList.remove('\x62\x67\x2d\x77\x68\x69\x74\x65\x2f\x32\x30','\x74\x65\x78\x74\x2d\x77\x68\x69\x74\x65');a.classList.add('\x62\x67\x2d\x77\x68\x69\x74\x65','\x74\x65\x78\x74\x2d\x5b\x23\x30\x30\x36\x38\x36\x42\x5d','\x73\x68\x61\x64\x6f\x77\x2d\x73\x6d');}}function selectPrizeCard(b){if(isDrawing)return;currentPrize=b;document.querySelectorAll('\x2e\x70\x72\x69\x7a\x65\x2d\x63\x61\x72\x64').forEach(a=>{a.classList.remove('\x72\x69\x6e\x67\x2d\x34','\x72\x69\x6e\x67\x2d\x61\x6d\x62\x65\x72\x2d\x33\x30\x30','\x73\x63\x61\x6c\x65\x2d\x31\x30\x35','\x73\x68\x61\x64\x6f\x77\x2d\x32\x78\x6c','\x62\x6f\x72\x64\x65\x72\x2d\x77\x68\x69\x74\x65');a.classList.add('\x62\x6f\x72\x64\x65\x72\x2d\x77\x68\x69\x74\x65\x2f\x31\x35');});const a=document.getElementById(`prize-card-${b}`);if(a){a.classList.remove('\x62\x6f\x72\x64\x65\x72\x2d\x77\x68\x69\x74\x65\x2f\x31\x35');a.classList.add('\x72\x69\x6e\x67\x2d\x34','\x72\x69\x6e\x67\x2d\x61\x6d\x62\x65\x72\x2d\x33\x30\x30','\x73\x63\x61\x6c\x65\x2d\x31\x30\x35','\x73\x68\x61\x64\x6f\x77\x2d\x32\x78\x6c','\x62\x6f\x72\x64\x65\x72\x2d\x77\x68\x69\x74\x65');}}function startLuckyDraw(){if(isDrawing)return;const h=prizeCounts[currentPrize]||0;const b=prizeConfig[currentPrize].max;if(h>=b){alert(`${currentPrize} đã quay đủ số lượng (${b}/${b} suất)!`);return;}const a=allDelegatesData.filter(a=>{if(winningHistory.some(b=>b.code===a.code))return false;const b=getMemberBranch(a);if(currentDrawGroup==='\x61\x6c\x6c')return true;if(currentDrawGroup==='\x66\x68\x6e')return b==='\x46\x48\x4e';if(currentDrawGroup==='\x66\x64\x6e')return b==='\x46\x44\x4e';if(currentDrawGroup==='\x66\x73\x67')return b==='\x46\x53\x47';if(currentDrawGroup==='\x6b\x68\x61\x63\x68')return(a.group||'').toLowerCase().includes('\x6b\x68\xe1\x63\x68')||(a.group||'').toLowerCase().includes('\u0111\u1ed1\x69\x20\x74\xe1\x63');return true;});if(a.length===0){alert("\x4b\x68\xf4\x6e\x67\x20\x63\xf2\x6e\x20\u0111\u1ea1\x69\x20\x62\x69\u1ec3\x75\x20\x68\u1ee3\x70\x20\x6c\u1ec7\x20\x63\x68\u01b0\x61\x20\x74\x72\xfa\x6e\x67\x20\x67\x69\u1ea3\x69\x20\x74\x72\x6f\x6e\x67\x20\x6e\x68\xf3\x6d\x20\x6e\xe0\x79\x21");return;}isDrawing=true;const c=document.getElementById('\x62\x74\x6e\x2d\x73\x74\x61\x72\x74\x2d\x64\x72\x61\x77');c.disabled=true;let d=0;const e=document.getElementById('\x64\x72\x61\x77\x2d\x64\x69\x73\x70\x6c\x61\x79\x2d\x63\x6f\x64\x65');const f=document.getElementById('\x64\x72\x61\x77\x2d\x77\x69\x6e\x6e\x65\x72\x2d\x6e\x61\x6d\x65');const g=document.getElementById('\x64\x72\x61\x77\x2d\x77\x69\x6e\x6e\x65\x72\x2d\x63\x6f\x6d\x70\x61\x6e\x79');f.textContent=`Đang quay ${currentPrize}...`;g.textContent="";const i=setInterval(()=>{const b=a[Math.floor(Math.random()*a.length)];e.textContent=b.code;d++;if(d>25){clearInterval(i);const b=a[Math.floor(Math.random()*a.length)];e.textContent=b.code;f.textContent=`🎉 Chúc mừng: ${b.name} trúng ${currentPrize}!`;g.textContent=`${b.group||''} · ${b.company||''}`;prizeCounts[currentPrize]++;winningHistory.unshift({...b,prizeWon:currentPrize});updatePrizeCardsUI();updateWinnerHistoryUI();isDrawing=false;c.disabled=false;}},90);}function updatePrizeCardsUI(){let a=0;Object.keys(prizeConfig).forEach(b=>{const c=prizeCounts[b]||0;a+=c;const d=document.getElementById(`prize-card-${b}`);if(d){const a=d.querySelector('\x2e\x64\x72\x61\x77\x6e\x2d\x63\x6f\x75\x6e\x74');if(a)a.textContent=c;}});const b=document.getElementById('\x74\x6f\x74\x61\x6c\x2d\x64\x72\x61\x77\x6e\x2d\x63\x6f\x75\x6e\x74\x65\x72');if(b)b.textContent=`Đã trao: ${a} / 28 giải`;}function updateWinnerHistoryUI(){let a=0;Object.keys(prizeConfig).forEach(c=>{const b=winningHistory.filter(a=>a.prizeWon===c);a+=b.length;const d=document.getElementById(`history-card-${c}`);if(!d)return;const e=d.querySelector('\x2e\x73\x6c\x6f\x74\x2d\x62\x61\x64\x67\x65');const f=d.querySelector('\x2e\x77\x69\x6e\x6e\x65\x72\x73\x2d\x6c\x69\x73\x74\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72');if(e)e.textContent=`${b.length}/${prizeConfig[c].max} suất`;if(f){f.innerHTML=b.length===0?`<div class="text-xs text-slate-400 italic text-center py-4">Chưa có người trúng</div>`:b.map(a=>`
                     <div class="p-2 rounded-xl bg-white border border-slate-100 flex items-center justify-between gap-2 text-xs">
-                        <span class="font-bold text-slate-700 truncate">${escapeHTML(w.name)}</span>
-                        <span class="font-mono font-extrabold text-fast-dark shrink-0">${escapeHTML(w.code)}</span>
+                        <span class="font-bold text-slate-700 truncate">${escapeHTML(a.name)}</span>
+                        <span class="font-mono font-extrabold text-fast-dark shrink-0">${escapeHTML(a.code)}</span>
                     </div>
-                `).join('');
-        }
-    });
-    const overall = document.getElementById('overall-winner-count');
-    if (overall) overall.textContent = `Tổng đã trao: ${total} / 28 giải`;
-}
-
-function resetLuckyDraw() {
-    if (isDrawing) return;
-    document.getElementById('draw-display-code').textContent = "FAST30-XXXX";
-    document.getElementById('draw-winner-name').textContent = "—";
-    document.getElementById('draw-winner-company').textContent = "—";
-}
-
-// ==================== 14. TIỆN ÍCH CHUNG ====================
-let toastTimeout;
-function showToast(msg) {
-    const box = document.getElementById('toast-box');
-    const textEl = document.getElementById('toast-message');
-    if (!box || !textEl) return;
-    textEl.textContent = msg;
-    box.classList.remove('translate-y-20', 'opacity-0');
-    clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(() => {
-        box.classList.add('translate-y-20', 'opacity-0');
-    }, 3000);
-}
-
-function copyTextFallback(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).catch(() => {});
-        return;
-    }
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-}
-
-function escapeHTML(str) {
-    return String(str || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    renderBCD();
-    selectPrizeCard('Giải Bảy');
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-});
+                `).join('');}});const b=document.getElementById('\x6f\x76\x65\x72\x61\x6c\x6c\x2d\x77\x69\x6e\x6e\x65\x72\x2d\x63\x6f\x75\x6e\x74');if(b)b.textContent=`Tổng đã trao: ${a} / 28 giải`;}function resetLuckyDraw(){if(isDrawing)return;document.getElementById('\x64\x72\x61\x77\x2d\x64\x69\x73\x70\x6c\x61\x79\x2d\x63\x6f\x64\x65').textContent="\x46\x41\x53\x54\x33\x30\x2d\x58\x58\x58\x58";document.getElementById('\x64\x72\x61\x77\x2d\x77\x69\x6e\x6e\x65\x72\x2d\x6e\x61\x6d\x65').textContent="\u2014";document.getElementById('\x64\x72\x61\x77\x2d\x77\x69\x6e\x6e\x65\x72\x2d\x63\x6f\x6d\x70\x61\x6e\x79').textContent="\u2014";}let toastTimeout;function showToast(c){const a=document.getElementById('\x74\x6f\x61\x73\x74\x2d\x62\x6f\x78');const b=document.getElementById('\x74\x6f\x61\x73\x74\x2d\x6d\x65\x73\x73\x61\x67\x65');if(!a||!b)return;b.textContent=c;a.classList.remove('\x74\x72\x61\x6e\x73\x6c\x61\x74\x65\x2d\x79\x2d\x32\x30','\x6f\x70\x61\x63\x69\x74\x79\x2d\x30');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>{a.classList.add('\x74\x72\x61\x6e\x73\x6c\x61\x74\x65\x2d\x79\x2d\x32\x30','\x6f\x70\x61\x63\x69\x74\x79\x2d\x30');},3000);}function copyTextFallback(b){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(b).catch(()=>{});return;}const a=document.createElement('\x74\x65\x78\x74\x61\x72\x65\x61');a.value=b;document.body.appendChild(a);a.select();document.execCommand('\x63\x6f\x70\x79');document.body.removeChild(a);}function escapeHTML(a){return String(a||'').replace(/&/g,'\x26\x61\x6d\x70\x3b').replace(/</g,'\x26\x6c\x74\x3b').replace(/>/g,'\x26\x67\x74\x3b').replace(/"/g,'\x26\x71\x75\x6f\x74\x3b');}document.addEventListener("\x44\x4f\x4d\x43\x6f\x6e\x74\x65\x6e\x74\x4c\x6f\x61\x64\x65\x64",()=>{renderBCD();selectPrizeCard('\x47\x69\u1ea3\x69\x20\x42\u1ea3\x79');if(typeof lucide!=='\x75\x6e\x64\x65\x66\x69\x6e\x65\x64')lucide.createIcons();});
