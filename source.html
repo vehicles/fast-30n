@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sự kiện Kỷ niệm 30 năm thành lập FAST (1997 - 2027) tại FLC Quang Binh Beach & Golf Resort (FLC Quảng Bình).">
+    <title>FAST 30 Năm | Dấu Ấn Hành Trình - Tỏa Sáng Tương Lai</title>
+    
+    <link rel="icon" type="image/png" href="logo-30-removebg-preview.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons (FontAwesome & Lucide) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Tailwind CSS & Custom Config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
+                        display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        fast: {
+                            primary: '#00979C',
+                            dark: '#00686B',
+                            deeper: '#004A4D',
+                            lightBg: '#EAE6DF',
+                            body: '#FAF9F6',
+                            card: '#FFFFFF',
+                            textMain: '#2D3748',
+                            textMuted: '#64748B',
+                            border: '#E2E8F0',
+                            orange: '#FF6B35',
+                            gold: '#D4AF37'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Firebase SDK (App, Auth, Realtime Database, Storage) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+</head>
+
+<body class="bg-fast-body text-fast-textMain antialiased selection:bg-fast-orange selection:text-white flex flex-col min-h-screen">
+
+    <!-- =====================================================================
+1. STICKY NAVIGATION HEADER
+    ====================================================================== -->
+    <header class="fixed top-0 inset-x-0 z-40 bg-fast-body/95 backdrop-blur-md border-b border-fast-border transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Brand Logo -->
+                <a href="#" onclick="switchPageView('home'); return false;" class="flex items-center gap-3 shrink-0 group" title="Trang chủ FAST 30 Năm">
+                    <div class="px-2.5 py-1 logo-white-gold-frame flex items-center justify-center transition-transform group-hover:scale-105">
+						<svg viewBox="0 0 320 225" class="h-10 sm:h-11 w-auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo FAST 30 Năm">
+							<defs>
+								<linearGradient id="tealNumHeader" x1="0" y1="0" x2="1" y2="1">
+									<stop offset="0%" stop-color="#00B5BC"/>
+									<stop offset="55%" stop-color="#00898E"/>
+									<stop offset="100%" stop-color="#005F63"/>
+								</linearGradient>
+								<linearGradient id="goldRingHeader" x1="0" y1="0" x2="1" y2="1">
+									<stop offset="0%" stop-color="#F7E08B"/>
+									<stop offset="45%" stop-color="#D4AF37"/>
+									<stop offset="100%" stop-color="#A67C1E"/>
+								</linearGradient>
+							</defs>
+							<text x="28" y="32" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="25" letter-spacing="4" fill="#00898E">FAST</text>
+							<!-- Dấu đỏ nằm trọn trong khoảng trống của chữ A -->
+							<polygon points="54.5,19.5 57.5,25 51.5,25" fill="#E53E3E"/>
+							<path d="M32,42 H126 L104,84 H114 C136,84 148,98 148,120 C148,148 126,166 90,166 C60,166 36,154 24,134 L48,118 C56,130 70,138 88,138 C106,138 118,129 118,116 C118,104 108,97 90,97 H72 L94,64 H32 Z" fill="url(#tealNumHeader)" stroke="#D4AF37" stroke-width="3.5" stroke-linejoin="round"/>
+							<g transform="translate(216, 103)">
+								<ellipse cx="0" cy="0" rx="64" ry="62" fill="url(#tealNumHeader)" stroke="#D4AF37" stroke-width="3.5"/>
+								<ellipse cx="4" cy="2" rx="46" ry="45" fill="url(#goldRingHeader)"/>
+								<ellipse cx="-5" cy="0" rx="34" ry="35" fill="#FFFFFF"/>
+							</g>
+							<path d="M44,183 C112,163 202,155 292,158 C296,158 297,163 292,164 C206,169 118,179 50,195 C42,197 38,185 44,183 Z" fill="#00979C" stroke="#D4AF37" stroke-width="2.2"/>
+							<text x="288" y="185" text-anchor="end" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="18" letter-spacing="1" fill="#E53E3E">1997 - 2027</text>
+							<text x="160" y="213" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="13.2" letter-spacing="0.4" fill="#007A7E">AM HIỂU NGHIỆP VỤ, TẬN TÂM ĐỒNG HÀNH</text>
+						</svg>
+					</div>
+                    <div class="flex flex-col leading-tight">
+                        <span class="font-display font-extrabold text-xs sm:text-sm text-fast-dark tracking-tight">FAST 30 NĂM</span>
+                        <span class="text-[10px] sm:text-[11px] font-medium text-fast-textMuted whitespace-nowrap">Quảng Bình · 10–13/07/2027</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex items-center gap-5 text-sm font-bold text-fast-textMain">
+                    <a href="#chuong-trinh" id="nav-link-program" onclick="switchPageView('program'); return false;" class="hover:text-fast-primary transition-colors py-2">Chương trình</a>
+                    <a href="#dia-diem" onclick="navigateToHomeSection('dia-diem'); return false;" class="hover:text-fast-primary transition-colors py-2">Địa điểm</a>
+                    <a href="#btc" onclick="navigateToHomeSection('btc'); return false;" class="hover:text-fast-primary transition-colors py-2">Ban chỉ đạo</a>
+                    <a href="#danh-sach" onclick="navigateToHomeSection('danh-sach'); return false;" class="hover:text-fast-primary transition-colors py-2">Danh sách</a>
+                    <a href="#the-thao" id="nav-link-sports" onclick="switchPageView('sports'); return false;" class="hover:text-fast-primary transition-colors py-2">Thể thao</a>
+                    <a href="#welcome-reel" onclick="openWelcomeReelModal(); return false;" class="inline-flex items-center gap-1.5 text-fast-primary hover:text-fast-dark transition-colors py-2" title="Clip chào mừng">
+                        <i data-lucide="clapperboard" class="w-4 h-4"></i>                        
+                    </a>
+                    <a href="#luckydraw" id="nav-link-luckydraw" onclick="switchPageView('luckydraw'); return false;" class="inline-flex items-center gap-1.5 text-fast-orange hover:text-fast-dark transition-colors py-2" title="Lucky Draw">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>                        
+                    </a>
+                </nav>
+
+                <!-- Header Actions -->
+                <div class="hidden sm:flex items-center gap-2.5 shrink-0">
+                    <button type="button" onclick="openLookupModal()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-semibold text-fast-dark bg-fast-lightBg/80 hover:bg-fast-lightBg border border-fast-border transition-colors" title="Tra cứu">
+                        <i data-lucide="search" class="w-4 h-4 text-fast-primary"></i>                        
+                    </button>
+                    <button type="button" onclick="switchPageView('register')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold btn-fast-orange shadow-md">
+                        <i data-lucide="ticket" class="w-4 h-4"></i>
+                        <span>Đăng ký</span>
+                    </button>
+                    <button type="button" onclick="openAdminModal()" id="header-admin-btn" title="Quản trị BTC" class="p-2.5 rounded-2xl text-fast-textMuted hover:text-fast-dark hover:bg-fast-lightBg/60 transition-colors">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Hamburger -->
+                <button type="button" onclick="toggleMobileMenu()" class="lg:hidden p-2.5 rounded-2xl text-fast-textMain hover:bg-fast-lightBg/60 focus:outline-none" aria-label="Mở menu">
+                    <i id="menu-toggle-icon" data-lucide="menu" class="w-6 h-6 transition-transform duration-300"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-fast-card border-t border-fast-border px-4 pt-3 pb-6 shadow-xl rounded-b-3xl">
+            <nav class="flex flex-col space-y-1 text-base font-bold text-fast-textMain">
+                <a href="#chuong-trinh" onclick="closeMobileMenu(); switchPageView('program'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-fast-body hover:text-fast-primary">Chương trình chi tiết</a>
+                <a href="#dia-diem" onclick="closeMobileMenu(); navigateToHomeSection('dia-diem'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-fast-body hover:text-fast-primary">Địa điểm</a>
+                <a href="#an-pham" onclick="closeMobileMenu(); navigateToHomeSection('an-pham'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-fast-body hover:text-fast-primary">Ấn phẩm</a>
+                <a href="#btc" onclick="closeMobileMenu(); navigateToHomeSection('btc'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-fast-body hover:text-fast-primary">Ban chỉ đạo</a>
+                <a href="#danh-sach" onclick="closeMobileMenu(); navigateToHomeSection('danh-sach'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-fast-body hover:text-fast-primary">Danh sách</a>
+                <a href="#the-thao" onclick="closeMobileMenu(); switchPageView('sports'); return false;" class="px-3.5 py-2.5 rounded-xl hover:bg-fast-body hover:text-fast-primary">Thể thao</a>
+                <a href="#welcome-reel" onclick="closeMobileMenu(); openWelcomeReelModal(); return false;" class="px-3.5 py-2.5 rounded-xl text-fast-primary hover:bg-fast-body">🎬 Clip chào mừng</a>
+                <a href="#luckydraw" onclick="closeMobileMenu(); switchPageView('luckydraw'); return false;" class="px-3.5 py-2.5 rounded-xl text-fast-orange hover:bg-fast-body">✨ Lucky Draw</a>
+                <a href="#quan-tri" onclick="closeMobileMenu(); openAdminModal(); return false;" class="px-3.5 py-2.5 rounded-xl text-fast-textMuted hover:bg-fast-body">Quản trị BTC</a>
+            </nav>
+            <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-fast-border">
+                <button type="button" onclick="closeMobileMenu(); openLookupModal();" class="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold text-fast-dark bg-fast-lightBg">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                    <span>Tra cứu</span>
+                </button>
+                <button type="button" onclick="closeMobileMenu(); switchPageView('register');" class="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-bold btn-fast-orange">
+                    <i data-lucide="ticket" class="w-4 h-4"></i>
+                    <span>Đăng ký</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- =====================================================================
+2. MAIN CONTENT VIEWS (SPA SWITCHING)
+    ====================================================================== -->
+    <div class="flex-1">
+
+        <!-- -----------------------------------------------------------------
+             VIEW A: TRANG CHỦ SỰ KIỆN (#home-view)
+        ------------------------------------------------------------------ -->
+        <main id="home-view">
+
+            <!-- A1. HERO SECTION -->
+            <section class="relative pt-28 pb-20 lg:pt-36 lg:pb-28 fast-hero-gradient text-white overflow-hidden">
+                <div class="absolute top-16 right-10 w-80 h-80 bg-fast-gold/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute bottom-10 left-10 w-96 h-96 bg-fast-orange/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="mb-4">
+                            <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-fast-deeper/65 border border-fast-gold text-amber-200 font-display font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow">
+                                <i data-lucide="award" class="w-4 h-4 text-[#FDE047]"></i>
+                                <span>KỶ NIỆM 30 NĂM THÀNH LẬP FAST · 1997 – 2027</span>
+                            </span>
+                        </div>
+
+                        <h1 class="font-display font-extrabold text-3xl sm:text-5xl lg:text-[44px] tracking-tight leading-[1.16] mb-5">
+                            Am hiểu nghiệp vụ, <span class="text-gradient-gold">Tận tâm đồng hành</span>
+                        </h1>
+
+                        <p class="text-white/95 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed mb-8">
+                            Hẹn gặp lại <strong class="text-amber-200">anh chị em FAST 3 miền</strong> trong hành trình 4 ngày 3 đêm gắn kết tại <strong class="text-amber-200">FLC Quang Binh Beach & Golf Resort</strong>.
+                        </p>
+
+                        <!-- Countdown Timer -->
+                        <div class="max-w-lg mx-auto mb-9">
+                            <p class="text-xs font-bold uppercase tracking-widest text-amber-200 mb-3">Đếm ngược tới lễ khai mạc · 08:00 ngày 10/07/2027</p>
+                            <div class="grid grid-cols-4 gap-2.5 sm:gap-3.5">
+                                <div class="p-3 sm:p-4 rounded-2xl bg-fast-deeper/75 border border-fast-gold/50 backdrop-blur-md">
+                                    <span id="cd-days" class="block font-display font-extrabold text-2xl sm:text-3xl text-white">00</span>
+                                    <span class="text-[11px] uppercase tracking-wider text-teal-100">Ngày</span>
+                                </div>
+                                <div class="p-3 sm:p-4 rounded-2xl bg-fast-deeper/75 border border-fast-gold/50 backdrop-blur-md">
+                                    <span id="cd-hours" class="block font-display font-extrabold text-2xl sm:text-3xl text-fast-orange">00</span>
+                                    <span class="text-[11px] uppercase tracking-wider text-teal-100">Giờ</span>
+                                </div>
+                                <div class="p-3 sm:p-4 rounded-2xl bg-fast-deeper/75 border border-fast-gold/50 backdrop-blur-md">
+                                    <span id="cd-minutes" class="block font-display font-extrabold text-2xl sm:text-3xl text-[#FDE047]">00</span>
+                                    <span class="text-[11px] uppercase tracking-wider text-teal-100">Phút</span>
+                                </div>
+                                <div class="p-3 sm:p-4 rounded-2xl bg-fast-deeper/75 border border-fast-gold/50 backdrop-blur-md">
+                                    <span id="cd-seconds" class="block font-display font-extrabold text-2xl sm:text-3xl text-teal-200">00</span>
+                                    <span class="text-[11px] uppercase tracking-wider text-teal-100">Giây</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Primary CTAs -->
+                        <div class="flex flex-wrap items-center justify-center gap-3.5 sm:gap-4 mb-12">
+                            <button type="button" onclick="switchPageView('register')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl font-display font-bold text-base btn-fast-orange shadow-lg">
+                                <i data-lucide="user-plus" class="w-5 h-5"></i>
+                                <span>Đăng ký tham dự</span>
+                            </button>
+							<button type="button" onclick="switchPageView('program')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-base text-white bg-white/15 hover:bg-white/25 border border-white/35 transition-all">
+								<i data-lucide="calendar-days" class="w-5 h-5 text-amber-200"></i>
+								<span>Xem chương trình chi tiết</span>
+							</button>
+                            <button type="button" onclick="openLookupModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-4 rounded-2xl font-semibold text-sm text-white bg-fast-deeper/65 hover:bg-fast-deeper border border-fast-gold/60 transition-all">
+                                <i data-lucide="search" class="w-4 h-4 text-[#FDE047]"></i>
+                                <span>Tra cứu đăng ký</span>
+                            </button>
+                        </div>
+
+                        <!-- 4 Quick Info Cards -->
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5 text-left">
+                            <div class="p-4 rounded-2xl bg-white/15 border border-white/25 backdrop-blur-sm">
+                                <div class="flex items-center gap-2 text-amber-200 text-xs font-bold uppercase tracking-wider mb-1">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 shrink-0"></i>
+                                    <span>Thời gian</span>
+                                </div>
+                                <p class="font-display font-bold text-white text-sm sm:text-base">10–13/07/2027</p>
+                                <p class="text-xs text-white/85">4 Ngày 3 Đêm</p>
+                            </div>
+                            <a href="https://www.flc.vn/du-an/quan-the-du-lich-nghi-duong-sinh-thai-flc-quang-binh/" target="_blank" rel="noopener noreferrer" class="p-4 rounded-2xl bg-white/15 hover:bg-white/25 border border-white/25 backdrop-blur-sm transition-colors block">
+                                <div class="flex items-center gap-2 text-amber-200 text-xs font-bold uppercase tracking-wider mb-1">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i>
+                                    <span>Địa điểm ↗</span>
+                                </div>
+                                <p class="font-display font-bold text-white text-sm sm:text-base">FLC Quảng Bình</p>
+                                <p class="text-xs text-white/85">Hải Ninh, Quảng Ninh</p>
+                            </a>
+                            <div class="p-4 rounded-2xl bg-white/15 border border-white/25 backdrop-blur-sm">
+                                <div class="flex items-center gap-2 text-amber-200 text-xs font-bold uppercase tracking-wider mb-1">
+                                    <i data-lucide="sparkles" class="w-3.5 h-3.5 shrink-0"></i>
+                                    <span>Gala 30 Năm</span>
+                                </div>
+                                <p class="font-display font-bold text-white text-sm sm:text-base">18:00 · 12/07</p>
+                                <p class="text-xs text-white/85">Trung tâm Hội nghị FLC</p>
+                            </div>
+                            <div onclick="switchPageView('sports')" class="cursor-pointer p-4 rounded-2xl bg-white/15 hover:bg-white/25 border border-white/25 backdrop-blur-sm transition-colors">
+                                <div class="flex items-center gap-2 text-amber-200 text-xs font-bold uppercase tracking-wider mb-1">
+                                    <i data-lucide="trophy" class="w-3.5 h-3.5 shrink-0"></i>
+                                    <span>Hội thao 30 Năm →</span>
+                                </div>
+                                <p class="font-display font-bold text-white text-sm sm:text-base">5 Bộ môn thi đấu</p>
+                                <p class="text-xs text-white/85">Pickleball, Chạy, Bơi...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- A2. 5 DẤU ẤN KIẾN TẠO -->
+            <section class="py-20 bg-fast-body">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-3xl mx-auto mb-14">
+                        <span class="inline-block px-4 py-1.5 rounded-full bg-fast-primary/10 text-fast-dark text-xs font-bold uppercase tracking-wider mb-3">DẤU ẤN HÀNH TRÌNH</span>
+                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-fast-dark mb-4">5 dấu ấn kiến tạo 30 năm FAST</h2>
+                        <p class="text-fast-textMuted text-base">Từ những dòng mã nguồn kế toán đầu tiên năm 1997 đến hệ sinh thái quản trị doanh nghiệp toàn diện.</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-6 mb-6">
+                        <article class="bg-fast-card p-7 rounded-3xl border border-fast-border shadow-sm hover:border-fast-primary transition-all">
+                            <div class="w-12 h-12 rounded-2xl bg-fast-primary/10 text-fast-primary flex items-center justify-center mb-5"><i data-lucide="cpu" class="w-6 h-6"></i></div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-fast-primary">Dấu ấn 01</span>
+                            <h3 class="font-display font-extrabold text-xl text-fast-dark mt-1 mb-3">Tiên Phong Công Nghệ Quản Trị</h3>
+                            <p class="text-sm text-fast-textMuted leading-relaxed">Ba thập kỷ không ngừng đổi mới từ phần mềm kế toán đến giải pháp ERP, Cloud và AI chuyên sâu.</p>
+                        </article>
+                        <article class="bg-fast-card p-7 rounded-3xl border border-fast-border shadow-sm hover:border-fast-primary transition-all">
+                            <div class="w-12 h-12 rounded-2xl bg-fast-primary/10 text-fast-primary flex items-center justify-center mb-5"><i data-lucide="handshake" class="w-6 h-6"></i></div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-fast-primary">Dấu ấn 02</span>
+                            <h3 class="font-display font-extrabold text-xl text-fast-dark mt-1 mb-3">Đồng Hành Bền Vững</h3>
+                            <p class="text-sm text-fast-textMuted leading-relaxed">Giữ vững tinh thần chuyên nghiệp, tận tâm phục vụ và nâng cao chất lượng giải pháp qua từng thế hệ sản phẩm.</p>
+                        </article>
+                        <article class="bg-fast-card p-7 rounded-3xl border border-fast-border shadow-sm hover:border-fast-orange transition-all">
+                            <div class="w-12 h-12 rounded-2xl bg-fast-orange/10 text-fast-orange flex items-center justify-center mb-5"><i data-lucide="globe" class="w-6 h-6"></i></div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-fast-orange">Dấu ấn 03</span>
+                            <h3 class="font-display font-extrabold text-xl text-fast-dark mt-1 mb-3">Hội Ngộ 3 Miền FHN – FDN – FSG</h3>
+                            <p class="text-sm text-fast-textMuted leading-relaxed">Đại gia đình CBNV FAST Hà Nội, Đà Nẵng và TP.HCM hội tụ tại quần thể FLC Quảng Bình.</p>
+                        </article>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                        <article class="bg-fast-card p-7 rounded-3xl border border-fast-border shadow-sm hover:border-fast-gold transition-all">
+                            <div class="w-12 h-12 rounded-2xl bg-fast-gold/15 text-[#9A7B1C] flex items-center justify-center mb-5"><i data-lucide="trophy" class="w-6 h-6"></i></div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-[#9A7B1C]">Dấu ấn 04</span>
+                            <h3 class="font-display font-extrabold text-xl text-fast-dark mt-1 mb-3">Gala 30 Năm & Hội Thao Biển</h3>
+                            <p class="text-sm text-fast-textMuted leading-relaxed">Bùng nổ năng lượng với các bộ môn thi đấu thể thao, Team Building bãi biển và Đêm Gala Dinner 30 năm.</p>
+                        </article>
+                        <article class="bg-fast-card p-7 rounded-3xl border border-fast-border shadow-sm hover:border-fast-primary transition-all">
+                            <div class="w-12 h-12 rounded-2xl bg-fast-primary/10 text-fast-dark flex items-center justify-center mb-5"><i data-lucide="compass" class="w-6 h-6"></i></div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-fast-dark">Dấu ấn 05</span>
+                            <h3 class="font-display font-extrabold text-xl text-fast-dark mt-1 mb-3">Khát Vọng Vươn Tầm Tương Lai</h3>
+                            <p class="text-sm text-fast-textMuted leading-relaxed">Khẳng định cam kết "Am hiểu nghiệp vụ, Tận tâm đồng hành", mở ra chặng đường phát triển mới.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <!-- A3. TỔNG QUAN CHƯƠNG TRÌNH 4N3Đ & GALA -->
+            <section id="chuong-trinh-preview" class="py-20 bg-fast-lightBg border-y border-fast-border">
+				<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+					<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+						<div>
+							<span class="inline-block px-4 py-1.5 rounded-full bg-fast-card text-fast-dark text-xs font-bold uppercase tracking-wider mb-3 border border-fast-border">Lịch Trình 4 Ngày 3 Đêm</span>
+							<h2 class="font-display font-extrabold text-3xl sm:text-4xl text-fast-dark">Tổng Quan Chương Trình Sự Kiện</h2>
+						</div>
+						<button type="button" onclick="switchPageView('program')" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl btn-fast-orange font-display font-bold text-sm shadow-md self-start md:self-auto">
+							<span>Xem lịch trình chi tiết 4 ngày</span>
+							<i data-lucide="arrow-right" class="w-4 h-4"></i>
+						</button>
+					</div>
+
+					<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+						<div class="bg-fast-card p-6 rounded-3xl border border-fast-border shadow-sm flex flex-col justify-between">
+							<div>
+								<span class="px-3 py-1 rounded-xl bg-fast-primary/10 text-fast-dark font-display font-extrabold text-xs inline-block mb-3">NGÀY 1 · 10/07</span>
+								<h3 class="font-display font-extrabold text-lg text-fast-textMain mb-3">Hội Ngộ & Khai Mạc</h3>
+								<ul class="space-y-2 text-xs text-fast-textMuted leading-relaxed">
+									<li><strong class="text-fast-dark">08:00 – 11:30:</strong> Đón đoàn 3 miền (FHN, FDN, FSG) về FLC Quảng Bình & nhận Welcome Kit.</li>
+									<li><strong class="text-fast-dark">12:00 – 14:00:</strong> Ăn trưa, nhận phòng & nghỉ ngơi.</li>
+									<li><strong class="text-fast-dark">15:00 – 21:30:</strong> Lễ khai mạc FAST 30 Năm, bốc thăm chia bảng thể thao & tiệc chào mừng tối.</li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="bg-fast-card p-6 rounded-3xl border-2 border-fast-primary/40 shadow-sm flex flex-col justify-between">
+							<div>
+								<span class="px-3 py-1 rounded-xl bg-fast-primary text-white font-display font-extrabold text-xs inline-block mb-3">NGÀY 2 · 11/07 · HỘI THAO</span>
+								<h3 class="font-display font-extrabold text-lg text-fast-dark mb-3">Thi Đấu Thể Thao & Team Building</h3>
+								<ul class="space-y-2 text-xs text-fast-textMuted leading-relaxed">
+									<li><strong class="text-fast-dark">06:30 – 11:30:</strong> Thi đấu <strong>Chạy bộ</strong>, <strong>Pickleball</strong>, <strong>Bóng đá</strong>, <strong>Cầu lông</strong> & <strong>Bơi lội</strong>.</li>
+									<li><strong class="text-fast-dark">14:30 – 17:30:</strong> Tứ kết/bán kết thể thao & <strong>Team Building bãi biển Hải Ninh</strong>.</li>
+									<li><strong class="text-fast-dark">18:30 – 21:30:</strong> Ăn tối theo đoàn & sinh hoạt gắn kết 3 miền.</li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="bg-fast-card p-6 rounded-3xl border border-fast-border shadow-sm flex flex-col justify-between">
+							<div>
+								<span class="px-3 py-1 rounded-xl bg-fast-primary/10 text-fast-dark font-display font-extrabold text-xs inline-block mb-3">NGÀY 3 · 12/07</span>
+								<h3 class="font-display font-extrabold text-lg text-fast-textMain mb-3">Chung Kết, Đại Lễ & Gala</h3>
+								<ul class="space-y-2 text-xs text-fast-textMuted leading-relaxed">
+									<li><strong class="text-fast-dark">07:30 – 11:30:</strong> Chung kết các môn thể thao, trao giải hội thao & chương trình kỷ niệm 30 năm.</li>
+									<li><strong class="text-fast-dark">12:00 – 17:00:</strong> Ăn trưa, nghỉ ngơi & chuẩn bị trang phục Gala.</li>
+									<li><strong class="text-fast-orange">18:00 – 22:00:</strong> <strong>Đêm Gala Dinner 30 Năm</strong>, vinh danh & <strong>Vòng quay Lucky Draw</strong>.</li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="bg-fast-card p-6 rounded-3xl border border-fast-border shadow-sm flex flex-col justify-between">
+							<div>
+								<span class="px-3 py-1 rounded-xl bg-fast-primary/10 text-fast-dark font-display font-extrabold text-xs inline-block mb-3">NGÀY 4 · 13/07</span>
+								<h3 class="font-display font-extrabold text-lg text-fast-textMain mb-3">Nghỉ Dưỡng & Tiễn Đoàn</h3>
+								<ul class="space-y-2 text-xs text-fast-textMuted leading-relaxed">
+									<li><strong class="text-fast-dark">07:00 – 10:30:</strong> Ăn sáng, thư giãn tại FLC Quảng Bình & làm thủ tục trả phòng.</li>
+									<li><strong class="text-fast-dark">11:30 – 13:30:</strong> Bữa trưa chia tay ấm cúng.</li>
+									<li><strong class="text-fast-dark">13:30 – 15:30:</strong> Xe BTC tiễn đoàn ra sân bay/ga trở về FHN, FDN, FSG.</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<!-- Gala Highlight Banner -->
+					<div class="rounded-3xl fast-gala-gradient p-7 sm:p-10 text-white border border-fast-gold/60 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+						<div class="space-y-2 max-w-2xl">
+							<span class="inline-block px-3.5 py-1 rounded-full bg-white/15 text-amber-200 text-xs font-extrabold uppercase tracking-wider">Đêm Hội Trọng Tâm · 18:00 Ngày 12/07/2027</span>
+							<h3 class="font-display font-extrabold text-2xl sm:text-3xl text-white">GALA DINNER 30 NĂM: "AM HIỂU NGHIỆP VỤ, TẬN TÂM ĐỒNG HÀNH"</h3>
+							<p class="text-sm sm:text-base text-white/90">FLC Quang Binh Beach & Golf Resort — Đại tiệc kỷ niệm 30 năm thành lập FAST, vinh danh các tập thể/cá nhân và bốc thăm may mắn.</p>
+						</div>
+						<div class="flex flex-wrap gap-3 shrink-0">
+							<button type="button" onclick="switchPageView('program')" class="px-6 py-3.5 rounded-2xl bg-white text-fast-dark hover:bg-amber-50 font-display font-bold text-sm shadow transition-colors">Khung giờ 4 ngày →</button>
+						</div>
+					</div>
+				</div>
+			</section>
+
+            <!-- A4. ĐỊA ĐIỂM & KHÔNG GIAN NGHỈ DƯỠNG -->
+            <section id="dia-diem" class="py-20 bg-fast-body">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-3xl mx-auto mb-12">
+                        <span class="inline-block px-4 py-1.5 rounded-full bg-fast-primary/10 text-fast-dark text-xs font-bold uppercase tracking-wider mb-3">Không Gian Nghỉ Dưỡng</span>
+                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-fast-dark mb-4">FLC Quang Binh Beach & Golf Resort</h2>
+                        <p class="text-fast-textMuted text-base">Quần thể du lịch nghỉ dưỡng sinh thái tại xã Hải Ninh, huyện Quảng Ninh, tỉnh Quảng Bình, thuận tiện tổ chức lưu trú, hội nghị, thể thao và nghỉ dưỡng.</p>
+                    </div>
+
+                    <div class="bg-fast-card rounded-3xl p-6 sm:p-8 border border-fast-border shadow-sm mb-8 grid lg:grid-cols-12 gap-6 items-center">
+                        <div class="lg:col-span-5">
+                            <div class="rounded-2xl overflow-hidden border border-fast-border relative group cursor-pointer" onclick="openResortLightbox(0)">
+                                <img src="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1000&q=80';" alt="FLC Quang Binh Beach & Golf Resort" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500">
+                                <span class="absolute bottom-3 right-3 px-3 py-1 rounded-xl bg-fast-dark/90 text-white text-xs font-semibold backdrop-blur-sm flex items-center gap-1.5">
+                                    <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i><span>Xem ảnh lớn</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-7 space-y-4">
+                            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-fast-orange/10 text-fast-orange text-xs font-bold">
+                                <i data-lucide="map-pin" class="w-4 h-4"></i><span>Xã Hải Ninh, Huyện Quảng Ninh, Tỉnh Quảng Bình</span>
+                            </div>
+                            <h3 class="font-display font-extrabold text-2xl text-fast-dark">FLC Quang Binh Beach & Golf Resort</h3>
+                            <p class="text-sm text-fast-textMuted leading-relaxed">Quần thể nghỉ dưỡng sinh thái quy mô khoảng 1.954 ha bên bờ biển Hải Ninh, quy hoạch đồng bộ các phân khu lưu trú, resort bãi biển, trung tâm hội nghị quốc tế, chuỗi sân golf liên hoàn và nhiều tiện ích nghỉ dưỡng – giải trí.</p>
+                            <div class="flex flex-wrap items-center gap-3 pt-1">
+                                <a href="https://www.flc.vn/du-an/quan-the-du-lich-nghi-duong-sinh-thai-flc-quang-binh/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl btn-fast-primary font-display font-bold text-xs sm:text-sm shadow-sm">
+                                    <i data-lucide="external-link" class="w-4 h-4 text-[#FDE047]"></i><span>Trang dự án FLC Quảng Bình ↗</span>
+                                </a>
+                                <a href="https://www.google.com/maps/search/?api=1&query=FLC+Quang+Binh+Beach+%26+Golf+Resort" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-fast-body hover:bg-fast-lightBg text-fast-dark border border-fast-border font-semibold text-xs sm:text-sm transition-colors">
+                                    <i data-lucide="map-pin" class="w-4 h-4 text-fast-primary"></i><span>Google Maps ↗</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        <div onclick="openResortLightbox(0)" class="group cursor-pointer bg-fast-card rounded-3xl overflow-hidden border border-fast-border shadow-sm hover:border-fast-primary transition-all">
+                            <div class="h-44 overflow-hidden"><img src="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80';" alt="Quần thể FLC Quảng Bình" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                            <div class="p-4"><h4 class="font-display font-bold text-sm text-fast-dark">Không gian FLC Quảng Bình</h4></div>
+                        </div>
+                        <div onclick="openResortLightbox(1)" class="group cursor-pointer bg-fast-card rounded-3xl overflow-hidden border border-fast-border shadow-sm hover:border-fast-primary transition-all">
+                            <div class="h-44 overflow-hidden"><img src="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80';" alt="Bãi biển Hải Ninh" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                            <div class="p-4"><h4 class="font-display font-bold text-sm text-fast-dark">Bờ biển Hải Ninh – Quảng Bình</h4></div>
+                        </div>
+                        <div onclick="openResortLightbox(2)" class="group cursor-pointer bg-fast-card rounded-3xl overflow-hidden border border-fast-border shadow-sm hover:border-fast-primary transition-all">
+                            <div class="h-44 overflow-hidden"><img src="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80';" alt="Lưu trú & nghỉ dưỡng FLC Quảng Bình" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                            <div class="p-4"><h4 class="font-display font-bold text-sm text-fast-dark">Khu lưu trú & nghỉ dưỡng</h4></div>
+                        </div>
+                        <div onclick="openResortLightbox(3)" class="group cursor-pointer bg-fast-card rounded-3xl overflow-hidden border border-fast-border shadow-sm hover:border-fast-primary transition-all">
+                            <div class="h-44 overflow-hidden"><img src="" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80';" alt="Hội nghị & sự kiện FLC Quảng Bình" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                            <div class="p-4"><h4 class="font-display font-bold text-sm text-fast-dark">Hội nghị & Gala Dinner</h4></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- A5. ẤN PHẨM & BỘ NHẬN DIỆN -->
+            <section id="an-pham" class="py-20 bg-fast-lightBg border-y border-fast-border">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-3xl mx-auto mb-12">
+                        <span class="inline-block px-4 py-1.5 rounded-full bg-fast-card text-fast-dark text-xs font-bold uppercase tracking-wider mb-3 border border-fast-gold/60">Bộ Nhận Diện Chính Thức</span>
+                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-fast-dark mb-3">Ấn Phẩm & Không Gian Sự Kiện 30 Năm</h2>
+                        <p class="text-fast-textMain text-base">Biểu trưng <strong>FAST 30 Năm (1997 – 2027)</strong> nền trắng viền vàng kim được ứng dụng đồng bộ trên toàn bộ vật phẩm đại biểu và sân khấu đại lễ.</p>
+                    </div>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-fast-card rounded-3xl p-6 border border-fast-border shadow-sm flex flex-col justify-between group">
+                            <div>
+                                <div onclick="openMockupModal('polo')" class="cursor-pointer h-52 rounded-2xl bg-fast-body border border-fast-border flex items-center justify-center relative overflow-hidden mb-5">
+                                    <svg viewBox="0 0 220 200" class="w-44 h-44 group-hover:scale-105 transition-transform" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M65 32 L155 32 L195 65 L175 95 L155 80 L155 180 L65 180 L65 80 L45 95 L25 65 Z" fill="#00979C"/>
+                                        <path d="M88 32 L110 52 L132 32 L122 24 L110 38 L98 24 Z" fill="#00686B"/>
+                                        <rect x="107" y="48" width="6" height="32" rx="2" fill="#FF6B35"/>
+                                    </svg>
+                                    <span class="absolute bottom-2.5 left-2.5 px-2.5 py-0.5 rounded-lg bg-fast-dark text-white text-[10px] font-bold">ÁO POLO ĐỒNG PHỤC</span>
+                                </div>
+                                <h3 class="font-display font-bold text-lg text-fast-dark mb-1">Áo Polo Kỷ Niệm 30 Năm</h3>
+                                <p class="text-xs text-fast-textMuted leading-relaxed">Sắc xanh Teal đặc trưng của FAST, logo 30 năm nền trắng viền vàng thêu nổi bật tại ngực trái.</p>
+                            </div>
+                            <button type="button" onclick="openMockupModal('polo')" class="mt-4 pt-3 border-t border-fast-border text-left text-xs font-bold text-fast-primary hover:text-fast-orange">Xem quy cách ấn phẩm →</button>
+                        </div>
+
+                        <div class="bg-fast-card rounded-3xl p-6 border border-fast-border shadow-sm flex flex-col justify-between group">
+                            <div>
+                                <div onclick="openMockupModal('badge')" class="cursor-pointer h-52 rounded-2xl bg-fast-body border border-fast-border flex items-center justify-center relative overflow-hidden mb-5">
+                                    <div class="w-36 h-40 rounded-2xl bg-white border border-fast-border shadow-md flex flex-col group-hover:scale-105 transition-transform">
+                                        <div class="h-12 bg-gradient-to-r from-fast-dark to-fast-primary flex items-center justify-center px-2">
+                                            <div class="px-2 py-0.5 rounded-md bg-white border border-fast-gold"><span class="font-display font-extrabold text-[9px] text-[#00898E]">FAST 30</span></div>
+                                        </div>
+                                        <div class="p-2.5 text-center flex-1 flex flex-col justify-between">
+                                            <p class="text-[10px] font-extrabold text-fast-dark">THẺ ĐẠI BIỂU</p>
+                                            <div class="w-8 h-8 mx-auto rounded bg-fast-body border border-fast-border flex items-center justify-center"><i data-lucide="qr-code" class="w-5 h-5 text-fast-dark"></i></div>
+                                        </div>
+                                    </div>
+                                    <span class="absolute bottom-2.5 left-2.5 px-2.5 py-0.5 rounded-lg bg-fast-primary text-white text-[10px] font-bold">THẺ ĐEO QR</span>
+                                </div>
+                                <h3 class="font-display font-bold text-lg text-fast-dark mb-1">Thẻ Đại Biểu & Dây Đeo</h3>
+                                <p class="text-xs text-fast-textMuted leading-relaxed">Tích hợp mã QR định danh cá nhân giúp check-in nhanh và lưu danh thiếp điện tử.</p>
+                            </div>
+                            <button type="button" onclick="openMockupModal('badge')" class="mt-4 pt-3 border-t border-fast-border text-left text-xs font-bold text-fast-primary hover:text-fast-orange">Xem quy cách ấn phẩm →</button>
+                        </div>
+
+                        <div class="bg-fast-card rounded-3xl p-6 border border-fast-border shadow-sm flex flex-col justify-between group">
+                            <div>
+                                <div onclick="openMockupModal('stage')" class="cursor-pointer h-52 rounded-2xl bg-fast-dark border border-fast-border flex items-center justify-center relative overflow-hidden mb-5 p-4">
+                                    <div class="w-full h-36 rounded-2xl fast-hero-gradient border border-white/30 shadow-inner flex flex-col items-center justify-center text-center p-3">
+                                        <p class="font-display font-extrabold text-xs text-white tracking-wide">VỮNG NỀN TẢNG — VƯƠN TẦM CAO</p>
+                                    </div>
+                                    <span class="absolute bottom-2.5 left-2.5 px-2.5 py-0.5 rounded-lg bg-fast-orange text-white text-[10px] font-bold">SÂN KHẤU LED GALA</span>
+                                </div>
+                                <h3 class="font-display font-bold text-lg text-fast-dark mb-1">Backdrop Sân Khấu Chính</h3>
+                                <p class="text-xs text-fast-textMuted leading-relaxed">Màn hình LED Panoramic trung tâm tôn vinh dấu ấn 30 năm tại FLC Quảng Bình.</p>
+                            </div>
+                            <button type="button" onclick="openMockupModal('stage')" class="mt-4 pt-3 border-t border-fast-border text-left text-xs font-bold text-fast-primary hover:text-fast-orange">Xem quy cách ấn phẩm →</button>
+                        </div>
+
+                        <div class="bg-fast-card rounded-3xl p-6 border border-fast-border shadow-sm flex flex-col justify-between group">
+                            <div>
+                                <div onclick="openMockupModal('flag')" class="cursor-pointer h-52 rounded-2xl bg-fast-body border border-fast-border flex items-center justify-center gap-4 relative overflow-hidden mb-5">
+                                    <div class="w-16 h-36 rounded-t-2xl bg-fast-primary border-2 border-white shadow-md flex flex-col items-center justify-between py-3 px-1 text-center">
+                                        <span class="text-[8px] text-white font-bold uppercase">Quảng Bình</span>
+                                    </div>
+                                    <span class="absolute bottom-2.5 left-2.5 px-2.5 py-0.5 rounded-lg bg-fast-dark text-white text-[10px] font-bold">STANDEE & CỜ PHƯỚN</span>
+                                </div>
+                                <h3 class="font-display font-bold text-lg text-fast-dark mb-1">Banner & Cờ Phướn Đón Khách</h3>
+                                <p class="text-xs text-fast-textMuted leading-relaxed">Hệ thống nhận diện chào đón các đoàn 3 miền tại FLC Quảng Bình.</p>
+                            </div>
+                            <button type="button" onclick="openMockupModal('flag')" class="mt-4 pt-3 border-t border-fast-border text-left text-xs font-bold text-fast-primary hover:text-fast-orange">Xem quy cách ấn phẩm →</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- A6. BAN CHỈ ĐẠO F30N -->
+            <section id="btc" class="py-20 bg-fast-body">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+                    <div class="text-center max-w-3xl mx-auto mb-12">
+                        <span class="inline-block px-4 py-1.5 rounded-full bg-fast-primary/10 text-fast-dark text-xs font-bold uppercase tracking-wider mb-3">Điều Phối Chương Trình</span>
+                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-fast-dark mb-4">Ban Chỉ Đạo F30N</h2>
+                        <p class="text-fast-textMuted text-base">Thành phần Ban Chỉ Đạo chương trình Kỷ niệm 30 năm thành lập FAST phụ trách điều phối tổng thể, truyền thông, kỷ yếu và các hoạt động văn thể – nghỉ mát.</p>
+                    </div>
+                    
+                    <div class="bg-[#FDFBF7] border-2 border-[#E5C158] rounded-3xl p-6 md:p-8 shadow-sm">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div id="bcd-leader-card" class="lg:col-span-5"></div>
+                            <div class="lg:col-span-7 space-y-4">
+                                <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-fast-dark">
+                                    <span class="w-2 h-2 rounded-full bg-fast-orange"></span>
+                                    <span>CÁC PHÓ BAN CHỈ ĐẠO F30N</span>
+                                </div>
+                                <div id="bcd-deputies-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h3 class="text-lg md:text-xl font-extrabold text-fast-dark flex items-center gap-2.5">
+                            <i data-lucide="users" class="w-5 h-5 text-fast-primary"></i>
+                            <span>Thành Viên Ban Chỉ Đạo & Các Mảng Chuyên Trách</span>
+                        </h3>
+                        <div id="bcd-members-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- A7. DANH SÁCH ĐẠI BIỂU REAL-TIME -->
+            <section id="danh-sach" class="py-20 bg-fast-lightBg/50 border-t border-fast-border">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-2xl mx-auto mb-10">
+                        <span class="inline-block px-3.5 py-1 rounded-full bg-fast-primary/10 text-fast-dark text-xs font-extrabold uppercase tracking-wider mb-2">DANH SÁCH NỘI BỘ CHÍNH THỨC</span>
+                        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-fast-dark">Danh Sách</h2>                        
+                    </div>
+                    
+                    <!-- Search & Live Stats -->
+                    <div class="max-w-4xl mx-auto mb-6 space-y-3">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400"><i data-lucide="search" class="w-4 h-4"></i></span>
+                            <input type="text" id="search-input" oninput="handleSearchInput(event)" placeholder="Tìm kiếm theo tên CBNV, số điện thoại, mã vé hoặc đơn vị..." class="w-full pl-10 pr-4 py-3.5 rounded-2xl bg-fast-card border border-fast-border text-sm focus:border-fast-primary outline-none shadow-xs transition">
+                        </div>
+
+						<!-- Thanh công cụ dành riêng cho BTC (Tab Danh sách) -->
+						<div id="admin-export-delegates-bar" class="hidden max-w-4xl mx-auto mb-4 flex flex-wrap items-center justify-end gap-2.5">
+							<button type="button" onclick="generateMockDelegates(215)" id="btn-gen-mock-delegates" class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold shadow-sm transition">
+								<i data-lucide="wand-2" class="w-4 h-4"></i>
+								<span>Tạo 215 CBNV mẫu</span>
+							</button>
+							<button type="button" onclick="exportDelegatesCSV()" class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm transition">
+								<i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+								<span>Kết xuất danh sách (CSV)</span>
+							</button>
+							<button type="button" onclick="clearAllDelegatesData()" id="btn-clear-all-delegates" class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold shadow-sm transition">
+								<i data-lucide="trash-2" class="w-4 h-4"></i>
+								<span>Xóa toàn bộ dữ liệu</span>
+							</button>
+						</div>
+
+                        <div id="stats-banner" class="bg-gradient-to-r from-fast-dark/10 to-fast-primary/10 border border-fast-primary/20 rounded-2xl p-3.5 text-xs text-fast-dark font-semibold flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2"><i data-lucide="pie-chart" class="w-4 h-4"></i><span id="stats-text">Đang tổng hợp số liệu...</span></div>
+                            <div id="stats-detail" class="text-[11px] text-slate-600 font-medium"></div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div class="flex flex-wrap items-center justify-center gap-2 mb-6">
+                        <button onclick="setFilter('all')" id="btn-all" class="px-4 py-2 rounded-2xl text-xs font-bold transition bg-fast-dark text-white shadow">Tất cả (<span id="count-all">0</span>)</button>
+                        <button onclick="setFilter('fhn')" id="btn-fhn" class="px-4 py-2 rounded-2xl text-xs font-bold transition bg-fast-card text-slate-600 border border-fast-border hover:bg-slate-100">Hà Nội (<span id="count-fhn">0</span>)</button>
+                        <button onclick="setFilter('fdn')" id="btn-fdn" class="px-4 py-2 rounded-2xl text-xs font-bold transition bg-fast-card text-slate-600 border border-fast-border hover:bg-slate-100">Đà Nẵng (<span id="count-fdn">0</span>)</button>
+                        <button onclick="setFilter('fsg')" id="btn-fsg" class="px-4 py-2 rounded-2xl text-xs font-bold transition bg-fast-card text-slate-600 border border-fast-border hover:bg-slate-100">Sài Gòn (<span id="count-fsg">0</span>)</button>
+                    </div>
+
+                    <!-- Desktop Table -->
+                    <div class="hidden md:block overflow-x-auto bg-fast-card rounded-3xl border border-fast-border shadow-sm">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-fast-border">
+                                    <th class="p-4 pl-6">Mã</th>
+                                    <th class="p-4">Họ và tên</th>
+                                    <th class="p-4">Đơn vị/Chi nhánh</th>
+                                    <th class="p-4">Nhóm</th>
+                                    <th class="p-4">Hoạt động tham gia</th>
+                                    <th class="p-4 pr-6"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="delegates-table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Mobile Cards -->
+                    <div id="delegates-mobile-list" class="md:hidden space-y-3"></div>
+
+                    <!-- Thanh phân trang danh sách (> 20 bản ghi/trang) -->
+                    <div id="delegates-pagination" class="hidden mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 bg-fast-card px-5 py-3.5 rounded-2xl border border-fast-border shadow-xs text-xs sm:text-sm">
+                        <span id="delegates-page-info" class="text-fast-textMuted font-medium"></span>
+                        <div id="delegates-page-buttons" class="flex flex-wrap items-center gap-1.5"></div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- -----------------------------------------------------------------
+             VIEW B: CHƯƠNG TRÌNH CHI TIẾT 4N3Đ (#program-view)
+        ------------------------------------------------------------------ -->
+        <section id="program-view" class="hidden pt-20 bg-[#FFFFFF] min-h-screen">
+
+			<!-- 1. Hero Banner -->
+			<div class="program-resort-banner text-white relative overflow-hidden">
+				<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-24 relative z-10">
+					<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs sm:text-sm text-white/85 mb-6">
+						<a href="#" onclick="switchPageView('home'); return false;" class="underline underline-offset-4 hover:text-white transition-colors">Trang chủ</a>
+						<span class="text-white/60">/</span>
+						<span class="text-white font-semibold">Chương trình</span>
+					</nav>
+
+					<div class="inline-flex items-center gap-2.5 mb-4">
+						<span class="w-6 h-3.5 rounded-md bg-[#FF6B35] inline-block shadow-sm"></span>
+						<span class="font-display font-extrabold text-xs sm:text-sm uppercase tracking-[0.14em] text-[#FDE047]">
+							FAST 30 NĂM · 2027 · 4 NGÀY 3 ĐÊM
+						</span>
+					</div>
+
+					<h1 class="font-display font-extrabold text-4xl sm:text-5xl lg:text-[54px] tracking-tight text-white leading-[1.12] mb-4">
+						Chương trình chi tiết
+					</h1>
+
+					<div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-base sm:text-lg text-white/95 mb-8">
+						<span class="font-bold">10/07 – 13/07/2027</span>
+						<span class="text-white/85">FLC Quang Binh Beach & Golf Resort</span>
+					</div>
+
+					<div class="flex flex-wrap items-center gap-4 sm:gap-6 mb-6">
+						<button type="button" onclick="downloadICS()" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full btn-fast-orange font-display font-bold text-sm sm:text-base shadow-lg">
+							<span>Lưu chương trình vào lịch</span>
+							<i data-lucide="arrow-right" class="w-4 h-4"></i>
+						</button>
+
+						<a href="https://www.flc.vn/du-an/quan-the-du-lich-nghi-duong-sinh-thai-flc-quang-binh/" target="_blank" rel="noopener noreferrer" class="text-sm sm:text-base font-semibold text-white underline underline-offset-4 hover:text-amber-200 transition-colors">
+							Thông tin khu nghỉ dưỡng FLC Quảng Bình ↗
+						</a>
+
+						<button type="button" onclick="switchPageView('home')" class="text-sm sm:text-base font-semibold text-white underline underline-offset-4 hover:text-amber-200 transition-colors">
+							Về trang chủ
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- 2. Thanh Chọn Tab 4 Ngày -->
+			<div class="sticky top-20 z-30 bg-[#FFFFFF] border-b border-[#E2E8F0] shadow-sm">
+				<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+					<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full max-w-4xl">
+						<button type="button" onclick="selectDetailedDay(1)" id="dp-tab-1" class="dp-day-tab px-4 py-3 rounded-xl text-left bg-[#00979C] text-white shadow-sm transition-all">
+							<span class="block font-display font-extrabold text-sm sm:text-base text-white">Ngày 1 · 10/07</span>							
+						</button>
+
+						<button type="button" onclick="selectDetailedDay(2)" id="dp-tab-2" class="dp-day-tab px-4 py-3 rounded-xl text-left bg-transparent hover:bg-[#FAF9F6] text-[#2D3748] transition-all">
+							<span class="block font-display font-extrabold text-sm sm:text-base text-[#2D3748]">Ngày 2 · 11/07</span>							
+						</button>
+
+						<button type="button" onclick="selectDetailedDay(3)" id="dp-tab-3" class="dp-day-tab px-4 py-3 rounded-xl text-left bg-transparent hover:bg-[#FAF9F6] text-[#2D3748] transition-all">
+							<span class="block font-display font-extrabold text-sm sm:text-base text-[#2D3748]">Ngày 3 · 12/07</span>							
+						</button>
+
+						<button type="button" onclick="selectDetailedDay(4)" id="dp-tab-4" class="dp-day-tab px-4 py-3 rounded-xl text-left bg-transparent hover:bg-[#FAF9F6] text-[#2D3748] transition-all">
+							<span class="block font-display font-extrabold text-sm sm:text-base text-[#2D3748]">Ngày 4 · 13/07</span>							
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- 3. Nội Dung Chương Trình Chi Tiết 4 Ngày -->
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+
+				<!-- NGÀY 1: 10/07 · HỘI NGỘ & KHAI MẠC -->
+				<div id="dp-day-panel-1" class="dp-day-section">
+					<div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+						<div class="lg:col-span-4 lg:sticky lg:top-44 space-y-4">
+							<span class="block font-display font-bold text-sm text-[#00979C]">Ngày 1 · 10/07/2027</span>
+							<h2 class="font-display font-extrabold text-3xl text-[#00686B] leading-tight">Hội Ngộ & Khai Mạc</h2>
+							<p class="text-sm text-[#64748B]">Đón đoàn 3 miền, nhận phòng, lễ khai mạc & tiệc chào mừng tối.</p>
+						</div>
+						<div class="lg:col-span-8 space-y-4">
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">08:00 – 11:30</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• Đón đoàn 3 miền (FHN, FDN, FSG) về Quảng Bình & nhận Welcome Kit.</li>
+								</ul>
+							</div>
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">12:00 – 14:00</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• Ăn trưa, nhận phòng & nghỉ ngơi tại Quảng Bình.</li>
+								</ul>
+							</div>
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">15:00 – 21:30</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• Lễ khai mạc FAST 30 Năm, bốc thăm chia bảng thể thao & tiệc chào mừng tối.</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- NGÀY 2: 11/07 · THI ĐẤU THỂ THAO & TEAM BUILDING -->
+				<div id="dp-day-panel-2" class="dp-day-section hidden">
+					<div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+						<div class="lg:col-span-4 lg:sticky lg:top-44 space-y-4">
+							<span class="block font-display font-bold text-sm text-[#00979C]">Ngày 2 · 11/07/2027</span>
+							<h2 class="font-display font-extrabold text-3xl text-[#00686B] leading-tight">Thi Đấu Thể Thao & Team Building</h2>
+							<p class="text-sm text-[#64748B]">Tranh tài các bộ môn thể thao, Team Building bãi biển Hải Ninh & gắn kết 3 miền.</p>
+						</div>
+						<div class="lg:col-span-8 space-y-4">
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">06:30 – 11:30</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• Thi đấu <strong>Chạy bộ</strong>, <strong>Pickleball</strong>, <strong>Bóng đá</strong>, <strong>Cầu lông</strong> & <strong>Bơi lội</strong>.</li>
+								</ul>
+							</div>
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">14:30 – 17:30</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• Tứ kết/bán kết thể thao & <strong>Team Building bãi biển Hải Ninh</strong>.</li>
+								</ul>
+							</div>
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">18:30 – 21:30</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• Ăn tối theo đoàn & sinh hoạt gắn kết 3 miền.</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- NGÀY 3: 12/07 · CHUNG KẾT, ĐẠI LỄ & GALA -->
+				<div id="dp-day-panel-3" class="dp-day-section hidden">
+					<div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+						<div class="lg:col-span-4 lg:sticky lg:top-44 space-y-4">
+							<span class="block font-display font-bold text-sm text-[#00979C]">Ngày 3 · 12/07/2027</span>
+							<h2 class="font-display font-extrabold text-3xl text-[#00686B] leading-tight">Chung Kết, Đại Lễ & Gala</h2>
+							<p class="text-sm text-[#64748B]">Chung kết thể thao, chương trình kỷ niệm 30 năm, Gala Dinner & Lucky Draw.</p>
+						</div>
+						<div class="lg:col-span-8 space-y-4">
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">07:30 – 11:30</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• Chung kết các môn thể thao, trao giải hội thao & chương trình kỷ niệm 30 năm.</li>
+								</ul>
+							</div>
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">12:00 – 17:00</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• Ăn trưa, nghỉ ngơi & chuẩn bị trang phục Gala.</li>
+								</ul>
+							</div>
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">18:00 – 22:00</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• <strong>Đêm Gala Dinner 30 Năm</strong>, vinh danh & <strong>Vòng quay Lucky Draw</strong>.</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- NGÀY 4: 13/07 · NGHỈ DƯỠNG & TIỄN ĐOÀN -->
+				<div id="dp-day-panel-4" class="dp-day-section hidden">
+					<div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+						<div class="lg:col-span-4 lg:sticky lg:top-44 space-y-4">
+							<span class="block font-display font-bold text-sm text-[#00979C]">Ngày 4 · 13/07/2027</span>
+							<h2 class="font-display font-extrabold text-3xl text-[#00686B] leading-tight">Nghỉ Dưỡng & Tiễn Đoàn</h2>
+							<p class="text-sm text-[#64748B]">Thư giãn tại Quảng Bình, trả phòng, bữa trưa chia tay & tiễn đoàn về 3 miền.</p>
+						</div>
+						<div class="lg:col-span-8 space-y-4">
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">07:00 – 10:30</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• Ăn sáng, thư giãn tại Quảng Bình & làm thủ tục trả phòng.</li>
+								</ul>
+							</div>
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">11:30 – 13:30</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• Bữa trưa chia tay ấm cúng.</li>
+								</ul>
+							</div>
+							<div class="rounded-2xl bg-[#F3EFEA] p-6 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6">
+								<span class="sm:w-40 shrink-0 font-display font-extrabold text-base text-[#00979C]">13:30 – 15:30</span>
+								<ul class="flex-1 space-y-2.5 text-sm text-[#2D3748]">
+									<li>• Xe BTC tiễn đoàn ra sân bay/ga trở về FHN, FDN, FSG.</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</section>
+
+        <!-- -----------------------------------------------------------------
+             VIEW C: TRANG ĐĂNG KÝ RIÊNG (#register-view)
+        ------------------------------------------------------------------ -->
+        <section id="register-view" class="hidden pt-28 pb-20 bg-fast-body min-h-screen">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs sm:text-sm text-fast-textMuted mb-6">
+                    <a href="#" onclick="switchPageView('home'); return false;" class="underline underline-offset-4 hover:text-fast-dark">Trang chủ</a>
+                    <span>/</span>
+                    <span class="text-fast-dark font-bold">Đăng ký tham dự</span>
+                </nav>
+
+                <div class="bg-fast-card p-6 sm:p-10 rounded-3xl border border-fast-border shadow-xl">
+                    <div id="page-register-form-view">
+                        <span class="inline-block px-3.5 py-1 rounded-full bg-fast-primary/10 text-fast-dark text-xs font-bold mb-2">
+                            FAST 30 NĂM · Quảng Bình · 10–13/07/2027
+                        </span>
+                        <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-fast-dark mb-1">
+                            Đăng Ký Tham Dự Sự Kiện
+                        </h1>
+                        <p class="text-sm text-fast-textMuted mb-6">
+                            Điền thông tin CBNV, phương án di chuyển, môn thể thao thi đấu và người thân đi kèm.
+                        </p>
+
+                        <form id="page-registration-form" onsubmit="handlePageRegistrationSubmit(event)" class="space-y-4">
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-fast-textMain uppercase tracking-wider mb-1.5">Họ và tên *</label>
+                                    <input type="text" id="p-reg-name" required minlength="2" maxlength="80" placeholder="Nguyễn Văn A" class="w-full px-4 py-3 rounded-2xl border border-fast-border focus:border-fast-primary outline-none text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-fast-textMain uppercase tracking-wider mb-1.5">Chi nhánh / Đơn vị *</label>
+                                    <select id="p-reg-group" required class="w-full px-4 py-3 rounded-2xl border border-fast-border focus:border-fast-primary outline-none text-sm bg-white">
+                                        <option value="">-- Chọn chi nhánh --</option>
+                                        <option value="CBNV FAST Hà Nội (FHN)">CBNV FAST Hà Nội (FHN)</option>
+                                        <option value="CBNV FAST Đà Nẵng (FDN)">CBNV FAST Đà Nẵng (FĐN)</option>
+                                        <option value="CBNV FAST TP.HCM (FSG)">CBNV FAST TP.HCM (FSG)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-fast-textMain uppercase tracking-wider mb-1.5">Chức vụ / Bộ phận</label>
+                                    <input type="text" id="p-reg-role" maxlength="80" placeholder="VD: Tư vấn / Lập trình / Hành chính" class="w-full px-4 py-3 rounded-2xl border border-fast-border focus:border-fast-primary outline-none text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-fast-textMain uppercase tracking-wider mb-1.5">Số điện thoại (Zalo) *</label>
+                                    <input type="tel" id="p-reg-phone" required placeholder="0912345678" inputmode="numeric" maxlength="15" class="w-full px-4 py-3 rounded-2xl border border-fast-border focus:border-fast-primary outline-none text-sm">
+                                </div>
+                            </div>
+
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-fast-textMain uppercase tracking-wider mb-1.5">Email *</label>
+                                    <input type="email" id="p-reg-email" required maxlength="120" placeholder="tenban@fast.com.vn" class="w-full px-4 py-3 rounded-2xl border border-fast-border focus:border-fast-primary outline-none text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-fast-textMain uppercase tracking-wider mb-1.5">Phương án di chuyển *</label>
+                                    <select id="p-reg-travel" required class="w-full px-4 py-3 rounded-2xl border border-fast-border focus:border-fast-primary outline-none text-sm bg-white">
+                                        <option value="Đi cùng đoàn FAST">Đi cùng đoàn FAST</option>
+                                        <option value="Bay đến Đồng Hới (VDH)">Bay đến Đồng Hới (VDH)</option>
+                                        <option value="Tự túc phương tiện">Tự túc phương tiện</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-fast-textMain uppercase tracking-wider mb-1.5">Hoạt động tham gia *</label>
+                                <select id="p-reg-activity" required class="w-full px-4 py-3 rounded-2xl border border-fast-border focus:border-fast-primary outline-none text-sm bg-white">
+                                    <option value="Tham dự trọn gói">Tham dự trọn gói</option>
+                                    <option value="Gala Dinner & Hội thao 30 Năm">Gala Dinner & Hội thao 30 Năm</option>
+                                    <option value="Gala Dinner & Team Building Bãi Biển">Gala Dinner & Team Building Bãi Biển</option>
+                                </select>
+                            </div>
+
+                            <!-- Upload & xem trước ảnh cá nhân gắn vào Thẻ Đại Biểu & Clip chào mừng -->
+                            <div class="p-4 rounded-2xl bg-fast-body border border-fast-border space-y-3">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label class="block text-xs font-bold text-fast-dark uppercase tracking-wider">
+                                        Ảnh chân dung gắn Thẻ Đại Biểu & Clip chào mừng
+                                    </label>
+                                    <span class="text-[11px] text-fast-textMuted">Tự nén vuông 320×320 · Tối đa 5MB</span>
+                                </div>
+                                <div class="flex flex-col sm:flex-row items-center gap-4">
+                                    <div class="w-24 h-24 rounded-2xl bg-white border-2 border-dashed border-fast-primary/40 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
+                                        <img id="p-reg-avatar-preview" src="" alt="Ảnh đại diện" class="hidden w-full h-full object-cover">
+                                        <div id="p-reg-avatar-placeholder" class="text-center text-slate-400 p-2">
+                                            <i data-lucide="camera" class="w-6 h-6 mx-auto mb-1 text-fast-primary"></i>
+                                            <span class="text-[10px] font-semibold block">Chưa chọn ảnh</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 w-full space-y-2">
+                                        <input type="file" id="p-reg-avatar-file" accept="image/png,image/jpeg,image/webp" onchange="handleAvatarFileChange(event, 'p-reg')" class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-fast-primary/10 file:text-fast-dark hover:file:bg-fast-primary/20 cursor-pointer">
+                                        <div class="flex items-center justify-between text-[11px] text-fast-textMuted">
+                                            <span>Hỗ trợ JPG, PNG, WEBP (tối đa 5MB). Ảnh tự nén nhỏ gọn gắn lên Thẻ & Clip chào mừng.</span>
+                                            <button type="button" id="p-reg-avatar-clear" onclick="clearAvatarSelection('p-reg')" class="hidden text-red-500 hover:underline font-bold shrink-0 ml-2">Xóa ảnh</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-2xl bg-fast-body border border-fast-border space-y-3">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label class="block text-xs font-bold text-fast-dark uppercase tracking-wider">
+                                        Đăng ký môn thi đấu thể thao (Có thể chọn nhiều môn)
+                                    </label>
+                                    <span class="text-[11px] text-fast-textMuted">Cập nhật vào Tab Thể thao</span>
+                                </div>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                                    <label class="flex items-center gap-2 p-2.5 rounded-xl border border-fast-border bg-white cursor-pointer hover:border-fast-primary">
+                                        <input type="checkbox" name="p-reg-sports" value="Pickleball" class="w-4 h-4 accent-fast-primary rounded">
+                                        <span class="text-sm font-medium">🏓 Pickleball</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2.5 rounded-xl border border-fast-border bg-white cursor-pointer hover:border-fast-primary">
+                                        <input type="checkbox" name="p-reg-sports" value="Bóng đá" class="w-4 h-4 accent-fast-primary rounded">
+                                        <span class="text-sm font-medium">⚽ Bóng đá</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2.5 rounded-xl border border-fast-border bg-white cursor-pointer hover:border-fast-primary">
+                                        <input type="checkbox" name="p-reg-sports" value="Cầu lông" class="w-4 h-4 accent-fast-primary rounded">
+                                        <span class="text-sm font-medium">🏸 Cầu lông</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2.5 rounded-xl border border-fast-border bg-white cursor-pointer hover:border-fast-primary">
+                                        <input type="checkbox" name="p-reg-sports" value="Bơi lội" class="w-4 h-4 accent-fast-primary rounded">
+                                        <span class="text-sm font-medium">🏊 Bơi lội</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2.5 rounded-xl border border-fast-border bg-white cursor-pointer hover:border-fast-primary">
+                                        <input type="checkbox" name="p-reg-sports" value="Chạy bộ" class="w-4 h-4 accent-fast-primary rounded">
+                                        <span class="text-sm font-medium">🏃 Chạy bộ</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3 pt-3 border-t border-fast-border">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label class="text-xs font-bold text-fast-textMain flex items-center gap-1.5">
+                                        <i data-lucide="users" class="w-4 h-4 text-fast-primary"></i>
+                                        <span>Đăng ký tham gia cùng Người thân đi kèm?</span>
+                                    </label>
+                                    <button type="button" onclick="addPageRelativeRow()" class="px-3 py-1.5 rounded-xl bg-fast-primary/10 text-fast-dark hover:bg-fast-primary/20 font-bold text-xs transition inline-flex items-center gap-1">
+                                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                        <span>Thêm người thân</span>
+                                    </button>
+                                </div>
+                                <div id="p-relatives-container" class="space-y-2.5"></div>
+                            </div>
+
+                            <div class="pt-3 flex flex-wrap items-center justify-between gap-3">
+                                <button type="button" onclick="switchPageView('home')" class="px-5 py-3 rounded-2xl text-sm font-semibold text-fast-textMuted hover:bg-fast-body">
+                                    ← Về trang chủ
+                                </button>
+                                <button type="submit" id="btn-p-reg-submit" class="px-7 py-3 rounded-2xl text-sm font-bold btn-fast-orange shadow-lg">
+                                    Xác nhận đăng ký
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="page-register-success-view" class="hidden text-center py-4">
+                        <div class="w-14 h-14 mx-auto rounded-full bg-fast-primary/15 text-fast-primary flex items-center justify-center mb-3">
+                            <i data-lucide="check" class="w-8 h-8"></i>
+                        </div>
+                        <h2 class="font-display font-extrabold text-2xl text-fast-dark mb-1">Đăng Ký Thành Công!</h2>
+                        <p class="text-xs sm:text-sm text-fast-textMuted mb-4">
+                            Chào mừng <strong id="p-succ-name" class="text-fast-textMain"></strong> · Mã: <strong id="p-succ-code" class="font-mono text-fast-primary">FAST30-0000</strong>
+                        </p>
+
+                        <!-- Khung Thẻ Đại Biểu gắn ảnh -->
+                        <div id="p-succ-badge-card" class="max-w-md mx-auto mb-6 text-left"></div>
+
+                        <div class="flex flex-wrap justify-center gap-3">
+                            <button type="button" onclick="resetPageRegisterForm()" class="px-5 py-2.5 rounded-2xl bg-fast-lightBg text-fast-dark text-sm font-bold">
+                                Đăng ký thêm người
+                            </button>
+                            <button type="button" onclick="openWelcomeReelModal()" class="px-5 py-2.5 rounded-2xl btn-fast-orange text-sm font-bold shadow-md">
+                                🎬 Xem Clip chào mừng
+                            </button>
+                            <button type="button" onclick="switchPageView('sports')" class="px-5 py-2.5 rounded-2xl btn-fast-primary text-sm font-bold">
+                                Xem Tab Thể thao →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- -----------------------------------------------------------------
+             VIEW D: TAB THỂ THAO (#sports-view)
+        ------------------------------------------------------------------ -->
+        <section id="sports-view" class="hidden pt-28 pb-20 bg-fast-body min-h-screen">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs sm:text-sm text-fast-textMuted">
+                    <a href="#" onclick="switchPageView('home'); return false;" class="underline underline-offset-4 hover:text-fast-dark">Trang chủ</a>
+                    <span>/</span>
+                    <span class="text-fast-dark font-bold">Thể thao FAST 30 Năm</span>
+                </nav>
+
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <span class="inline-block px-3.5 py-1 rounded-full bg-fast-primary/10 text-fast-dark text-xs font-extrabold uppercase tracking-wider mb-2">
+                            HỘI THAO NỘI BỘ 3 MIỀN
+                        </span>
+                        <h1 class="font-display font-extrabold text-3xl sm:text-4xl text-fast-dark">
+                            Danh Sách
+                        </h1>                        
+                    </div>
+                    <button type="button" onclick="switchPageView('register')" class="px-5 py-3 rounded-2xl btn-fast-orange text-xs sm:text-sm font-bold shadow-md self-start md:self-auto">
+                        + Đăng ký tham gia môn thi đấu
+                    </button>
+                </div>
+
+                <!-- Các Tab Môn Thi Đấu -->
+                <div id="sports-tabs" class="flex flex-wrap gap-2">
+                    <button type="button" onclick="selectSportTab('Pickleball')" id="sport-tab-Pickleball" class="sport-tab-btn px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-fast-dark text-white shadow transition">
+                        🏓 Pickleball (<span id="sport-count-Pickleball">0</span>)
+                    </button>
+                    <button type="button" onclick="selectSportTab('Bóng đá')" id="sport-tab-Bóng đá" class="sport-tab-btn px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-fast-card text-fast-textMain border border-fast-border hover:border-fast-primary transition">
+                        ⚽ Bóng đá (<span id="sport-count-Bóng đá">0</span>)
+                    </button>
+                    <button type="button" onclick="selectSportTab('Cầu lông')" id="sport-tab-Cầu lông" class="sport-tab-btn px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-fast-card text-fast-textMain border border-fast-border hover:border-fast-primary transition">
+                        🏸 Cầu lông (<span id="sport-count-Cầu lông">0</span>)
+                    </button>
+                    <button type="button" onclick="selectSportTab('Bơi lội')" id="sport-tab-Bơi lội" class="sport-tab-btn px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-fast-card text-fast-textMain border border-fast-border hover:border-fast-primary transition">
+                        🏊 Bơi lội (<span id="sport-count-Bơi lội">0</span>)
+                    </button>
+                    <button type="button" onclick="selectSportTab('Chạy bộ')" id="sport-tab-Chạy bộ" class="sport-tab-btn px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-fast-card text-fast-textMain border border-fast-border hover:border-fast-primary transition">
+                        🏃 Chạy bộ (<span id="sport-count-Chạy bộ">0</span>)
+                    </button>
+                </div>
+
+                <!-- Thanh Search & Lọc Theo Chi Nhánh Trong Từng Môn -->
+                <div class="bg-fast-card p-4 sm:p-5 rounded-3xl border border-fast-border shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="setSportBranchFilter('ALL')" id="sport-branch-ALL" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-fast-primary text-white">Tất cả</button>
+                        <button type="button" onclick="setSportBranchFilter('FHN')" id="sport-branch-FHN" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Hà Nội</button>
+                        <button type="button" onclick="setSportBranchFilter('FDN')" id="sport-branch-FDN" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Đà Nẵng</button>
+                        <button type="button" onclick="setSportBranchFilter('FSG')" id="sport-branch-FSG" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Sài Gòn</button>
+                    </div>
+
+                    <div class="relative w-full md:w-80">
+                        <input type="text" id="sport-search-input" oninput="handleSportSearchInput(event)" placeholder="Tìm CBNV hoặc chi nhánh (FHN, FDN, FSG)..." class="w-full px-4 py-2.5 rounded-2xl border border-fast-border focus:border-fast-primary outline-none text-xs sm:text-sm bg-fast-body">
+                    </div>
+                </div>
+
+                <!-- Bảng (Desktop) & Card View (Mobile) CBNV Theo Môn Đang Chọn -->
+				<div class="bg-fast-card rounded-3xl border border-fast-border shadow-sm overflow-hidden">
+					<div class="px-6 py-4 bg-slate-50 border-b border-fast-border flex flex-wrap items-center justify-between gap-3">
+						<h2 id="sport-current-title" class="font-display font-extrabold text-base sm:text-lg text-fast-dark">
+							Môn: Pickleball
+						</h2>
+						<div class="flex items-center gap-3">
+							<button type="button" onclick="exportCurrentSportCSV()" id="admin-export-sport-btn" class="hidden inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-xs transition">
+								<i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+								<span>Kết xuất môn này</span>
+							</button>
+							<span id="sport-filtered-total" class="text-xs font-bold text-fast-primary">0 CBNV</span>
+						</div>
+					</div>
+
+					<!-- Desktop Table -->
+					<div class="hidden md:block overflow-x-auto">
+						<table class="w-full text-left border-collapse">
+							<thead>
+								<tr class="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-fast-border">
+									<th class="p-4 pl-6">Mã</th>
+									<th class="p-4">Họ và tên</th>
+									<th class="p-4">Đơn vị/Chi nhánh</th>
+									<th class="p-4">Nhóm</th>
+									<th class="p-4">Hoạt động tham gia</th>
+									<th class="p-4 pr-6 text-right">Thẻ</th>
+								</tr>
+							</thead>
+							<tbody id="sports-table-body"></tbody>
+						</table>
+					</div>
+
+					<!-- Mobile Card View -->
+					<div id="sports-mobile-list" class="md:hidden p-4 space-y-3 bg-fast-body/50"></div>
+				</div>
+
+				<!-- Thanh phân trang Tab Thể thao -->
+				<div id="sports-pagination" class="hidden mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-fast-card px-5 py-3.5 rounded-2xl border border-fast-border shadow-xs text-xs sm:text-sm">
+					<span id="sports-page-info" class="text-fast-textMuted font-medium"></span>
+					<div id="sports-page-buttons" class="flex flex-wrap items-center gap-1.5"></div>
+				</div>
+            </div>
+        </section>
+
+        <!-- -----------------------------------------------------------------
+             VIEW E: VÒNG QUAY LUCKY DRAW (#luckydraw-view — đồng bộ màu Hero Banner)
+        ------------------------------------------------------------------ -->
+        <section id="luckydraw-view" class="hidden pt-28 pb-20 min-h-screen text-white relative overflow-hidden fast-hero-gradient">
+            <div class="absolute top-16 right-10 w-80 h-80 bg-fast-gold/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-10 left-10 w-96 h-96 bg-fast-orange/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
+                <nav aria-label="Breadcrumb" class="flex items-center justify-between flex-wrap gap-3 text-xs sm:text-sm text-white/85">
+                    <div class="flex items-center gap-2">
+                        <a href="#" onclick="switchPageView('home'); return false;" class="hover:text-[#FDE047] underline underline-offset-4">Trang chủ</a>
+                        <span>/</span>
+                        <span class="text-[#FDE047] font-bold">Vòng Quay May Mắn Gala</span>
+                    </div>
+                    <span id="ld-auth-status-badge" class="px-3.5 py-1 rounded-full bg-fast-deeper/70 border border-fast-gold/60 text-[11px] font-bold text-amber-200">
+                        🔒 Chế độ xem (Đăng nhập BTC để quay số)
+                    </span>
+                </nav>
+
+                <!-- Banner 7 Hạng Giải & Bộ lọc chi nhánh -->
+                <div class="bg-fast-deeper/70 border border-fast-gold/50 rounded-3xl p-6 sm:p-8 text-white shadow-2xl backdrop-blur-md space-y-6">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                        <div>
+                            <span class="inline-block px-3.5 py-1 rounded-full bg-fast-deeper/75 border border-fast-gold text-amber-200 text-[11px] font-extrabold uppercase tracking-wider mb-2">
+                                GALA DINNER · F30N · 1997–2027
+                            </span>
+                            <h2 class="font-display font-extrabold text-3xl sm:text-4xl tracking-tight leading-tight">
+                                Vòng Quay <span class="text-gradient-gold">May Mắn</span>
+                            </h2>
+                            <p class="text-xs sm:text-sm text-white/90 mt-1">Vinh danh FASTer may mắn trong đêm Gala kỷ niệm 30 năm tại Quảng Bình.</p>
+                        </div>                        
+                    </div>
+
+                    <div class="space-y-3 pt-4 border-t border-white/15">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <h3 class="font-bold text-white text-xs uppercase tracking-wider">Chọn hạng giải để quay số</h3>
+                            <span id="total-drawn-counter" class="text-xs text-[#FDE047] font-extrabold bg-fast-deeper/80 px-3.5 py-1 rounded-full border border-fast-gold/50">Đã trao: 0 / 28 giải</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+                            <div onclick="selectPrizeCard('Giải Bảy')" id="prize-card-Giải Bảy" class="prize-card cursor-pointer p-3.5 rounded-2xl bg-white/10 border border-white/15 text-white text-center transition-all hover:bg-white/20">
+                                <div class="text-[10px] uppercase font-bold text-teal-100">Giải Bảy</div>
+                                <div class="text-lg font-black my-0.5"><span class="drawn-count">0</span>/7</div>
+                                <div class="text-[10px] text-[#FDE047] font-semibold">7 suất</div>
+                            </div>
+                            <div onclick="selectPrizeCard('Giải Sáu')" id="prize-card-Giải Sáu" class="prize-card cursor-pointer p-3.5 rounded-2xl bg-white/10 border border-white/15 text-white text-center transition-all hover:bg-white/20">
+                                <div class="text-[10px] uppercase font-bold text-teal-100">Giải Sáu</div>
+                                <div class="text-lg font-black my-0.5"><span class="drawn-count">0</span>/6</div>
+                                <div class="text-[10px] text-[#FDE047] font-semibold">6 suất</div>
+                            </div>
+                            <div onclick="selectPrizeCard('Giải Năm')" id="prize-card-Giải Năm" class="prize-card cursor-pointer p-3.5 rounded-2xl bg-white/10 border border-white/15 text-white text-center transition-all hover:bg-white/20">
+                                <div class="text-[10px] uppercase font-bold text-teal-100">Giải Năm</div>
+                                <div class="text-lg font-black my-0.5"><span class="drawn-count">0</span>/5</div>
+                                <div class="text-[10px] text-[#FDE047] font-semibold">5 suất</div>
+                            </div>
+                            <div onclick="selectPrizeCard('Giải Tư')" id="prize-card-Giải Tư" class="prize-card cursor-pointer p-3.5 rounded-2xl bg-white/10 border border-white/15 text-white text-center transition-all hover:bg-white/20">
+                                <div class="text-[10px] uppercase font-bold text-teal-100">Giải Tư</div>
+                                <div class="text-lg font-black my-0.5"><span class="drawn-count">0</span>/4</div>
+                                <div class="text-[10px] text-[#FDE047] font-semibold">4 suất</div>
+                            </div>
+                            <div onclick="selectPrizeCard('Giải Ba')" id="prize-card-Giải Ba" class="prize-card cursor-pointer p-3.5 rounded-2xl bg-white/15 border border-[#FDE047]/40 text-white text-center transition-all hover:bg-white/25">
+                                <div class="text-[10px] uppercase font-extrabold text-[#FDE047]">🥉 Giải Ba</div>
+                                <div class="text-lg font-black my-0.5 text-amber-100"><span class="drawn-count">0</span>/3</div>
+                                <div class="text-[10px] text-amber-200 font-semibold">3 suất</div>
+                            </div>
+                            <div onclick="selectPrizeCard('Giải Nhì')" id="prize-card-Giải Nhì" class="prize-card cursor-pointer p-3.5 rounded-2xl bg-white/15 border border-[#FDE047]/50 text-white text-center transition-all hover:bg-white/25">
+                                <div class="text-[10px] uppercase font-extrabold text-[#FDE047]">🥈 Giải Nhì</div>
+                                <div class="text-lg font-black my-0.5 text-amber-100"><span class="drawn-count">0</span>/2</div>
+                                <div class="text-[10px] text-amber-200 font-semibold">2 suất</div>
+                            </div>
+                            <div onclick="selectPrizeCard('Giải Nhất')" id="prize-card-Giải Nhất" class="prize-card cursor-pointer p-3.5 rounded-2xl bg-gradient-to-br from-[#FDE047] via-amber-400 to-[#FF6B35] border-2 border-white text-[#00282A] text-center shadow-lg transition-all">
+                                <div class="text-[10px] uppercase font-black tracking-wider">⭐ Giải Nhất</div>
+                                <div class="text-xl font-black my-0.5"><span class="drawn-count">0</span>/1</div>
+                                <div class="text-[10px] font-extrabold">1 suất VIP</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sân Khấu Quay Trung Tâm (Hiển thị Thẻ CBNV khi quay & khi có kết quả) -->
+                <div class="bg-fast-deeper/70 border-2 border-fast-gold/60 rounded-[32px] p-6 sm:p-10 shadow-2xl backdrop-blur-md text-center space-y-6">
+                    <div id="draw-winner-card-slot" class="max-w-2xl mx-auto">
+                        <div class="rounded-[32px] bg-[#00282A]/75 border border-[#FDE047]/35 p-8 sm:p-10 text-center space-y-2.5 shadow-inner">
+                            <div id="draw-display-code" class="font-mono text-4xl sm:text-6xl font-black text-[#FDE047] tracking-widest">
+                                FAST30-XXXX
+                            </div>
+                            <h3 id="draw-winner-name" class="text-xl sm:text-2xl font-bold text-white">Sẵn sàng quay số</h3>
+                            <p id="draw-winner-company" class="text-xs sm:text-sm text-teal-100/85">Chọn hạng giải phía trên rồi bấm "Bắt đầu quay số"</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-4 pt-2">
+                        <button type="button" onclick="startLuckyDraw()" id="btn-start-draw" class="px-9 py-4 rounded-2xl btn-fast-orange text-white font-display font-extrabold text-base shadow-xl transition flex items-center gap-2.5">
+                            <i class="fa-solid fa-dice"></i>
+                            <span>Bắt đầu quay số</span>
+                        </button>
+                        <button type="button" onclick="resetLuckyDraw()" class="px-6 py-4 rounded-2xl bg-white/15 hover:bg-white/25 text-white border border-white/25 font-bold text-sm sm:text-base transition flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>Làm mới khung</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bảng Vàng Trúng Thưởng -->
+                <div class="bg-fast-deeper/75 rounded-3xl p-6 sm:p-8 border border-fast-gold/50 shadow-xl space-y-6 backdrop-blur-md">
+                    <div class="flex items-center justify-between flex-wrap gap-2 border-b border-white/15 pb-3">
+                        <h3 class="font-display font-bold text-[#FDE047] text-base uppercase tracking-wider">🏆 Bảng vàng trúng thưởng</h3>
+                        <span id="overall-winner-count" class="text-xs font-extrabold px-4 py-1.5 rounded-full bg-white/15 text-white border border-white/20">Tổng đã trao: 0 / 28 giải</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="winner-cards-grid">
+                        <div class="bg-white/10 rounded-3xl p-4 border border-white/15" id="history-card-Giải Bảy">
+                            <div class="flex items-center justify-between pb-2 border-b border-white/15">
+                                <span class="font-extrabold text-sm text-[#FDE047]">🏆 Giải Bảy</span>
+                                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#00282A]/70 text-white slot-badge">0/7 suất</span>
+                            </div>
+                            <div class="winners-list-container space-y-2 mt-3"><div class="text-xs text-teal-100/70 italic text-center py-4">Chưa có người trúng</div></div>
+                        </div>
+                        <div class="bg-white/10 rounded-3xl p-4 border border-white/15" id="history-card-Giải Sáu">
+                            <div class="flex items-center justify-between pb-2 border-b border-white/15">
+                                <span class="font-extrabold text-sm text-[#FDE047]">🏆 Giải Sáu</span>
+                                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#00282A]/70 text-white slot-badge">0/6 suất</span>
+                            </div>
+                            <div class="winners-list-container space-y-2 mt-3"><div class="text-xs text-teal-100/70 italic text-center py-4">Chưa có người trúng</div></div>
+                        </div>
+                        <div class="bg-white/10 rounded-3xl p-4 border border-white/15" id="history-card-Giải Năm">
+                            <div class="flex items-center justify-between pb-2 border-b border-white/15">
+                                <span class="font-extrabold text-sm text-[#FDE047]">🏆 Giải Năm</span>
+                                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#00282A]/70 text-white slot-badge">0/5 suất</span>
+                            </div>
+                            <div class="winners-list-container space-y-2 mt-3"><div class="text-xs text-teal-100/70 italic text-center py-4">Chưa có người trúng</div></div>
+                        </div>
+                        <div class="bg-white/10 rounded-3xl p-4 border border-white/15" id="history-card-Giải Tư">
+                            <div class="flex items-center justify-between pb-2 border-b border-white/15">
+                                <span class="font-extrabold text-sm text-[#FDE047]">🏆 Giải Tư</span>
+                                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#00282A]/70 text-white slot-badge">0/4 suất</span>
+                            </div>
+                            <div class="winners-list-container space-y-2 mt-3"><div class="text-xs text-teal-100/70 italic text-center py-4">Chưa có người trúng</div></div>
+                        </div>
+                        <div class="bg-white/15 rounded-3xl p-4 border border-[#FDE047]/35" id="history-card-Giải Ba">
+                            <div class="flex items-center justify-between pb-2 border-b border-white/15">
+                                <span class="font-extrabold text-sm text-[#FDE047]">🥉 Giải Ba</span>
+                                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#00282A]/70 text-amber-200 slot-badge">0/3 suất</span>
+                            </div>
+                            <div class="winners-list-container space-y-2 mt-3"><div class="text-xs text-teal-100/70 italic text-center py-4">Chưa có người trúng</div></div>
+                        </div>
+                        <div class="bg-white/15 rounded-3xl p-4 border border-[#FDE047]/45" id="history-card-Giải Nhì">
+                            <div class="flex items-center justify-between pb-2 border-b border-white/15">
+                                <span class="font-extrabold text-sm text-[#FDE047]">🥈 Giải Nhì</span>
+                                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#00282A]/70 text-amber-200 slot-badge">0/2 suất</span>
+                            </div>
+                            <div class="winners-list-container space-y-2 mt-3"><div class="text-xs text-teal-100/70 italic text-center py-4">Chưa có người trúng</div></div>
+                        </div>
+                        <div class="bg-gradient-to-br from-[#FDE047]/25 to-[#FF6B35]/25 rounded-3xl p-4 border-2 border-[#FDE047] shadow-md lg:col-span-2" id="history-card-Giải Nhất">
+                            <div class="flex items-center justify-between pb-2 border-b border-[#FDE047]/35">
+                                <span class="font-black text-sm text-[#FDE047]">⭐ Giải Nhất VIP</span>
+                                <span class="text-xs font-extrabold px-3 py-0.5 rounded-full bg-[#FF6B35] text-white slot-badge">0/1 suất</span>
+                            </div>
+                            <div class="winners-list-container space-y-2 mt-3"><div class="text-xs text-teal-50/80 italic text-center py-4">Chưa có CBNV trúng giải</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- =====================================================================
+3. FOOTER (LOGO VUÔNG · ĐIỀU HƯỚNG NHANH · LIÊN HỆ 3 CHI NHÁNH)
+    ====================================================================== -->
+    <footer class="bg-gradient-to-r from-[#005A5D] via-[#006D70] to-[#007D81] text-white/95 py-14 border-t border-fast-gold/40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Hàng trên: Logo vuông + Điều hướng nhanh + Nút Tra cứu & Đăng ký -->
+            <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-8 pb-10 border-b border-white/15">
+                <div class="flex items-start gap-4 max-w-md">
+                    <div class="px-2.5 py-1.5 rounded-2xl logo-white-gold-frame flex items-center justify-center shrink-0 shadow-md">
+						<svg viewBox="0 0 320 225" class="h-12 w-auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo FAST 30 Năm">
+							<defs>
+								<linearGradient id="tealNumFooter" x1="0" y1="0" x2="1" y2="1">
+									<stop offset="0%" stop-color="#00B5BC"/>
+									<stop offset="55%" stop-color="#00898E"/>
+									<stop offset="100%" stop-color="#005F63"/>
+								</linearGradient>
+								<linearGradient id="goldRingFooter" x1="0" y1="0" x2="1" y2="1">
+									<stop offset="0%" stop-color="#F7E08B"/>
+									<stop offset="45%" stop-color="#D4AF37"/>
+									<stop offset="100%" stop-color="#A67C1E"/>
+								</linearGradient>
+							</defs>
+							<text x="28" y="32" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="25" letter-spacing="4" fill="#00898E">FAST</text>
+							<!-- Dấu đỏ nằm trọn trong khoảng trống của chữ A -->
+							<polygon points="54.5,19.5 57.5,25 51.5,25" fill="#E53E3E"/>
+							<path d="M32,42 H126 L104,84 H114 C136,84 148,98 148,120 C148,148 126,166 90,166 C60,166 36,154 24,134 L48,118 C56,130 70,138 88,138 C106,138 118,129 118,116 C118,104 108,97 90,97 H72 L94,64 H32 Z" fill="url(#tealNumFooter)" stroke="#D4AF37" stroke-width="3.5" stroke-linejoin="round"/>
+							<g transform="translate(216, 103)">
+								<ellipse cx="0" cy="0" rx="64" ry="62" fill="url(#tealNumFooter)" stroke="#D4AF37" stroke-width="3.5"/>
+								<ellipse cx="4" cy="2" rx="46" ry="45" fill="url(#goldRingFooter)"/>
+								<ellipse cx="-5" cy="0" rx="34" ry="35" fill="#FFFFFF"/>
+							</g>
+							<path d="M44,183 C112,163 202,155 292,158 C296,158 297,163 292,164 C206,169 118,179 50,195 C42,197 38,185 44,183 Z" fill="#00979C" stroke="#D4AF37" stroke-width="2.2"/>
+							<text x="288" y="185" text-anchor="end" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="18" letter-spacing="1" fill="#E53E3E">1997 - 2027</text>
+							<text x="160" y="213" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="13.2" letter-spacing="0.4" fill="#007A7E">AM HIỂU NGHIỆP VỤ, TẬN TÂM ĐỒNG HÀNH</text>
+						</svg>
+					</div>
+                    <div>
+                        <span class="font-display font-extrabold text-xl text-white block tracking-tight">FAST 30 NĂM</span>
+                        <span class="font-display font-bold text-xs text-[#FDE047] uppercase tracking-wider block mt-1">
+                            QUẢNG BÌNH • 10–13/07/2027
+                        </span>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-display font-extrabold text-xs text-[#FDE047] uppercase tracking-wider mb-2.5">
+                        ĐIỀU HƯỚNG
+                    </h3>
+                    <ul class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-1.5 text-xs sm:text-sm text-white/90">
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FDE047]"></span><a href="#" onclick="switchPageView('home'); return false;" class="hover:text-[#FDE047]">Trang chủ</a></li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FDE047]"></span><a href="#chuong-trinh" onclick="switchPageView('program'); return false;" class="hover:text-[#FDE047]">Chương trình</a></li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FDE047]"></span><a href="#btc" onclick="navigateToHomeSection('btc'); return false;" class="hover:text-[#FDE047]">Ban chỉ đạo</a></li>						
+						<li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FDE047]"></span><a href="#danh-sach" onclick="navigateToHomeSection('danh-sach'); return false;" class="hover:text-[#FDE047]">Danh sách</a></li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FDE047]"></span><a href="#the-thao" onclick="switchPageView('sports'); return false;" class="hover:text-[#FDE047]">Thể thao</a></li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FDE047]"></span><a href="#luckydraw" onclick="switchPageView('luckydraw'); return false;" class="hover:text-[#FDE047]">Lucky Draw</a></li>                        
+                    </ul>
+                </div>
+
+                <!-- Nút Tra cứu và Đăng ký -->
+                <div class="flex flex-wrap items-center gap-3 shrink-0">
+                    <button type="button" onclick="openLookupModal()" class="px-5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white text-sm font-semibold border border-white/20 transition-colors">Tra cứu</button>
+                    <button type="button" onclick="switchPageView('register')" class="px-5 py-2.5 rounded-2xl btn-fast-orange text-sm font-bold shadow-lg">Đăng ký</button>
+                </div>
+            </div>
+
+            <!-- Khối Liên hệ 3 Chi nhánh & Kênh trực tuyến -->
+            <div class="py-10 border-b border-white/15">
+                <h3 class="font-display font-extrabold text-xs sm:text-sm text-[#FDE047] uppercase tracking-wider mb-6">
+                    LIÊN HỆ
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-xs text-white/90">
+
+                    <!-- Văn phòng tại TP Hà Nội -->
+                    <div class="p-5 rounded-2xl bg-white/10 border border-white/15 space-y-2.5">
+                        <h4 class="font-display font-extrabold text-sm text-[#FDE047]">Văn phòng tại TP Hà Nội</h4>
+                        <p class="flex items-start gap-2 text-white/90 leading-relaxed">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-[#FDE047] shrink-0 mt-0.5"></i>
+                            <span>Tầng 3, Tòa nhà CT1B, Khu VOV Mễ Trì, P. Đại Mỗ, TP. Hà Nội</span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i data-lucide="globe" class="w-4 h-4 text-[#FDE047] shrink-0"></i>
+                            <span>Website nhận hỗ trợ: <a href="https://hotro.fast.com.vn" target="_blank" rel="noopener noreferrer" class="text-amber-200 underline hover:text-white">hotro.fast.com.vn</a></span>
+                        </p>
+                        <p class="flex items-start gap-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-[#FDE047] shrink-0 mt-0.5"></i>
+                            <span>Tổng đài: (024) 7108-8288/ 8888-8288</span>
+                        </p>
+                        <p class="text-white/85 pl-6 font-semibold">Hỗ trợ ngoài giờ (8h-21h30)</p>
+                        <p class="text-white/85 pl-6">FAO, HĐĐT: (024) 7108-8288/ 8888-8288 (line 4)</p>
+                        <p class="flex items-center gap-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-[#FDE047] shrink-0"></i>
+                            <span>Phần mềm khác: <a href="tel:0981195590" class="hover:text-[#FDE047]">098-119-5590</a></span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-[#FDE047] shrink-0"></i>
+                            <span>Góp ý, phản ánh: <a href="tel:0903400131" class="hover:text-[#FDE047]">090-340-0131</a></span>
+                        </p>
+                    </div>
+
+                    <!-- Văn phòng tại TP HCM -->
+                    <div class="p-5 rounded-2xl bg-white/10 border border-white/15 space-y-2.5">
+                        <h4 class="font-display font-extrabold text-sm text-[#FDE047]">Văn phòng tại TP HCM</h4>
+                        <p class="flex items-start gap-2 text-white/90 leading-relaxed">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-[#FDE047] shrink-0 mt-0.5"></i>
+                            <span>Số 29, Đường số 18, P. Hiệp Bình, TP. HCM</span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i data-lucide="globe" class="w-4 h-4 text-[#FDE047] shrink-0"></i>
+                            <span>Website nhận hỗ trợ: <a href="https://hotro.fast.com.vn" target="_blank" rel="noopener noreferrer" class="text-amber-200 underline hover:text-white">hotro.fast.com.vn</a></span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-[#FDE047] shrink-0"></i>
+                            <span>Tổng đài: <a href="tel:02871088788" class="hover:text-[#FDE047]">(028) 7108-8788</a></span>
+                        </p>
+                        <p class="flex items-start gap-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-[#FDE047] shrink-0 mt-0.5"></i>
+                            <span>Tổng đài CSKH (hỗ trợ ngoài giờ): <a href="tel:19006811" class="hover:text-[#FDE047]">1900-6811</a> (8h-22h)</span>
+                        </p>
+                    </div>
+
+                    <!-- Văn phòng tại TP Đà Nẵng -->
+                    <div class="p-5 rounded-2xl bg-white/10 border border-white/15 space-y-2.5">
+                        <h4 class="font-display font-extrabold text-sm text-[#FDE047]">Văn phòng tại TP Đà Nẵng</h4>
+                        <p class="flex items-start gap-2 text-white/90 leading-relaxed">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-[#FDE047] shrink-0 mt-0.5"></i>
+                            <span>10B Nguyễn Chí Thanh, Phường Hải Châu, TP. Đà Nẵng</span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i data-lucide="globe" class="w-4 h-4 text-[#FDE047] shrink-0"></i>
+                            <span>Website nhận hỗ trợ: <a href="https://hotro.fast.com.vn" target="_blank" rel="noopener noreferrer" class="text-amber-200 underline hover:text-white">hotro.fast.com.vn</a></span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-[#FDE047] shrink-0"></i>
+                            <span>Tổng đài: <a href="tel:02363810532" class="hover:text-[#FDE047]">(0236) 381-0532</a></span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-[#FDE047] shrink-0"></i>
+                            <span>Hỗ trợ ngoài giờ: <a href="tel:0905888462" class="hover:text-[#FDE047]">090-588-8462</a> (8h-22h)</span>
+                        </p>
+                    </div>
+
+                    <!-- Kênh trực tuyến & Sự kiện -->
+                    <div class="p-5 rounded-2xl bg-white/10 border border-white/15 space-y-3">
+                        <h4 class="font-display font-extrabold text-sm text-[#FDE047]">Kênh trực tuyến & BTC</h4>
+                        <p class="flex items-center gap-2">
+                            <i data-lucide="mail" class="w-4 h-4 text-[#FDE047] shrink-0"></i>
+                            <span>Email: <a href="mailto:info@fast.com.vn" class="text-amber-200 underline hover:text-white">info@fast.com.vn</a></span>
+                        </p>                        
+                        <p class="flex items-center gap-2">
+                            <i data-lucide="globe" class="w-4 h-4 text-[#FDE047] shrink-0"></i>
+                            <span>Website: <a href="https://www.fast.com.vn" target="_blank" rel="noopener noreferrer" class="text-amber-200 underline hover:text-white">www.fast.com.vn</a></span>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Hàng dưới -->
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-teal-100/80">
+                <p>© 2027 FAST Software Company</p>                
+            </div>
+        </div>
+    </footer>
+
+    <!-- =====================================================================
+4. MODALS & OVERLAYS
+    ====================================================================== -->
+    
+    <!-- Modal 2: Tra Cứu Đăng Ký -->
+    <div id="lookup-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-6 pb-20 text-center sm:p-0">
+            <div onclick="closeLookupModal()" class="fixed inset-0 bg-fast-deeper/75 backdrop-blur-sm"></div>
+            <div class="relative inline-block w-full max-w-lg p-6 sm:p-8 my-8 overflow-hidden text-left align-middle bg-fast-card shadow-2xl rounded-3xl z-10 border border-fast-border">
+                <button type="button" onclick="closeLookupModal()" class="absolute top-5 right-5 p-2 rounded-2xl text-fast-textMuted hover:bg-fast-body"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <h3 class="font-display font-extrabold text-2xl text-fast-dark mb-2">Tra Cứu Đăng Ký</h3>
+                <form onsubmit="handleLookupSubmit(event)" class="flex gap-2 mb-4">
+                    <input type="text" id="lookup-query" required placeholder="Nhập mã FAST30-XXXX hoặc SĐT..." class="flex-1 px-4 py-3 rounded-2xl border border-fast-border outline-none text-sm">
+                    <button type="submit" class="px-5 py-3 rounded-2xl btn-fast-primary font-bold text-sm shrink-0">Tra cứu</button>
+                </form>
+                <div id="lookup-result" class="hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Chi Tiết Ấn Phẩm -->
+    <div id="mockup-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-6 pb-20 text-center sm:p-0">
+            <div onclick="closeMockupModal()" class="fixed inset-0 bg-fast-deeper/75 backdrop-blur-sm"></div>
+            <div class="relative inline-block w-full max-w-lg p-6 sm:p-8 my-8 overflow-hidden text-left align-middle bg-fast-card shadow-2xl rounded-3xl z-10 border border-fast-border">
+                <button type="button" onclick="closeMockupModal()" class="absolute top-5 right-5 p-2 rounded-2xl text-fast-textMuted"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <h3 id="mockup-modal-title" class="font-display font-extrabold text-2xl text-fast-dark mb-2">Chi tiết ấn phẩm</h3>
+                <p id="mockup-modal-desc" class="text-sm text-fast-textMuted leading-relaxed mb-5"></p>
+                <div id="mockup-modal-specs" class="p-4 rounded-2xl bg-fast-body border border-fast-border space-y-2 text-xs text-fast-textMain"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Resort Image Lightbox -->
+    <div id="resort-lightbox" class="fixed inset-0 z-50 hidden bg-[#001F20]/95 backdrop-blur-md flex flex-col justify-between p-4 sm:p-6 select-none" role="dialog" aria-modal="true">
+        <div class="max-w-6xl w-full mx-auto flex items-center justify-between gap-3 text-white z-20">
+            <span id="lightbox-counter" class="px-3 py-1 rounded-full bg-white/15 border border-white/20 text-xs font-bold text-amber-200">1 / 4</span>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="toggleLightboxZoom()" class="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-xs font-semibold text-white transition-colors">
+                    <span id="lightbox-zoom-label">Phóng to 1.8x</span>
+                </button>
+                <button type="button" onclick="closeResortLightbox()" class="p-2.5 rounded-xl bg-white/15 hover:bg-fast-orange text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+        <div class="relative flex-1 flex items-center justify-center overflow-hidden my-3">
+            <button type="button" onclick="changeLightboxSlide(-1)" class="absolute left-2 z-20 p-3 rounded-full bg-white/15 hover:bg-white/30 text-white transition">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+            <div class="max-w-5xl max-h-[70vh] flex items-center justify-center overflow-hidden rounded-2xl">
+                <img id="lightbox-img" onclick="toggleLightboxZoom()" src="" alt="Xem ảnh lớn Quảng Bình" class="max-h-[68vh] max-w-full w-auto object-contain rounded-2xl shadow-2xl transition-transform duration-300 cursor-zoom-in">
+            </div>
+            <button type="button" onclick="changeLightboxSlide(1)" class="absolute right-2 z-20 p-3 rounded-full bg-white/15 hover:bg-white/30 text-white transition">
+                <i data-lucide="chevron-right" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div class="max-w-3xl mx-auto text-center text-white z-20 pb-2">
+            <h4 id="lightbox-title" class="font-display font-bold text-base sm:text-lg text-amber-200"></h4>
+            <p id="lightbox-desc" class="text-xs sm:text-sm text-white/80 mt-1"></p>
+        </div>
+    </div>
+
+    <!-- Modal 5: Admin Login (Firebase Authentication) -->
+    <div id="admin-login-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-fast-card rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-fast-border space-y-4">
+            <div class="flex items-center justify-between gap-2">
+                <h3 class="font-display font-extrabold text-lg text-fast-dark">Đăng Nhập Ban Tổ Chức</h3>
+                <span id="admin-auth-indicator" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500">Chưa đăng nhập</span>
+            </div>
+            <p class="text-xs text-fast-textMuted">Sử dụng tài khoản BTC đã cấp trên Firebase Authentication.</p>
+            <form id="admin-login-form" onsubmit="handleAdminAuthLogin(event)" class="space-y-3">
+                <input type="email" id="admin-email-input" required placeholder="Email BTC (vd: btc@fast.com.vn)" class="w-full px-4 py-2.5 rounded-2xl border border-fast-border outline-none text-sm">
+                <input type="password" id="admin-password-input" required placeholder="Mật khẩu..." class="w-full px-4 py-2.5 rounded-2xl border border-fast-border outline-none text-sm">
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeAdminModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Đóng</button>
+                    <button type="submit" id="btn-admin-auth-submit" class="flex-1 py-2.5 rounded-xl btn-fast-orange text-xs font-bold shadow-md">Đăng nhập</button>
+                </div>
+            </form>
+            <div id="admin-logged-in-actions" class="hidden pt-2 border-t border-fast-border flex items-center justify-between gap-2">
+                <span id="admin-current-email" class="text-xs font-semibold text-fast-dark truncate"></span>
+                <button type="button" onclick="handleAdminAuthLogout()" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold shrink-0">
+                    Đăng xuất
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Chỉnh Sửa Đại Biểu (Admin) -->
+    <div id="edit-modal" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300 overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-6 pb-20 text-center sm:p-0">
+            <div onclick="closeEditModal()" class="fixed inset-0 bg-fast-deeper/75 backdrop-blur-sm"></div>
+            <div id="edit-modal-content" class="relative inline-block w-full max-w-2xl p-6 sm:p-8 my-8 overflow-hidden text-left align-middle bg-fast-card shadow-2xl rounded-3xl z-10 border border-fast-border transform scale-95 transition-transform duration-300">
+                <button type="button" onclick="closeEditModal()" class="absolute top-5 right-5 p-2 rounded-2xl text-fast-textMuted hover:bg-fast-body">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <h3 class="font-display font-extrabold text-xl text-fast-dark mb-1">Cập Nhật Thông Tin Đại Biểu</h3>
+                <p class="text-xs text-fast-textMuted mb-5">Chỉnh sửa thông tin đăng ký hoặc danh sách người thân đi kèm.</p>
+
+                <form onsubmit="handleEditSubmit(event)" class="space-y-4">
+                    <input type="hidden" id="edit-firebase-key">
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold mb-1">Họ và tên *</label><input type="text" id="edit-name" required minlength="2" maxlength="80" class="w-full px-3.5 py-2.5 rounded-xl border border-fast-border text-sm outline-none"></div>
+                        <div><label class="block text-xs font-bold mb-1">Đơn vị / Chi nhánh</label><input type="text" id="edit-company" maxlength="100" class="w-full px-3.5 py-2.5 rounded-xl border border-fast-border text-sm outline-none"></div>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold mb-1">Nhóm *</label>
+                            <select id="edit-group" required class="w-full px-3.5 py-2.5 rounded-xl border border-fast-border text-sm bg-white outline-none">
+                                <option value="CBNV FAST Hà Nội (FHN)">CBNV FAST Hà Nội (FHN)</option>
+                                <option value="CBNV FAST Đà Nẵng (FDN)">CBNV FAST Đà Nẵng (FĐN)</option>
+                                <option value="CBNV FAST TP.HCM (FSG)">CBNV FAST TP.HCM (FSG)</option>
+                            </select>
+                        </div>
+                        <div><label class="block text-xs font-bold mb-1">Chức vụ</label><input type="text" id="edit-role" maxlength="80" class="w-full px-3.5 py-2.5 rounded-xl border border-fast-border text-sm outline-none"></div>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold mb-1">Số điện thoại *</label><input type="tel" id="edit-phone" required inputmode="numeric" maxlength="15" class="w-full px-3.5 py-2.5 rounded-xl border border-fast-border text-sm outline-none"></div>
+                        <div><label class="block text-xs font-bold mb-1">Email *</label><input type="email" id="edit-email" required maxlength="120" class="w-full px-3.5 py-2.5 rounded-xl border border-fast-border text-sm outline-none"></div>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold mb-1">Di chuyển</label><input type="text" id="edit-travel" maxlength="100" class="w-full px-3.5 py-2.5 rounded-xl border border-fast-border text-sm outline-none"></div>
+                        <div><label class="block text-xs font-bold mb-1">Hoạt động</label><input type="text" id="edit-activity" maxlength="100" class="w-full px-3.5 py-2.5 rounded-xl border border-fast-border text-sm outline-none"></div>
+                    </div>
+
+                    <!-- Chỉnh sửa ảnh đại biểu -->
+                    <div class="p-3.5 rounded-2xl bg-fast-body border border-fast-border flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-2xl bg-white border border-fast-border overflow-hidden shrink-0 flex items-center justify-center">
+                            <img id="edit-avatar-preview" src="" alt="Ảnh đại biểu" class="hidden w-full h-full object-cover">
+                            <i id="edit-avatar-placeholder" data-lucide="user" class="w-6 h-6 text-slate-400"></i>
+                        </div>
+                        <div class="flex-1 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-bold text-fast-dark">Ảnh đại biểu (Tự nén vuông 320×320 · Tối đa 5MB)</label>
+                                <button type="button" id="edit-avatar-clear" onclick="clearAvatarSelection('edit')" class="hidden text-[11px] text-red-500 font-bold">Xóa ảnh</button>
+                            </div>
+                            <input type="file" id="edit-avatar-file" accept="image/png,image/jpeg,image/webp" onchange="handleAvatarFileChange(event, 'edit')" class="block w-full text-xs text-slate-600 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-fast-primary/10 file:text-fast-dark cursor-pointer">
+                        </div>
+                    </div>
+
+					<!-- Chỉnh sửa môn thể thao tham gia -->
+					<div class="p-3.5 rounded-2xl bg-fast-body border border-fast-border space-y-2.5">
+						<label class="block text-xs font-bold text-fast-dark uppercase tracking-wider">
+							Môn thi đấu thể thao (Có thể chọn nhiều môn)
+						</label>
+						<div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+							<label class="flex items-center gap-2 p-2 rounded-xl border border-fast-border bg-white cursor-pointer hover:border-fast-primary">
+								<input type="checkbox" name="edit-sports" value="Pickleball" class="w-4 h-4 accent-fast-primary rounded">
+								<span class="text-xs font-medium">🏓 Pickleball</span>
+							</label>
+							<label class="flex items-center gap-2 p-2 rounded-xl border border-fast-border bg-white cursor-pointer hover:border-fast-primary">
+								<input type="checkbox" name="edit-sports" value="Bóng đá" class="w-4 h-4 accent-fast-primary rounded">
+								<span class="text-xs font-medium">⚽ Bóng đá</span>
+							</label>
+							<label class="flex items-center gap-2 p-2 rounded-xl border border-fast-border bg-white cursor-pointer hover:border-fast-primary">
+								<input type="checkbox" name="edit-sports" value="Cầu lông" class="w-4 h-4 accent-fast-primary rounded">
+								<span class="text-xs font-medium">🏸 Cầu lông</span>
+							</label>
+							<label class="flex items-center gap-2 p-2 rounded-xl border border-fast-border bg-white cursor-pointer hover:border-fast-primary">
+								<input type="checkbox" name="edit-sports" value="Bơi lội" class="w-4 h-4 accent-fast-primary rounded">
+								<span class="text-xs font-medium">🏊 Bơi lội</span>
+							</label>
+							<label class="flex items-center gap-2 p-2 rounded-xl border border-fast-border bg-white cursor-pointer hover:border-fast-primary">
+								<input type="checkbox" name="edit-sports" value="Chạy bộ" class="w-4 h-4 accent-fast-primary rounded">
+								<span class="text-xs font-medium">🏃 Chạy bộ</span>
+							</label>
+						</div>
+					</div>
+
+                    <div class="pt-2 border-t border-fast-border">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-xs font-bold text-fast-dark uppercase">Người thân đi kèm</label>
+                            <button type="button" onclick="addEditRelativeRow()" class="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-fast-primary/10 text-fast-dark text-xs font-bold">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm dòng
+                            </button>
+                        </div>
+                        <div id="edit-relatives-container" class="space-y-2.5 max-h-48 overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <div class="pt-3 flex justify-end gap-3">
+                        <button type="button" onclick="closeEditModal()" class="px-5 py-2.5 rounded-2xl text-sm font-semibold text-fast-textMuted">Hủy</button>
+                        <button type="submit" id="btn-edit-submit" class="px-6 py-2.5 rounded-2xl text-sm font-bold btn-fast-primary shadow">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 7: Thẻ Đại Biểu Gắn Ảnh (Không khung trắng ngoài, thẻ lớn) -->
+    <div id="delegate-card-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-3 sm:px-6 py-8 text-center">
+            <div onclick="closeDelegateCardModal()" class="fixed inset-0 bg-fast-deeper/85 backdrop-blur-sm"></div>
+            <div class="relative inline-block w-full max-w-xl sm:max-w-2xl overflow-visible text-left align-middle bg-transparent shadow-none rounded-[32px] z-10">
+                <button type="button" onclick="closeDelegateCardModal()" aria-label="Đóng thẻ" class="absolute -top-3 -right-3 z-30 w-10 h-10 rounded-full bg-[#00282A]/95 hover:bg-[#FF6B35] text-white border border-[#E5C158]/70 shadow-xl flex items-center justify-center transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <div id="delegate-card-modal-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 8: Clip Chào Mừng Fullscreen · Sân Khấu FAST 30 Năm · Nhạc Nền -->
+    <!-- Modal 8: Clip Chào Mừng Fullscreen · Không Scroll trên Mobile -->
+    <div id="welcome-reel-modal" class="fixed inset-0 z-50 hidden bg-[#001415] text-white overflow-y-auto" role="dialog" aria-modal="true">
+		<div id="welcome-reel-wrapper" class="relative min-h-screen w-full flex flex-col justify-between overflow-hidden" style="background: radial-gradient(circle at 18% 15%, rgba(253, 224, 71, 0.22), transparent 42%), radial-gradient(circle at 85% 80%, rgba(255, 107, 53, 0.22), transparent 45%), linear-gradient(135deg, #003B3E 0%, #00686B 52%, #004245 100%);">
+
+			<!-- Họa tiết trang trí nền sân khấu phủ kín toàn màn hình -->
+			<div class="pointer-events-none absolute inset-0 z-0 opacity-20"
+				 style="background-image: radial-gradient(#FDE047 1px, transparent 1px), radial-gradient(#5EEAD4 1px, transparent 1px); background-size: 36px 36px; background-position: 0 0, 18px 18px;"></div>
+
+			<svg viewBox="0 0 1200 600" preserveAspectRatio="none" class="pointer-events-none absolute inset-0 w-full h-full z-0 opacity-25" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+				<path d="M0,450 C260,370 460,530 760,430 C980,355 1100,410 1200,380 L1200,600 L0,600 Z" fill="#004A4D"/>
+				<path d="M0,490 C280,420 500,560 800,470 C990,415 1110,450 1200,430" fill="none" stroke="#FDE047" stroke-width="2" stroke-dasharray="8 8"/>
+				<circle cx="160" cy="140" r="110" fill="none" stroke="#FDE047" stroke-width="1.2"/>
+				<circle cx="1040" cy="160" r="135" fill="none" stroke="#5EEAD4" stroke-width="1.2"/>
+			</svg>
+
+			<!-- Vầng sáng trang trí nền -->
+			<div class="pointer-events-none absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#FDE047]/10 blur-3xl z-0"></div>
+			<div class="pointer-events-none absolute -bottom-28 -left-28 w-96 h-96 rounded-full bg-[#00B5BC]/20 blur-3xl z-0"></div>
+
+			<!-- Canvas hiệu ứng pháo hoa & tia sáng lễ hội 30 năm phủ kín toàn màn hình -->
+			<canvas id="welcome-reel-fireworks-canvas" class="pointer-events-none absolute inset-0 w-full h-full z-0 opacity-80"></canvas>
+
+			<!-- Thanh điều khiển trên cùng -->
+			<!-- Vùng kích hoạt & Thanh điều khiển trên cùng (mặc định ẩn, hiện khi đưa chuột vào) -->
+			<div id="reel-top-zone" class="max-w-6xl w-full mx-auto px-3 sm:px-6 pt-3 pb-2 z-20 transition-all duration-300 opacity-0 -translate-y-2 pointer-events-auto hover:opacity-100 hover:translate-y-0 focus-within:opacity-100 focus-within:translate-y-0">
+				<div class="flex flex-wrap items-center justify-between gap-3 bg-[#00282A]/75 border border-[#E5C158]/35 rounded-2xl px-4 py-3 backdrop-blur-md shadow-xl">
+
+					<!-- Lọc chi nhánh + Nhạc nền + Toàn màn hình + Đóng -->
+					<div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+						<button type="button" onclick="setReelBranch('ALL')" id="reel-branch-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#FDE047] text-fast-dark">Tất cả</button>
+						<button type="button" onclick="setReelBranch('FHN')" id="reel-branch-FHN" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/15 text-white hover:bg-white/25">FHN</button>
+						<button type="button" onclick="setReelBranch('FDN')" id="reel-branch-FDN" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/15 text-white hover:bg-white/25">FDN</button>
+						<button type="button" onclick="setReelBranch('FSG')" id="reel-branch-FSG" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/15 text-white hover:bg-white/25">FSG</button>
+
+						<!-- Nút bật/tắt nhạc nền -->
+						<button type="button" onclick="toggleReelMusic()" id="btn-reel-music" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/25 hover:bg-emerald-500/35 text-emerald-200 border border-emerald-400/40 inline-flex items-center gap-1.5" title="Bật/Tắt nhạc nền">
+							<i data-lucide="music" class="w-3.5 h-3.5"></i>
+							<span id="reel-music-label">Nhạc nền: Bật</span>
+						</button>
+
+						<!-- Chọn file nhạc riêng nếu muốn -->
+						<label class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-amber-200 border border-white/15 cursor-pointer inline-flex items-center gap-1" title="Tải file nhạc MP3/WAV riêng">
+							<i data-lucide="upload" class="w-3.5 h-3.5"></i>
+							<span class="hidden sm:inline">File nhạc</span>
+							<input type="file" id="reel-music-file" accept="audio/*" onchange="handleReelMusicUpload(event)" class="hidden">
+						</label>
+
+						<!-- Nút Fullscreen -->
+						<button type="button" onclick="toggleReelFullscreen()" id="btn-reel-fullscreen" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white border border-white/20 inline-flex items-center gap-1.5" title="Toàn màn hình">
+							<i data-lucide="maximize" class="w-3.5 h-3.5"></i>
+							<span id="reel-fs-label">Full màn hình</span>
+						</button>
+
+						<button type="button" onclick="closeWelcomeReelModal()" class="p-1.5 rounded-xl bg-white/15 hover:bg-fast-orange text-white transition" title="Đóng">
+							<i data-lucide="x" class="w-4 h-4"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- Sân khấu chào mừng chính tràn nền toàn màn hình -->
+			<div id="welcome-reel-stage" class="relative z-10 max-w-6xl w-full mx-auto flex-1 px-4 sm:px-10 py-6 flex flex-col justify-between">
+
+				<!-- Header sân khấu: Logo FAST + Slogan nổi bật -->
+				<div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4 pb-6 border-b border-[#E5C158]/30 text-center md:text-left">
+					<div class="flex items-center gap-3.5">
+						<div class="px-2.5 py-1 logo-white-gold-frame flex items-center justify-center transition-transform group-hover:scale-105">
+							<svg viewBox="0 0 320 225" class="h-20 sm:h-20 w-auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo FAST 30 Năm">
+								<defs>
+									<linearGradient id="tealNumHeader" x1="0" y1="0" x2="1" y2="1">
+										<stop offset="0%" stop-color="#00B5BC"/>
+										<stop offset="55%" stop-color="#00898E"/>
+										<stop offset="100%" stop-color="#005F63"/>
+									</linearGradient>
+									<linearGradient id="goldRingHeader" x1="0" y1="0" x2="1" y2="1">
+										<stop offset="0%" stop-color="#F7E08B"/>
+										<stop offset="45%" stop-color="#D4AF37"/>
+										<stop offset="100%" stop-color="#A67C1E"/>
+									</linearGradient>
+								</defs>
+								<text x="28" y="32" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="25" letter-spacing="4" fill="#00898E">FAST</text>
+								<!-- Dấu đỏ nằm trọn trong khoảng trống của chữ A -->
+								<polygon points="54.5,19.5 57.5,25 51.5,25" fill="#E53E3E"/>
+								<path d="M32,42 H126 L104,84 H114 C136,84 148,98 148,120 C148,148 126,166 90,166 C60,166 36,154 24,134 L48,118 C56,130 70,138 88,138 C106,138 118,129 118,116 C118,104 108,97 90,97 H72 L94,64 H32 Z" fill="url(#tealNumHeader)" stroke="#D4AF37" stroke-width="3.5" stroke-linejoin="round"/>
+								<g transform="translate(216, 103)">
+									<ellipse cx="0" cy="0" rx="64" ry="62" fill="url(#tealNumHeader)" stroke="#D4AF37" stroke-width="3.5"/>
+									<ellipse cx="4" cy="2" rx="46" ry="45" fill="url(#goldRingHeader)"/>
+									<ellipse cx="-5" cy="0" rx="34" ry="35" fill="#FFFFFF"/>
+								</g>
+								<path d="M44,183 C112,163 202,155 292,158 C296,158 297,163 292,164 C206,169 118,179 50,195 C42,197 38,185 44,183 Z" fill="#00979C" stroke="#D4AF37" stroke-width="2.2"/>
+								<text x="288" y="185" text-anchor="end" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="18" letter-spacing="1" fill="#E53E3E">1997 - 2027</text>
+								<text x="160" y="213" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="13.2" letter-spacing="0.4" fill="#007A7E">AM HIỂU NGHIỆP VỤ, TẬN TÂM ĐỒNG HÀNH</text>
+							</svg>
+						</div>
+						<div>
+							<div class="text-xs font-extrabold uppercase tracking-[0.18em] text-[#FDE047]">
+								LỄ KỶ NIỆM 30 NĂM THÀNH LẬP FAST
+							</div>
+							<div class="text-xs sm:text-sm text-teal-100/90 font-medium">
+								Đón chào đại gia đình Faster 3 miền hội tụ tại Quảng Bình
+							</div>
+						</div>
+					</div>
+
+					<!-- Slogan nổi bật -->
+					<span class="font-display font-extrabold text-sm sm:text-lg text-[#FDE047] tracking-wide">
+						AM HIỂU NGHIỆP VỤ, TẬN TÂM ĐỒNG HÀNH
+					</span>
+				</div>
+
+				<!-- Khu vực hiển thị lần lượt từng CBNV -->
+				<div id="welcome-reel-slide" class="relative z-10 my-auto py-4"></div>			
+
+			</div>
+
+			
+			<!-- Bộ điều khiển dưới cùng -->
+			<!-- Vùng kích hoạt & Bộ điều khiển dưới cùng (mặc định ẩn, hiện khi đưa chuột vào) -->
+			<div id="reel-bottom-zone" class="max-w-6xl w-full mx-auto px-3 sm:px-6 pt-2 pb-3 z-20 transition-all duration-300 opacity-0 translate-y-2 pointer-events-auto hover:opacity-100 hover:translate-y-0 focus-within:opacity-100 focus-within:translate-y-0">
+				<div class="flex flex-wrap items-center justify-between gap-3 bg-[#00282A]/75 border border-white/15 rounded-2xl px-4 py-3 backdrop-blur-md shadow-xl text-xs sm:text-sm">
+					<div class="flex items-center gap-2">
+						<button type="button" onclick="prevReelSlide()" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 font-bold">← Trước</button>
+						<button type="button" onclick="toggleReelPlayPause()" id="btn-reel-toggle" class="px-4 py-2 rounded-xl btn-fast-orange font-extrabold shadow">⏸ Tạm dừng</button>
+						<button type="button" onclick="nextReelSlide()" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 font-bold">Sau →</button>
+					</div>
+
+					<div class="flex items-center gap-3">
+						<label class="flex items-center gap-1.5 text-xs text-white/90">
+							<span>Tốc độ:</span>
+							<select id="reel-speed-select" onchange="changeReelSpeed(this.value)" class="px-2.5 py-1.5 rounded-xl bg-fast-deeper border border-white/20 text-white font-bold outline-none">
+								<option value="2500">2.5s / người</option>
+								<option value="3500" selected>3.5s / người</option>
+								<option value="5000">5.0s / người</option>
+							</select>
+						</label>
+						<span id="welcome-reel-counter" class="font-mono font-bold text-[#FDE047]">0 / 0</span>
+					</div>
+				</div>
+			</div>
+			
+			<div class="pt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs text-white/80">
+					<div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+						<span class="text-[#FDE047] font-bold">🎵 Nhạc nền:</span>
+						<span>Song: Jim Yosef - Firefly</span>
+						<span class="text-white/40">·</span>
+						<span>Music provided by NoCopyrightSounds</span>
+						<span class="text-white/40">·</span>
+						<a href="https://ncs.io/jyfirefly" target="_blank" rel="noopener noreferrer" class="underline text-amber-200 hover:text-white">
+							https://ncs.io/jyfirefly
+						</a>
+					</div>
+					<button type="button" onclick="copyNcsMusicCredit()" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-[11px] font-bold text-amber-200 transition">
+						Copy credit
+					</button>
+				</div>
+		</div>
+	</div>
+
+    <!-- Toast Notification -->
+    <div id="toast-box" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-fast-dark text-white shadow-2xl border border-fast-gold text-sm font-medium">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-[#FDE047] shrink-0"></i>
+            <span id="toast-message">Thông báo</span>
+        </div>
+    </div>
+
+    <!-- External Script JS -->
+    <script src="app.js"></script>
+</body>
+</html>
